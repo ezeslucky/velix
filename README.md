@@ -1,28 +1,4 @@
-<div align="center">
 
-<img width="full" alt="Superset" src="apps/marketing/public/images/readme-hero.png" />
-
-### The Code Editor for AI Agents
-
-[![GitHub stars](https://img.shields.io/github/stars/superset-sh/superset?style=flat&logo=github)](https://github.com/ezeslucky/velix/stargazers)
-[![GitHub release](https://img.shields.io/github/v/release/superset-sh/superset?style=flat&logo=github)](https://github.com/ezeslucky/velix/releases)
-[![License](https://img.shields.io/github/license/superset-sh/superset?style=flat)](LICENSE.md)
-[![Twitter](https://img.shields.io/badge/@superset__sh-555?logo=x)](https://x.com/ezeslucky)
-[![Discord](https://img.shields.io/badge/Discord-555?logo=discord)](https://discord.gg/cZeD9WYcV7)
-
-<br />
-
-Orchestrate swarms of Claude Code, Codex, and more in parallel.<br />
-Works with any CLI agent. Built for local worktree-based development.
-
-<br />
-
-[**Download for macOS**](https://github.com/ezeslucky/velix/releases/latest) &nbsp;&bull;&nbsp; [Documentation](https://docs.superset.sh) &nbsp;&bull;&nbsp; [Changelog](https://github.com/ezeslucky/velix/releases) &nbsp;&bull;&nbsp; [Discord](https://discord.gg/cZeD9WYcV7)
-
-<br />
-
-
-</div>
 
 ## Code 10x Faster With No Switching Cost
 
