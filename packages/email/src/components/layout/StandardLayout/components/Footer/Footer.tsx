@@ -31,7 +31,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 			{/* Social Icons */}
 			{showSocial && (
 				<Section className="mb-6">
-					<Link href="https://x.com/superset_sh" className="inline-block mr-4">
+					<Link href="https://x.com/ezeslucky" className="inline-block mr-4">
 						<Img
 							src={socialIcons.x}
 							alt="X (Twitter)"

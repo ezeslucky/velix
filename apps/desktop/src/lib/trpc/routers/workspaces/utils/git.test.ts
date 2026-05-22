@@ -981,7 +981,7 @@ describe("hasUnpushedCommits", () => {
 describe("parsePrUrl", () => {
 	test("parses canonical GitHub PR URL", () => {
 		expect(
-			parsePrUrl("https://github.com/superset-sh/superset/pull/1781"),
+			parsePrUrl("https://github.com/ezeslucky/velix/pull/1781"),
 		).toEqual({
 			owner: "superset-sh",
 			repo: "superset",
@@ -999,7 +999,7 @@ describe("parsePrUrl", () => {
 
 	test("returns null for non-PR URLs", () => {
 		expect(
-			parsePrUrl("https://github.com/superset-sh/superset/issues/1781"),
+			parsePrUrl("https://github.com/ezeslucky/velix/issues/1781"),
 		).toBe(null);
 	});
 });

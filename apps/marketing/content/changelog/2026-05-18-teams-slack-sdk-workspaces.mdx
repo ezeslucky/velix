@@ -19,13 +19,13 @@ Typical uses:
 
 This batch brings automations into their own as a first-class workflow:
 
-- **Prompt version history** <PRBadge url="https://github.com/superset-sh/superset/pull/3996" /> — every edit to an automation's prompt is snapshotted. Browse previous versions and restore any of them, so an accidental change is no longer a one-way door.
-- **Redesigned automations tab** <PRBadge url="https://github.com/superset-sh/superset/pull/4225" /> — new layout that makes a queue of runs easier to scan at a glance.
-- **Mine vs. Team filter** <PRBadge url="https://github.com/superset-sh/superset/pull/4403" /> — automations now belong to a team. Filter the runs view between **Mine** and **Team** to see only what you ran vs. everything your team kicked off.
+- **Prompt version history** <PRBadge url="https://github.com/ezeslucky/velix/pull/3996" /> — every edit to an automation's prompt is snapshotted. Browse previous versions and restore any of them, so an accidental change is no longer a one-way door.
+- **Redesigned automations tab** <PRBadge url="https://github.com/ezeslucky/velix/pull/4225" /> — new layout that makes a queue of runs easier to scan at a glance.
+- **Mine vs. Team filter** <PRBadge url="https://github.com/ezeslucky/velix/pull/4403" /> — automations now belong to a team. Filter the runs view between **Mine** and **Team** to see only what you ran vs. everything your team kicked off.
 
 ### Drive them from the CLI
 
-Everything you can do in the UI is now scriptable. New in this batch: `prompt get` / `prompt set` <PRBadge url="https://github.com/superset-sh/superset/pull/3966" /> and the `--name` filter on list <PRBadge url="https://github.com/superset-sh/superset/pull/3959" />.
+Everything you can do in the UI is now scriptable. New in this batch: `prompt get` / `prompt set` <PRBadge url="https://github.com/ezeslucky/velix/pull/3966" /> and the `--name` filter on list <PRBadge url="https://github.com/ezeslucky/velix/pull/3959" />.
 
 ```bash
 # create a recurring run from a prompt file
@@ -58,10 +58,10 @@ The `superset` CLI grew real project and workspace commands and a cross-device l
 
 **New commands:**
 
-- `superset projects create` <PRBadge url="https://github.com/superset-sh/superset/pull/4355" /> — scaffold a new Superset project from your shell.
-- `superset projects setup` <PRBadge url="https://github.com/superset-sh/superset/pull/4356" /> — link an existing local repo to a Superset project.
-- `superset workspaces open` <PRBadge url="https://github.com/superset-sh/superset/pull/4258" /> — open a workspace directly from the terminal.
-- `superset auth login` <PRBadge url="https://github.com/superset-sh/superset/pull/3965" /> — now uses OAuth device code + PKCE, so it works on headless servers and across devices.
+- `superset projects create` <PRBadge url="https://github.com/ezeslucky/velix/pull/4355" /> — scaffold a new Superset project from your shell.
+- `superset projects setup` <PRBadge url="https://github.com/ezeslucky/velix/pull/4356" /> — link an existing local repo to a Superset project.
+- `superset workspaces open` <PRBadge url="https://github.com/ezeslucky/velix/pull/4258" /> — open a workspace directly from the terminal.
+- `superset auth login` <PRBadge url="https://github.com/ezeslucky/velix/pull/3965" /> — now uses OAuth device code + PKCE, so it works on headless servers and across devices.
 
 **Setting it up:**
 
@@ -79,7 +79,7 @@ superset projects create
 superset workspaces open
 ```
 
-The accompanying **TypeScript SDK** <PRBadge url="https://github.com/superset-sh/superset/pull/3937" /> (`@superset_sh/sdk`) mirrors the CLI 1:1 — same procedures, same shapes — so anything you can do from your shell, you can do from a script, a CI job, or an internal tool.
+The accompanying **TypeScript SDK** <PRBadge url="https://github.com/ezeslucky/velix/pull/3937" /> (`@superset_sh/sdk`) mirrors the CLI 1:1 — same procedures, same shapes — so anything you can do from your shell, you can do from a script, a CI job, or an internal tool.
 
 ```bash
 npm install @superset_sh/sdk
@@ -91,7 +91,7 @@ const client = new Superset(); // reads SUPERSET_API_KEY / SUPERSET_ORGANIZATION
 await client.automations.run('<automation-id>');
 ```
 
-Linux `superset start` and `superset update` are now fixed <PRBadge url="https://github.com/superset-sh/superset/pull/4635" />.
+Linux `superset start` and `superset update` are now fixed <PRBadge url="https://github.com/ezeslucky/velix/pull/4635" />.
 
 ## Slack bot
 
@@ -100,7 +100,7 @@ Linux `superset start` and `superset update` are now fixed <PRBadge url="https:/
 `@superset` in Slack is now an actual agent, not a task-filer. Mention it in a channel or DM it from anywhere, and it can:
 
 - **Create, update, search, and triage tasks** from the conversation it's standing in — pulling assignees, statuses, and priorities from your team's Linear/Superset setup.
-- **Spin up a cloud workspace and launch a coding agent** to actually do the work. For code-change requests (e.g. "@superset bump our Sentry SDK to v9 across all apps"), it now defaults to spawning a workspace and agent rather than just filing a ticket <PRBadge url="https://github.com/superset-sh/superset/pull/4660" />.
+- **Spin up a cloud workspace and launch a coding agent** to actually do the work. For code-change requests (e.g. "@superset bump our Sentry SDK to v9 across all apps"), it now defaults to spawning a workspace and agent rather than just filing a ticket <PRBadge url="https://github.com/ezeslucky/velix/pull/4660" />.
 - **Read the thread or channel history** on its own to gather context — no need to copy-paste the prior messages.
 - **Search the web with citations** when a request needs up-to-date info.
 - **Unfurl Superset task and workspace links** with rich previews when they're shared in a channel.
@@ -119,10 +119,10 @@ The mobile app is in **internal review**. Core flows — workspaces list, task t
 
 ## Also in this batch
 
-- **Teams as a first-class primitive** <PRBadge url="https://github.com/superset-sh/superset/pull/4403" /> — assign members, workspaces, and automations to a team. Powers the Mine/Team automations split above.
-- **Terminal sessions survive app updates** <PRBadge url="https://github.com/superset-sh/superset/pull/3971" /> — the PTY daemon hands off file descriptors on upgrade, so running shells stay alive when Superset auto-updates.
-- **Web terminal presets** <PRBadge url="https://github.com/superset-sh/superset/pull/4653" /> — run your common commands with a single click in the web terminal, same as desktop.
+- **Teams as a first-class primitive** <PRBadge url="https://github.com/ezeslucky/velix/pull/4403" /> — assign members, workspaces, and automations to a team. Powers the Mine/Team automations split above.
+- **Terminal sessions survive app updates** <PRBadge url="https://github.com/ezeslucky/velix/pull/3971" /> — the PTY daemon hands off file descriptors on upgrade, so running shells stay alive when Superset auto-updates.
+- **Web terminal presets** <PRBadge url="https://github.com/ezeslucky/velix/pull/4653" /> — run your common commands with a single click in the web terminal, same as desktop.
 
 ## Minor updates
 
-V2 changes tab gained inline stage/unstage/discard controls <PRBadge url="https://github.com/superset-sh/superset/pull/4022" /> and diff comments gained a copy action <PRBadge url="https://github.com/superset-sh/superset/pull/4389" />. Workspaces can be started with a preset for repeatable agent runs <PRBadge url="https://github.com/superset-sh/superset/pull/4335" />. The relay server now drains tunnel connections cleanly on shutdown ahead of the multi-region rollout <PRBadge url="https://github.com/superset-sh/superset/pull/4594" />. Theme search in the command palette <PRBadge url="https://github.com/superset-sh/superset/pull/4573" />. macOS notifications now include workspace and project context <PRBadge url="https://github.com/superset-sh/superset/pull/4614" />. MCP OAuth access token TTL bumped to 7 days <PRBadge url="https://github.com/superset-sh/superset/pull/4365" />.
+V2 changes tab gained inline stage/unstage/discard controls <PRBadge url="https://github.com/ezeslucky/velix/pull/4022" /> and diff comments gained a copy action <PRBadge url="https://github.com/ezeslucky/velix/pull/4389" />. Workspaces can be started with a preset for repeatable agent runs <PRBadge url="https://github.com/ezeslucky/velix/pull/4335" />. The relay server now drains tunnel connections cleanly on shutdown ahead of the multi-region rollout <PRBadge url="https://github.com/ezeslucky/velix/pull/4594" />. Theme search in the command palette <PRBadge url="https://github.com/ezeslucky/velix/pull/4573" />. macOS notifications now include workspace and project context <PRBadge url="https://github.com/ezeslucky/velix/pull/4614" />. MCP OAuth access token TTL bumped to 7 days <PRBadge url="https://github.com/ezeslucky/velix/pull/4365" />.

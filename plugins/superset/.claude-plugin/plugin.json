@@ -9,7 +9,7 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/superset-sh/superset"
+		"url": "https://github.com/ezeslucky/velix"
 	},
 	"license": "MIT",
 	"keywords": [

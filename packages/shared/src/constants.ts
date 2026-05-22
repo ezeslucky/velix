@@ -15,7 +15,7 @@ export const COMPANY = {
 	NAME: "Superset",
 	DOMAIN: "superset.sh",
 	EMAIL_DOMAIN: "@superset.sh",
-	GITHUB_URL: "https://github.com/superset-sh/superset",
+	GITHUB_URL: "https://github.com/ezeslucky/velix",
 	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.superset.sh",
 	MARKETING_URL: process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh",
 	TERMS_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh"}/terms`,
@@ -25,11 +25,11 @@ export const COMPANY = {
 	CHANGELOG_URL:
 		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh") +
 		"/changelog",
-	X_URL: "https://x.com/superset_sh",
+	X_URL: "https://x.com/ezeslucky",
 	LINKEDIN_URL: "https://www.linkedin.com/company/superset-sh",
 	YOUTUBE_URL: "https://www.youtube.com/@superset-sh",
 	MAIL_TO: "mailto:founders@superset.sh",
-	REPORT_ISSUE_URL: "https://github.com/superset-sh/superset/issues/new",
+	REPORT_ISSUE_URL: "https://github.com/ezeslucky/velix/issues/new",
 	DISCORD_URL: "https://discord.gg/cZeD9WYcV7",
 	STATUS_URL: "https://status.superset.sh",
 	TRUST_URL: "https://trust.superset.sh",

@@ -57,7 +57,7 @@ export default function NavigationBar() {
 					<SidebarTrigger />
 					<ul className="navbar:flex items-center gap-6 hidden shrink-0">
 						<NavLink
-							href="https://github.com/superset-sh/superset"
+							href="https://github.com/ezeslucky/velix"
 							external
 							aria-label="View Superset repository on GitHub"
 						>
