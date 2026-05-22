@@ -1,4 +1,4 @@
-### The Modern Code Editor for AI Agents 
+
 
 # Code 10x Faster With No Switching Cost
 
