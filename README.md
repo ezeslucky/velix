@@ -1,6 +1,6 @@
+### The Modern Code Editor for AI Agents 
 
-
-## Code 10x Faster With No Switching Cost
+# Code 10x Faster With No Switching Cost
 
 Superset orchestrates CLI-based coding agents across isolated git worktrees, with built-in terminal, review, and open-in-editor workflows.
 
