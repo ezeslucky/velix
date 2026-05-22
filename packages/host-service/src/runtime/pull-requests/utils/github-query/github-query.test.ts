@@ -28,7 +28,7 @@ describe("GitHub pull request REST queries", () => {
 				{
 					number: 42,
 					title: "Fix sidebar",
-					html_url: "https://github.com/superset-sh/superset/pull/42",
+					html_url: "https://github.com/ezeslucky/velix/pull/42",
 					state: "open",
 					draft: false,
 					merged_at: null,
@@ -59,7 +59,7 @@ describe("GitHub pull request REST queries", () => {
 		expect(result).toEqual({
 			number: 42,
 			title: "Fix sidebar",
-			url: "https://github.com/superset-sh/superset/pull/42",
+			url: "https://github.com/ezeslucky/velix/pull/42",
 			state: "OPEN",
 			isDraft: false,
 			headRefName: "fix/sidebar",
@@ -97,7 +97,7 @@ describe("GitHub pull request REST queries", () => {
 				{
 					number: 41,
 					title: "Wrong fork",
-					html_url: "https://github.com/superset-sh/superset/pull/41",
+					html_url: "https://github.com/ezeslucky/velix/pull/41",
 					state: "open",
 					draft: false,
 					merged_at: null,
@@ -119,7 +119,7 @@ describe("GitHub pull request REST queries", () => {
 				{
 					number: 42,
 					title: "Right fork",
-					html_url: "https://github.com/superset-sh/superset/pull/42",
+					html_url: "https://github.com/ezeslucky/velix/pull/42",
 					state: "open",
 					draft: false,
 					merged_at: null,
@@ -210,7 +210,7 @@ describe("GitHub pull request REST queries", () => {
 					{
 						name: "Typecheck",
 						conclusion: "success",
-						details_url: "https://github.com/superset-sh/superset/actions/1",
+						details_url: "https://github.com/ezeslucky/velix/actions/1",
 						status: "completed",
 						started_at: "2026-05-08T12:00:00Z",
 						completed_at: "2026-05-08T12:03:00Z",
@@ -238,7 +238,7 @@ describe("GitHub pull request REST queries", () => {
 				__typename: "CheckRun",
 				name: "Typecheck",
 				conclusion: "SUCCESS",
-				detailsUrl: "https://github.com/superset-sh/superset/actions/1",
+				detailsUrl: "https://github.com/ezeslucky/velix/actions/1",
 				status: "COMPLETED",
 				startedAt: "2026-05-08T12:00:00Z",
 				completedAt: "2026-05-08T12:03:00Z",

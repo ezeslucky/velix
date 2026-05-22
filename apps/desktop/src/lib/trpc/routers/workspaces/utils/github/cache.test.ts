@@ -19,8 +19,8 @@ describe("clearGitHubCachesForWorktree", () => {
 
 		const status: GitHubStatus = {
 			pr: null,
-			repoUrl: "https://github.com/superset-sh/superset",
-			upstreamUrl: "https://github.com/superset-sh/superset",
+			repoUrl: "https://github.com/ezeslucky/velix",
+			upstreamUrl: "https://github.com/ezeslucky/velix",
 			isFork: false,
 			branchExistsOnRemote: true,
 			lastRefreshed: Date.now(),
@@ -36,8 +36,8 @@ describe("clearGitHubCachesForWorktree", () => {
 
 		setCachedGitHubStatus(worktreePath, status);
 		setCachedRepoContext(worktreePath, {
-			repoUrl: "https://github.com/superset-sh/superset",
-			upstreamUrl: "https://github.com/superset-sh/superset",
+			repoUrl: "https://github.com/ezeslucky/velix",
+			upstreamUrl: "https://github.com/ezeslucky/velix",
 			isFork: false,
 		});
 
@@ -73,8 +73,8 @@ describe("getCachedGitHubStatusState", () => {
 		const worktreePath = "/tmp/worktrees/review-cache-stale-test";
 		const status: GitHubStatus = {
 			pr: null,
-			repoUrl: "https://github.com/superset-sh/superset",
-			upstreamUrl: "https://github.com/superset-sh/superset",
+			repoUrl: "https://github.com/ezeslucky/velix",
+			upstreamUrl: "https://github.com/ezeslucky/velix",
 			isFork: false,
 			branchExistsOnRemote: true,
 			lastRefreshed: 1000,

@@ -8,8 +8,8 @@ import {
 describe("pull-request-url", () => {
 	test("normalizes GitHub remote URLs", () => {
 		expect(
-			normalizeGitHubRepoUrl("https://github.com/superset-sh/superset.git"),
-		).toBe("https://github.com/superset-sh/superset");
+			normalizeGitHubRepoUrl("https://github.com/ezeslucky/velix.git"),
+		).toBe("https://github.com/ezeslucky/velix");
 		expect(normalizeGitHubRepoUrl("git@github.com:Kitenite/superset.git")).toBe(
 			"https://github.com/Kitenite/superset",
 		);
@@ -28,13 +28,13 @@ describe("pull-request-url", () => {
 	test("builds compare URLs for fork branches", () => {
 		expect(
 			buildPullRequestCompareUrl({
-				baseRepoUrl: "https://github.com/superset-sh/superset.git",
+				baseRepoUrl: "https://github.com/ezeslucky/velix.git",
 				baseBranch: "main",
 				headRepoOwner: "Kitenite",
 				headBranch: "kitenite/halved-position",
 			}),
 		).toBe(
-			"https://github.com/superset-sh/superset/compare/main...Kitenite:kitenite/halved-position?expand=1",
+			"https://github.com/ezeslucky/velix/compare/main...Kitenite:kitenite/halved-position?expand=1",
 		);
 	});
 });

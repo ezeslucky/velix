@@ -54,10 +54,10 @@ release stream" (what's actually going on). The proper fix is below.
 
 ## Source-of-truth URLs per consumer
 
-- **Desktop stable build** → `https://github.com/superset-sh/superset/releases/download/desktop-latest/latest-{mac,linux}.yml`. Today reads from `/releases/latest/download/`. **Must move to `desktop-latest`.**
-- **Desktop canary build** → `https://github.com/superset-sh/superset/releases/download/desktop-canary/latest-{mac,linux}.yml`. Already correct.
-- **CLI stable** → `https://github.com/superset-sh/superset/releases/download/cli-latest/version.txt` and matching tarballs. Already correct.
-- **CLI canary** (future) → `https://github.com/superset-sh/superset/releases/download/cli-canary/version.txt` and tarballs.
+- **Desktop stable build** → `https://github.com/ezeslucky/velix/releases/download/desktop-latest/latest-{mac,linux}.yml`. Today reads from `/releases/latest/download/`. **Must move to `desktop-latest`.**
+- **Desktop canary build** → `https://github.com/ezeslucky/velix/releases/download/desktop-canary/latest-{mac,linux}.yml`. Already correct.
+- **CLI stable** → `https://github.com/ezeslucky/velix/releases/download/cli-latest/version.txt` and matching tarballs. Already correct.
+- **CLI canary** (future) → `https://github.com/ezeslucky/velix/releases/download/cli-canary/version.txt` and tarballs.
 
 After migration, **no consumer reads `/releases/latest`**. That endpoint becomes irrelevant for our update flows, which removes the cross-stream collision class entirely.
 
@@ -112,8 +112,8 @@ gh release create desktop-latest /tmp/desktop-bootstrap/* \
 `apps/desktop/src/main/lib/auto-updater.ts:52`:
 
 ```diff
--  : "https://github.com/superset-sh/superset/releases/latest/download";
-+  : "https://github.com/superset-sh/superset/releases/download/desktop-latest";
+-  : "https://github.com/ezeslucky/velix/releases/latest/download";
++  : "https://github.com/ezeslucky/velix/releases/download/desktop-latest";
 ```
 
 Ship in next desktop release (`desktop-v1.7.3` or whatever's next). Verify the new build picks up `desktop-latest/latest-mac.yml` correctly in a manual smoke test before publishing.
