@@ -181,11 +181,6 @@ We welcome contributions! If you have a suggestion that would make Superset bett
 
 You can also [open issues](https://github.com/ezeslucky/velix/issues) for bugs or feature requests.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions and code of conduct.
-
-<a href="https://github.com/ezeslucky/velix/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=superset-sh/superset" />
-</a>
 
 ## Community
 
