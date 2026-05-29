@@ -1,16 +1,16 @@
 import {
 	CodeBlock,
 	CodeBlockCopyButton,
-} from "@superset/ui/ai-elements/code-block";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/ai-elements/code-block";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dialog";
+import { toast } from "@velix/ui/sonner";
 import { useState } from "react";
 
 // biome-ignore lint/suspicious/noControlCharactersInRegex: matching ANSI escape sequences

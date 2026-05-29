@@ -2,13 +2,13 @@ import {
 	canRemoveMember,
 	getRoleSortPriority,
 	type OrganizationRole,
-} from "@superset/shared/auth";
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Badge } from "@superset/ui/badge";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/shared/auth";
+import { Avatar } from "@velix/ui/atoms/Avatar";
+import { Badge } from "@velix/ui/badge";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { Skeleton } from "@velix/ui/skeleton";
+import { toast } from "@velix/ui/sonner";
 import {
 	Table,
 	TableBody,
@@ -16,8 +16,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useState } from "react";

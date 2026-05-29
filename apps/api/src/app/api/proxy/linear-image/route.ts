@@ -1,6 +1,6 @@
-import { auth } from "@superset/auth/server";
-import { db } from "@superset/db/client";
-import { integrationConnections } from "@superset/db/schema";
+import { auth } from "@velix/auth/server";
+import { db } from "@velix/db/client";
+import { integrationConnections } from "@velix/db/schema";
 import { and, eq } from "drizzle-orm";
 
 const LINEAR_IMAGE_HOST = "uploads.linear.app";

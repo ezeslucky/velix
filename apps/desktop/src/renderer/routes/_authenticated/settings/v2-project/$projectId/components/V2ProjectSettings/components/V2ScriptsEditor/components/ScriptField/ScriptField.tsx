@@ -1,5 +1,5 @@
-import { Textarea } from "@superset/ui/textarea";
-import { cn } from "@superset/ui/utils";
+import { Textarea } from "@velix/ui/textarea";
+import { cn } from "@velix/ui/utils";
 import { useCallback, useRef, useState } from "react";
 import { HiDocumentArrowUp } from "react-icons/hi2";
 

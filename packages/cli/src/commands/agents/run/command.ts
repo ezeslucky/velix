@@ -1,4 +1,4 @@
-import { CLIError, string } from "@superset/cli-framework";
+import { CLIError, string } from "@velix/cli-framework";
 import { command } from "../../../lib/command";
 import { resolveHostTarget } from "../../../lib/host-target";
 import { uploadAttachments } from "../../../lib/upload-attachments";

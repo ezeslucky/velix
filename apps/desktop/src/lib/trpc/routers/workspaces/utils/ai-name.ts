@@ -1,7 +1,7 @@
-import { generateTitleFromMessage } from "@superset/chat/server/desktop";
-import { getSmallModel } from "@superset/chat/server/shared";
-import { workspaces } from "@superset/local-db";
-import { deriveWorkspaceTitleFromPrompt } from "@superset/shared/workspace-launch";
+import { generateTitleFromMessage } from "@velix/chat/server/desktop";
+import { getSmallModel } from "@velix/chat/server/shared";
+import { workspaces } from "@velix/local-db";
+import { deriveWorkspaceTitleFromPrompt } from "@velix/shared/workspace-launch";
 import { and, eq, isNull } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 import { getWorkspaceAutoRenameDecision } from "./workspace-auto-rename";

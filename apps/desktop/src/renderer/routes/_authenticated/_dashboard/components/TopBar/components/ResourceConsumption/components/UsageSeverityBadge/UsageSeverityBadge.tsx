@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/lib/utils";
+import { cn } from "@velix/ui/lib/utils";
 import type { UsageSeverity } from "../../types";
 
 interface UsageSeverityBadgeProps {

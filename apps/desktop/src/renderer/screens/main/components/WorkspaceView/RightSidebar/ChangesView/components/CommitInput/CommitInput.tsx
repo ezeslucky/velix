@@ -1,16 +1,16 @@
-import type { GitHubStatus } from "@superset/local-db";
-import { Button } from "@superset/ui/button";
-import { ButtonGroup } from "@superset/ui/button-group";
+import type { GitHubStatus } from "@velix/local-db";
+import { Button } from "@velix/ui/button";
+import { ButtonGroup } from "@velix/ui/button-group";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
-import { Textarea } from "@superset/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
+import { Textarea } from "@velix/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useState } from "react";
 import {
 	VscArrowDown,

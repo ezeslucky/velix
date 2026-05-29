@@ -1,4 +1,4 @@
-import { CLIError, number, positional, string } from "@superset/cli-framework";
+import { CLIError, number, positional, string } from "@velix/cli-framework";
 import { isValid, parseISO } from "date-fns";
 import { command } from "../../../lib/command";
 

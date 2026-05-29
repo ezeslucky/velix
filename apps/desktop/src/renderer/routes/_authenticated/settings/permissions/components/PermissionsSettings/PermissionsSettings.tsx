@@ -1,7 +1,7 @@
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
-import { Label } from "@superset/ui/label";
-import { Skeleton } from "@superset/ui/skeleton";
+import { Badge } from "@velix/ui/badge";
+import { Button } from "@velix/ui/button";
+import { Label } from "@velix/ui/label";
+import { Skeleton } from "@velix/ui/skeleton";
 import { LuExternalLink } from "react-icons/lu";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import {

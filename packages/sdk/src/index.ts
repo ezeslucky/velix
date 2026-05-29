@@ -20,7 +20,7 @@ export {
 export { toFile, type Uploadable } from "./core/uploads";
 
 // Resource classes + their data shapes — bare top-level exports so consumers
-// can `import { type Task } from '@superset_sh/sdk'` without going through
+// can `import { type Task } from '@velix_sh/sdk'` without going through
 // the `Superset` namespace.
 export {
 	type AgentListParams,

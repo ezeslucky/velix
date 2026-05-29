@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpCircle, Monitor } from "lucide-react";
 

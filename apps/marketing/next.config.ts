@@ -93,7 +93,7 @@ const config: NextConfig = {
 };
 
 export default withSentryConfig(config, {
-	org: "superset-sh",
+	org: "ezeslucky",
 	project: "marketing",
 	silent: !process.env.CI,
 	authToken: process.env.SENTRY_AUTH_TOKEN,

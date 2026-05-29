@@ -1,4 +1,4 @@
-import type { AgentIdentity } from "@superset/workspace-client";
+import type { AgentIdentity } from "@velix/workspace-client";
 import { create } from "zustand";
 
 export interface V2AgentBinding {

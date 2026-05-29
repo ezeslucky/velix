@@ -1,4 +1,4 @@
-import type { ThinkingLevel } from "@superset/ui/ai-elements/thinking-toggle";
+import type { ThinkingLevel } from "@velix/ui/ai-elements/thinking-toggle";
 
 export type ChatSendMessageInput = {
 	payload: {

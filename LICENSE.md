@@ -54,4 +54,4 @@ trademark means trademarks, service marks, and similar rights.
 
 ---
 
-Copyright 2025-2026Velix, Inc.
+Copyright 2025-2026 Velix, Inc.

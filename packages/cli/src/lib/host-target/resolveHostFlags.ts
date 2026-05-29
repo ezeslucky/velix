@@ -1,5 +1,5 @@
-import { CLIError } from "@superset/cli-framework";
-import { getHostId } from "@superset/shared/host-info";
+import { CLIError } from "@velix/cli-framework";
+import { getHostId } from "@velix/shared/host-info";
 
 export interface HostFlags {
 	host: string | undefined;

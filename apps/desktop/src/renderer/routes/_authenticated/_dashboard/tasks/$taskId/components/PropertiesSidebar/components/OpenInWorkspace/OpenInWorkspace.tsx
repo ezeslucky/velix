@@ -1,21 +1,21 @@
-import type { AgentLaunchRequest } from "@superset/shared/agent-launch";
-import { buildTaskAgentLaunchRequest } from "@superset/shared/agent-launch-request";
+import type { AgentLaunchRequest } from "@velix/shared/agent-launch";
+import { buildTaskAgentLaunchRequest } from "@velix/shared/agent-launch-request";
 import {
 	type AgentDefinitionId,
 	getEnabledAgentConfigs,
 	getFallbackAgentId,
 	indexResolvedAgentConfigs,
-} from "@superset/shared/agent-settings";
-import { Button } from "@superset/ui/button";
+} from "@velix/shared/agent-settings";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
+} from "@velix/ui/dropdown-menu";
+import { Label } from "@velix/ui/label";
+import { toast } from "@velix/ui/sonner";
+import { Switch } from "@velix/ui/switch";
 import { useMemo } from "react";
 import { HiArrowRight, HiChevronDown } from "react-icons/hi2";
 import { AgentSelect } from "renderer/components/AgentSelect";

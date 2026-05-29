@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Command,
 	CommandEmpty,
@@ -6,9 +6,9 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { toast } from "@velix/ui/sonner";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { ChevronDownIcon } from "lucide-react";

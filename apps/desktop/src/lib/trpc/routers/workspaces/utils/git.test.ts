@@ -24,7 +24,7 @@ import {
 
 const TEST_DIR = join(
 	realpathSync(tmpdir()),
-	`superset-test-git-${process.pid}`,
+	`velix-test-git-${process.pid}`,
 );
 
 function createTestRepo(name: string): string {
@@ -101,7 +101,7 @@ describe("getDefaultBranch", () => {
 	} {
 		const testDir = join(
 			realpathSync(tmpdir()),
-			`superset-test-${testName}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+			`velix-test-${testName}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 		);
 		mkdirSync(testDir, { recursive: true });
 		execSync("git init", { cwd: testDir, stdio: "ignore" });
@@ -378,7 +378,7 @@ describe("Shell Environment", () => {
 		const tmpDir = mkdtempSync(join(realpathSync(tmpdir()), "shell-env-test-"));
 		writeFileSync(
 			join(tmpDir, ".zshrc"),
-			'export __SUPERSET_SHELL_ENV_TEST__="interactive"\n',
+			'export __VELIX_SHELL_ENV_TEST__="interactive"\n',
 		);
 
 		const origZDOTDIR = process.env.ZDOTDIR;
@@ -389,7 +389,7 @@ describe("Shell Environment", () => {
 
 		try {
 			const env = await getShellEnvironment();
-			expect(env.__SUPERSET_SHELL_ENV_TEST__).toBe("interactive");
+			expect(env.__VELIX_SHELL_ENV_TEST__).toBe("interactive");
 		} finally {
 			if (origZDOTDIR !== undefined) process.env.ZDOTDIR = origZDOTDIR;
 			else delete process.env.ZDOTDIR;
@@ -541,7 +541,7 @@ describe("getCurrentBranch", () => {
 	test("returns branch name for empty repo with unborn HEAD", async () => {
 		const repoPath = join(
 			realpathSync(tmpdir()),
-			`superset-test-current-branch-empty-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+			`velix-test-current-branch-empty-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 		);
 
 		mkdirSync(repoPath, { recursive: true });
@@ -565,7 +565,7 @@ describe("getCurrentBranch", () => {
 	test("returns null in detached HEAD state", async () => {
 		const repoPath = join(
 			realpathSync(tmpdir()),
-			`superset-test-current-branch-detached-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+			`velix-test-current-branch-detached-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 		);
 
 		mkdirSync(repoPath, { recursive: true });
@@ -983,16 +983,16 @@ describe("parsePrUrl", () => {
 		expect(
 			parsePrUrl("https://github.com/ezeslucky/velix/pull/1781"),
 		).toEqual({
-			owner: "superset-sh",
-			repo: "superset",
+			owner: "ezeslucky",
+			repo: "velix",
 			number: 1781,
 		});
 	});
 
 	test("parses GitHub URL without protocol", () => {
-		expect(parsePrUrl("github.com/superset-sh/superset/pull/1781")).toEqual({
-			owner: "superset-sh",
-			repo: "superset",
+		expect(parsePrUrl("github.com/ezeslucky/velix/pull/1781")).toEqual({
+			owner: "ezeslucky",
+			repo: "velix",
 			number: 1781,
 		});
 	});

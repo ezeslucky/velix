@@ -1,18 +1,18 @@
-import type { BranchPrefixMode } from "@superset/local-db";
+import type { BranchPrefixMode } from "@velix/local-db";
 import {
 	resolveBranchPrefix,
 	sanitizeSegment,
-} from "@superset/shared/workspace-launch";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
+} from "@velix/shared/workspace-launch";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { Switch } from "@superset/ui/switch";
+} from "@velix/ui/select";
+import { Switch } from "@velix/ui/switch";
 import { useEffect, useState } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import {

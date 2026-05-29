@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { members, users } from "@superset/db/schema";
+import { db } from "@velix/db/client";
+import { members, users } from "@velix/db/schema";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";

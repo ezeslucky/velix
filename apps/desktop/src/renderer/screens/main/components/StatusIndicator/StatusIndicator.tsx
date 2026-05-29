@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import type { ActivePaneStatus } from "shared/tabs-types";
 
 // Re-export for consumers

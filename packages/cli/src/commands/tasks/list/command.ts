@@ -1,4 +1,4 @@
-import { boolean, number, string, table } from "@superset/cli-framework";
+import { boolean, number, string, table } from "@velix/cli-framework";
 import { command } from "../../../lib/command";
 
 export default command({

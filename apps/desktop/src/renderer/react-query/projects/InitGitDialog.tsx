@@ -5,8 +5,8 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
 import { useGitInitDialogStore } from "renderer/stores/git-init-dialog";
 
 export function InitGitDialog() {

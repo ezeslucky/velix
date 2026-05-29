@@ -1,4 +1,4 @@
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
+import { buildHostRoutingKey } from "@velix/shared/host-routing";
 import SuperJSON from "superjson";
 
 export interface HostServiceCallOptions {

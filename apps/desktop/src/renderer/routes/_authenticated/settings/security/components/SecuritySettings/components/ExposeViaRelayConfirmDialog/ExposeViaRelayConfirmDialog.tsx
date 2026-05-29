@@ -5,10 +5,10 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
 import { useEffect, useState } from "react";
 
 const CONFIRM_PHRASE = "I understand";

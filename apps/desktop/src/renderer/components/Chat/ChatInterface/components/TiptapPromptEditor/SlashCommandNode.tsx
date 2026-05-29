@@ -4,9 +4,9 @@ import {
 	CommandGroup,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverAnchor, PopoverContent } from "@superset/ui/popover";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/command";
+import { Popover, PopoverAnchor, PopoverContent } from "@velix/ui/popover";
+import { cn } from "@velix/ui/utils";
 import { mergeAttributes, Node } from "@tiptap/core";
 import {
 	type NodeViewProps,

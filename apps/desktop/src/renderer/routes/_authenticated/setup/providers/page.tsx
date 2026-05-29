@@ -1,5 +1,5 @@
-import { chatServiceTrpc } from "@superset/chat/client";
-import { Spinner } from "@superset/ui/spinner";
+import { chatServiceTrpc } from "@velix/chat/client";
+import { Spinner } from "@velix/ui/spinner";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
 import { LuKeyRound, LuSettings } from "react-icons/lu";

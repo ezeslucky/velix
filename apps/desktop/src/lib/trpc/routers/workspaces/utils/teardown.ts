@@ -6,7 +6,7 @@ import {
 	getShellEnv,
 } from "main/lib/agent-setup/shell-wrappers";
 import { buildSafeEnv, sanitizeEnv } from "main/lib/terminal/env";
-import { SUPERSET_DIR_NAME } from "shared/constants";
+import { VELIX_DIR_NAME } from "shared/constants";
 import { removeWorktree } from "./git";
 import { loadSetupConfig } from "./setup";
 
@@ -45,12 +45,12 @@ export async function runTeardown({
 		const shell =
 			process.env.SHELL ||
 			(process.platform === "darwin" ? "/bin/zsh" : "/bin/bash");
-		const supersetHomeDir =
-			process.env.SUPERSET_HOME_DIR || join(homedir(), SUPERSET_DIR_NAME);
+		const velixHomeDir =
+			process.env.VELIX_HOME_DIR || join(homedir(), VELIX_DIR_NAME);
 		const shellWrapperPaths = {
-			BIN_DIR: join(supersetHomeDir, "bin"),
-			ZSH_DIR: join(supersetHomeDir, "zsh"),
-			BASH_DIR: join(supersetHomeDir, "bash"),
+			BIN_DIR: join(velixHomeDir, "bin"),
+			ZSH_DIR: join(velixHomeDir, "zsh"),
+			BASH_DIR: join(velixHomeDir, "bash"),
 		};
 
 		const baseEnv = buildSafeEnv(sanitizeEnv(process.env) || {});
@@ -65,8 +65,8 @@ export async function runTeardown({
 				env: {
 					...baseEnv,
 					...wrapperEnv,
-					SUPERSET_WORKSPACE_NAME: workspaceName,
-					SUPERSET_ROOT_PATH: mainRepoPath,
+					VELIX_WORKSPACE_NAME: workspaceName,
+					VELIX_ROOT_PATH: mainRepoPath,
 				},
 			});
 

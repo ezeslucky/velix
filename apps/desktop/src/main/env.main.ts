@@ -1,11 +1,4 @@
-/**
- * Environment variables for the MAIN PROCESS (Node.js context).
- *
- * This file uses t3-env with process.env which works at runtime in Node.js.
- * Only import this file in src/main/ code - never in renderer or shared code.
- *
- * For renderer process env vars, use src/renderer/env.renderer.ts instead.
- */
+
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod/v4";
 
@@ -14,18 +7,18 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
-		NEXT_PUBLIC_API_URL: z.url().default("https://api.superset.sh"),
-		NEXT_PUBLIC_STREAMS_URL: z.url().default("https://streams.superset.sh"),
+		NEXT_PUBLIC_API_URL: z.url().default("https://api.velix.sh"),
+		NEXT_PUBLIC_STREAMS_URL: z.url().default("https://streams.velix.sh"),
 		NEXT_PUBLIC_ELECTRIC_URL: z
 			.url()
 			.default("https://electric-proxy.avi-6ac.workers.dev"),
-		NEXT_PUBLIC_WEB_URL: z.url().default("https://app.superset.sh"),
-		NEXT_PUBLIC_MARKETING_URL: z.url().default("https://superset.sh"),
+		NEXT_PUBLIC_WEB_URL: z.url().default("https://app.velix.sh"),
+		NEXT_PUBLIC_MARKETING_URL: z.url().default("https://velix.sh"),
 		NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
 		NEXT_PUBLIC_POSTHOG_HOST: z.string().default("https://us.i.posthog.com"),
 		SENTRY_DSN_DESKTOP: z.string().optional(),
-		STREAMS_URL: z.url().default("https://superset-stream.fly.dev"),
-		RELAY_URL: z.url().default("https://relay.superset.sh"),
+		STREAMS_URL: z.url().default("https://velix-stream.fly.dev"),
+		RELAY_URL: z.url().default("https://relay.velix.sh"),
 	},
 
 	runtimeEnv: {

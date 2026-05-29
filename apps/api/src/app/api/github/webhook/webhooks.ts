@@ -1,11 +1,11 @@
 import type { EmitterWebhookEvent } from "@octokit/webhooks";
 import { Webhooks } from "@octokit/webhooks";
-import { db } from "@superset/db/client";
+import { db } from "@velix/db/client";
 import {
 	githubInstallations,
 	githubPullRequests,
 	githubRepositories,
-} from "@superset/db/schema";
+} from "@velix/db/schema";
 import { and, eq } from "drizzle-orm";
 
 import { env } from "@/env";

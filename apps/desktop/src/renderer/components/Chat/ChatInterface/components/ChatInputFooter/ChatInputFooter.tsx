@@ -1,12 +1,12 @@
-import { chatServiceTrpc } from "@superset/chat/client";
+import { chatServiceTrpc } from "@velix/chat/client";
 import {
 	PromptInput,
 	PromptInputAttachment,
 	PromptInputAttachments,
 	type PromptInputMessage,
 	usePromptInputController,
-} from "@superset/ui/ai-elements/prompt-input";
-import type { ThinkingLevel } from "@superset/ui/ai-elements/thinking-toggle";
+} from "@velix/ui/ai-elements/prompt-input";
+import type { ThinkingLevel } from "@velix/ui/ai-elements/thinking-toggle";
 import type { ChatStatus, FileUIPart } from "ai";
 import type React from "react";
 import type { ReactNode } from "react";

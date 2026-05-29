@@ -1,10 +1,10 @@
-import type { TaskPriority } from "@superset/db/enums";
+import type { TaskPriority } from "@velix/db/enums";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import { useState } from "react";
 import { useOptimisticCollectionActions } from "renderer/routes/_authenticated/hooks/useOptimisticCollectionActions";
 import { PriorityIcon } from "../../../../../components/TasksView/components/shared/PriorityIcon";

@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -6,10 +6,10 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dialog";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { toast } from "@velix/ui/sonner";
 import { useState } from "react";
 import { authClient } from "renderer/lib/auth-client";
 

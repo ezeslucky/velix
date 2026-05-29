@@ -1,5 +1,5 @@
-import { COMPANY } from "@superset/shared/constants";
-import { Button } from "@superset/ui/button";
+import { COMPANY } from "@velix/shared/constants";
+import { Button } from "@velix/ui/button";
 import {
 	Select,
 	SelectContent,
@@ -9,8 +9,8 @@ import {
 	SelectSeparator,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/select";
+import { toast } from "@velix/ui/sonner";
 import { type ChangeEvent, useRef, useState } from "react";
 import {
 	HiOutlineArrowDownTray,

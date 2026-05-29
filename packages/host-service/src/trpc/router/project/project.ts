@@ -2,7 +2,7 @@ import { basename, resolve as resolvePath } from "node:path";
 import {
 	type ParsedGitHubRemote,
 	parseGitHubRemote,
-} from "@superset/shared/github-remote";
+} from "@velix/shared/github-remote";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";

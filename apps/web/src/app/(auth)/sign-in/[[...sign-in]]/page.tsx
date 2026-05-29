@@ -1,7 +1,7 @@
 "use client";
 
-import { authClient } from "@superset/auth/client";
-import { Button } from "@superset/ui/button";
+import { authClient } from "@velix/auth/client";
+import { Button } from "@velix/ui/button";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";

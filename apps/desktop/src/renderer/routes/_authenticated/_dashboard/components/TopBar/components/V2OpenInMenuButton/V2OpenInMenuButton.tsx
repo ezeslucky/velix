@@ -1,14 +1,14 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@velix/local-db";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { OverflowFadeText } from "@superset/ui/overflow-fade-text";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/dropdown-menu";
+import { OverflowFadeText } from "@velix/ui/overflow-fade-text";
+import { toast } from "@velix/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { useCallback, useMemo } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import {

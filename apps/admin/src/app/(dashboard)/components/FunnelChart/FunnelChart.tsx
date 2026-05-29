@@ -6,14 +6,14 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
+} from "@velix/ui/card";
 import {
 	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@superset/ui/chart";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@velix/ui/chart";
+import { Skeleton } from "@velix/ui/skeleton";
 import type { ReactNode } from "react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 

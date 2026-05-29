@@ -2,7 +2,7 @@
 
 ## Problem
 
-[#3372](https://github.com/ezeslucky/velix/issues/3372): Superset spawns a growing pile of `lsof` processes. Symptoms: CPU pinned at 100%, count grows with open workspaces, closing workspaces doesn't help, quitting Superset leaves `lsof` behind.
+[#3372](https://github.com/ezeslucky/velix/issues/3372): Velix spawns a growing pile of `lsof` processes. Symptoms: CPU pinned at 100%, count grows with open workspaces, closing workspaces doesn't help, quitting Veix leaves `lsof` behind.
 
 Related: [#3235](https://github.com/ezeslucky/velix/issues/3235) — EDR agents amplify every spawn, so fixing this also reduces their CPU.
 
@@ -28,7 +28,7 @@ All in `apps/desktop/src/main/lib/terminal/`.
 - **B3, per-pane `isScanning` + semaphore:** more state, same behavior as B2.
 - **C3, `killSignal: "SIGKILL"`:** kills the shell, child still orphans. Doesn't address the root issue.
 - **D3, delete all hints:** loses fast-detection for dev servers (UX regression).
-- **Option 1: delete the whole dynamic-port subsystem and rely on `.superset/ports.json`:** attractive (-1500 lines) but regresses feature for users without a static config.
+- **Option 1: delete the whole dynamic-port subsystem and rely on `.velix/ports.json`:** attractive (-1500 lines) but regresses feature for users without a static config.
 - **Option 2: delete periodic scan, hint-only:** halves the code but misses silent port openers.
 - **Option 4: delete `lsof` entirely, parse ports from terminal output:** most elegant (-700 lines) but loses PID info (Kill Port), still has edge cases.
 

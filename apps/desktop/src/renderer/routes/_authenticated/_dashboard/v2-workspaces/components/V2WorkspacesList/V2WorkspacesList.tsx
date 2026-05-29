@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Empty,
 	EmptyContent,
@@ -6,9 +6,9 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@superset/ui/empty";
-import { ScrollArea } from "@superset/ui/scroll-area";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/empty";
+import { ScrollArea } from "@velix/ui/scroll-area";
+import { cn } from "@velix/ui/utils";
 import { useMatchRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {

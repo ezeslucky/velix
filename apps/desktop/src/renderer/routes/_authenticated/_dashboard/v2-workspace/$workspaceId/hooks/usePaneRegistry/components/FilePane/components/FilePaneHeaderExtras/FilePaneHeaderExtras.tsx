@@ -1,5 +1,5 @@
-import type { RendererContext } from "@superset/panes";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import type { RendererContext } from "@velix/panes";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useCallback } from "react";
 import { LuCheck, LuCopy } from "react-icons/lu";
 import { TbExternalLink } from "react-icons/tb";

@@ -1,4 +1,4 @@
-import type { WorkspaceStore } from "@superset/panes";
+import type { WorkspaceStore } from "@velix/panes";
 import { useEffect, useRef } from "react";
 import type { StoreApi } from "zustand/vanilla";
 import type {

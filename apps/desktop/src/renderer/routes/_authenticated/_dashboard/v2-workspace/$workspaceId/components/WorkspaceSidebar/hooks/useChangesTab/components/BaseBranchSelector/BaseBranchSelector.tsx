@@ -1,6 +1,6 @@
-import type { AppRouter } from "@superset/host-service";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { ScrollArea } from "@superset/ui/scroll-area";
+import type { AppRouter } from "@velix/host-service";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { ScrollArea } from "@velix/ui/scroll-area";
 import type { inferRouterOutputs } from "@trpc/server";
 import { Check, ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";

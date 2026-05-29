@@ -1,4 +1,4 @@
-import { DOWNLOAD_URL_MAC_ARM64 } from "@superset/shared/constants";
+import { DOWNLOAD_URL_MAC_ARM64 } from "@velix/shared/constants";
 import type { FAQItem } from "@/app/components/FAQSection";
 
 export type TierId = "free" | "pro" | "enterprise";

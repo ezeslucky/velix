@@ -1,4 +1,4 @@
-import { auth } from "@superset/auth/server";
+import { auth } from "@velix/auth/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 

@@ -1,6 +1,6 @@
-import { auth } from "@superset/auth/server";
-import { db } from "@superset/db/client";
-import { chatAttachments } from "@superset/db/schema";
+import { auth } from "@velix/auth/server";
+import { db } from "@velix/db/client";
+import { chatAttachments } from "@velix/db/schema";
 import { head } from "@vercel/blob";
 import { eq } from "drizzle-orm";
 

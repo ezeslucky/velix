@@ -1,15 +1,15 @@
-import type { WorkspaceState } from "@superset/panes";
-import { Button } from "@superset/ui/button";
+import type { WorkspaceState } from "@velix/panes";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { cn } from "@superset/ui/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/dropdown-menu";
+import { cn } from "@velix/ui/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";

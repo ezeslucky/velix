@@ -127,11 +127,11 @@ export {
 	agentCustomDefinitionSchema,
 	agentPresetOverrideEnvelopeSchema,
 	agentPresetOverrideSchema,
-} from "@superset/shared/agent-custom";
+} from "@velix/shared/agent-custom";
 export {
 	PROMPT_TRANSPORTS,
 	type PromptTransport,
-} from "@superset/shared/agent-prompt-launch";
+} from "@velix/shared/agent-prompt-launch";
 
 /**
  * Workspace type

@@ -1,4 +1,4 @@
-import { auth } from "@superset/auth/server";
+import { auth } from "@velix/auth/server";
 import { NextResponse } from "next/server";
 
 import { env } from "@/env";

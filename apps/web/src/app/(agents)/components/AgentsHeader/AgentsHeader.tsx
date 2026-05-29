@@ -1,10 +1,10 @@
 "use client";
 
-import { authClient } from "@superset/auth/client";
-import { isPaidPlan } from "@superset/shared/billing";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
-import { Badge } from "@superset/ui/badge";
-import { Drawer, DrawerContent, DrawerTitle } from "@superset/ui/drawer";
+import { authClient } from "@velix/auth/client";
+import { isPaidPlan } from "@velix/shared/billing";
+import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
+import { Badge } from "@velix/ui/badge";
+import { Drawer, DrawerContent, DrawerTitle } from "@velix/ui/drawer";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -15,9 +15,9 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { useIsMobile } from "@superset/ui/hooks/use-mobile";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dropdown-menu";
+import { useIsMobile } from "@velix/ui/hooks/use-mobile";
+import { toast } from "@velix/ui/sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, LogOut } from "lucide-react";
 import Link from "next/link";

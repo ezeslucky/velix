@@ -5,8 +5,8 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
+} from "@velix/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { useState } from "react";
 import { HiCheck } from "react-icons/hi2";
 import { LuFolder } from "react-icons/lu";

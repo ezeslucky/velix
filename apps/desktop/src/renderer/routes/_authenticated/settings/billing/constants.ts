@@ -1,4 +1,4 @@
-import { PLAN_TIERS, type PlanTier } from "@superset/shared/billing";
+import { PLAN_TIERS, type PlanTier } from "@velix/shared/billing";
 
 export { PLAN_TIERS, type PlanTier };
 

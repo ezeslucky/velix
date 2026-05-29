@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { UserMessageActionPayload } from "../../../../ChatMessageList.types";

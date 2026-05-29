@@ -1,4 +1,4 @@
-import type { ResolvedAgentConfig } from "@superset/shared/agent-settings";
+import type { ResolvedAgentConfig } from "@velix/shared/agent-settings";
 
 export interface AgentCardProps {
 	preset: ResolvedAgentConfig;

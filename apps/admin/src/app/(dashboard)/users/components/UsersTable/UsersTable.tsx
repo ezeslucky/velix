@@ -1,6 +1,6 @@
 "use client";
 
-import { getInitials } from "@superset/shared/names";
+import { getInitials } from "@velix/shared/names";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -10,23 +10,23 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
+import { Button } from "@velix/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
+} from "@velix/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
 import {
 	Table,
 	TableBody,
@@ -34,7 +34,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@velix/ui/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";

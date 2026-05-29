@@ -1,6 +1,6 @@
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+import { Avatar } from "@velix/ui/atoms/Avatar";
+import { Badge } from "@velix/ui/badge";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -8,11 +8,11 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dialog";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { Skeleton } from "@velix/ui/skeleton";
+import { toast } from "@velix/ui/sonner";
 import {
 	Table,
 	TableBody,
@@ -20,7 +20,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@velix/ui/table";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { Link, useNavigate } from "@tanstack/react-router";

@@ -1,5 +1,5 @@
-import { auth } from "@superset/auth/server";
-import { db } from "@superset/db/client";
+import { auth } from "@velix/auth/server";
+import { db } from "@velix/db/client";
 import { headers } from "next/headers";
 import Image from "next/image";
 

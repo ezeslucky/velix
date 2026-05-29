@@ -1,12 +1,12 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Spinner } from "@superset/ui/spinner";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/dropdown-menu";
+import { Spinner } from "@velix/ui/spinner";
+import { cn } from "@velix/ui/utils";
 import type { ReactNode } from "react";
 import { LuCheck, LuChevronDown, LuTriangle } from "react-icons/lu";
 

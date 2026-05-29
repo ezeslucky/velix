@@ -1,4 +1,4 @@
-import { primeRelayAffinity } from "@superset/workspace-client";
+import { primeRelayAffinity } from "@velix/workspace-client";
 import type { Terminal as XTerm } from "@xterm/xterm";
 
 export type ConnectionState = "disconnected" | "connecting" | "open" | "closed";

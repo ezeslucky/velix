@@ -1,5 +1,5 @@
-import type { WorkspaceStore } from "@superset/panes";
-import { Button } from "@superset/ui/button";
+import type { WorkspaceStore } from "@velix/panes";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -7,9 +7,9 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+} from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { Archive, ChevronDown, Trash2 } from "lucide-react";
 import {
 	memo,

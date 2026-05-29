@@ -4,15 +4,15 @@ import path from "node:path";
 import {
 	buildWrapperScript,
 	createWrapper,
-	isSupersetManagedHookCommand,
+	isVelixManagedHookCommand,
 	writeFileIfChanged,
 } from "./agent-wrappers-common";
 import { getNotifyScriptPath, NOTIFY_SCRIPT_NAME } from "./notify-hook";
 import { OPENCODE_CONFIG_DIR, OPENCODE_PLUGIN_DIR } from "./paths";
 
-export const OPENCODE_PLUGIN_FILE = "superset-notify.js";
+export const OPENCODE_PLUGIN_FILE = "velix-notify.js";
 
-const OPENCODE_PLUGIN_SIGNATURE = "// Superset opencode plugin";
+const OPENCODE_PLUGIN_SIGNATURE = "// Velix opencode plugin";
 const OPENCODE_PLUGIN_VERSION = "v8";
 export const OPENCODE_PLUGIN_MARKER = `${OPENCODE_PLUGIN_SIGNATURE} ${OPENCODE_PLUGIN_VERSION}`;
 
@@ -27,9 +27,7 @@ const CODEX_WRAPPER_EXEC_TEMPLATE_PATH = path.join(
 	"codex-wrapper-exec.template.sh",
 );
 
-/**
- * Returns the environment-scoped OpenCode plugin path under Superset home.
- */
+
 export function getOpenCodePluginPath(): string {
 	return path.join(OPENCODE_PLUGIN_DIR, OPENCODE_PLUGIN_FILE);
 }
@@ -66,23 +64,15 @@ interface ClaudeSettingsJson {
 }
 
 const CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH = `hooks/${NOTIFY_SCRIPT_NAME}`;
-const CLAUDE_DYNAMIC_NOTIFY_PATH_MARKER = `$SUPERSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}`;
+const CLAUDE_DYNAMIC_NOTIFY_PATH_MARKER = `$VELIX_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}`;
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/**
- * Returns the shell command written into Claude's global hook config.
- * The notify path is resolved at runtime from SUPERSET_HOME_DIR so one
- * shared ~/.claude/settings.json works for both dev and prod installs.
- *
- * `SUPERSET_AGENT_ID=claude` is inlined so the v2 hook payload carries the
- * wrapper-level identity even when Claude is launched outside the Superset
- * wrapper (system PATH resolves to the real binary directly).
- */
+
 export function getClaudeManagedHookCommand(): string {
-	return `[ -n "$SUPERSET_HOME_DIR" ] && [ -x "$SUPERSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" ] && SUPERSET_AGENT_ID=claude "$SUPERSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" || true`;
+	return `[ -n "$VELIX_HOME_DIR" ] && [ -x "$VELIX_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" ] && VELIX_AGENT_ID=claude "$VELIX_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" || true`;
 }
 
 function isManagedClaudeHookCommand(
@@ -92,7 +82,7 @@ function isManagedClaudeHookCommand(
 	return (
 		command?.includes(notifyScriptPath) ||
 		command?.includes(CLAUDE_DYNAMIC_NOTIFY_PATH_MARKER) ||
-		isSupersetManagedHookCommand(command, NOTIFY_SCRIPT_NAME)
+		isVelixManagedHookCommand(command, NOTIFY_SCRIPT_NAME)
 	);
 }
 
@@ -243,11 +233,7 @@ export function getClaudeGlobalSettingsJsonContent(
 	return JSON.stringify(existing, null, 2);
 }
 
-/**
- * Writes Superset hook definitions directly into ~/.claude/settings.json.
- * This ensures hooks work regardless of whether the binary wrapper is in PATH,
- * matching the approach used for Cursor, Gemini, Droid, and Mastra.
- */
+
 export function createClaudeSettingsJson(): void {
 	const notifyScriptPath = getNotifyScriptPath();
 	const globalPath = getClaudeGlobalSettingsJsonPath();
@@ -272,11 +258,7 @@ export function getOpenCodePluginContent(notifyPath: string): string {
 		.replace("{{NOTIFY_PATH}}", notifyPath);
 }
 
-/**
- * Pass-through wrapper for Claude. Hooks live in ~/.claude/settings.json
- * (createClaudeSettingsJson); the wrapper exists only to forward SUPERSET_*
- * env vars into the agent process tree.
- */
+
 export function createClaudeWrapper(): void {
 	const script = buildWrapperScript("claude", `exec "$REAL_BIN" "$@"`, {
 		agentId: "claude",
@@ -284,9 +266,7 @@ export function createClaudeWrapper(): void {
 	createWrapper("claude", script);
 }
 
-/**
- * Creates the Codex wrapper that injects Superset's notify/session-log logic.
- */
+
 export function createCodexWrapper(): void {
 	const notifyPath = getNotifyScriptPath();
 	const script = buildWrapperScript(
@@ -311,7 +291,7 @@ function isManagedCodexHookCommand(
 ): boolean {
 	return (
 		command?.includes(notifyScriptPath) ||
-		isSupersetManagedHookCommand(command, NOTIFY_SCRIPT_NAME)
+		isVelixManagedHookCommand(command, NOTIFY_SCRIPT_NAME)
 	);
 }
 
@@ -352,19 +332,7 @@ export function getCodexGlobalHooksJsonPath(): string {
 	return path.join(os.homedir(), ".codex", "hooks.json");
 }
 
-/**
- * Reads existing ~/.codex/hooks.json, merges our hook definitions
- * (identified by notify script path), and preserves any user-defined hooks.
- *
- * Codex hooks.json uses the same nested structure as Claude/Droid:
- *   { hooks: { EventName: [{ matcher?, hooks: [{ type, command }] }] } }
- *
- * Superset uses native Codex hooks as the durable lifecycle integration path.
- * Recent Codex builds no longer emit the older session-log shapes our wrapper
- * watcher depended on, so we register prompt/tool lifecycle hooks directly in
- * ~/.codex/hooks.json and treat the wrapper session-log watcher as best-effort
- * compatibility for older releases.
- */
+
 export function getCodexGlobalHooksJsonContent(
 	notifyScriptPath: string,
 ): string | null {
@@ -376,8 +344,6 @@ export function getCodexGlobalHooksJsonContent(
 		existing.hooks = {};
 	}
 
-	// Remove all stale Superset-managed Codex hook commands, including events we
-	// no longer manage natively (for example UserPromptSubmit from older builds).
 	for (const [eventName, current] of Object.entries(existing.hooks)) {
 		if (!Array.isArray(current)) continue;
 		const filtered = current.flatMap((def: ClaudeHookDefinition) => {
@@ -395,11 +361,7 @@ export function getCodexGlobalHooksJsonContent(
 		existing.hooks[eventName] = filtered;
 	}
 
-	// Inline SUPERSET_AGENT_ID like getClaudeManagedHookCommand so the v2
-	// payload carries identity even when codex is launched outside the wrapper.
-	// Quote the path: codex executes via /bin/sh -lc, so a space in $HOME
-	// (e.g. "/Users/Some User/...") would otherwise word-split.
-	const codexCommand = `SUPERSET_AGENT_ID=codex "${notifyScriptPath}"`;
+	const codexCommand = `VELIX_AGENT_ID=codex "${notifyScriptPath}"`;
 
 	const managedEvents: Array<{
 		eventName: "SessionStart" | "UserPromptSubmit" | "Stop";
@@ -432,17 +394,7 @@ export function getCodexGlobalHooksJsonContent(
 	return JSON.stringify(existing, null, 2);
 }
 
-/**
- * Writes Superset hook definitions directly into ~/.codex/hooks.json.
- * This provides a fallback notification path that works even when the
- * binary wrapper is not in PATH (e.g. user runs codex from outside
- * a Superset terminal).
- *
- * The wrapper still injects Codex's native notify callback and keeps the
- * session-log watcher as a best-effort bridge for older releases, but the
- * native hooks.json registration is now the primary source for prompt/tool
- * lifecycle events.
- */
+
 export function createCodexHooksJson(): void {
 	const notifyScriptPath = getNotifyScriptPath();
 	const globalPath = getCodexGlobalHooksJsonPath();

@@ -1,6 +1,6 @@
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
+import { Label } from "@velix/ui/label";
+import { toast } from "@velix/ui/sonner";
+import { Switch } from "@velix/ui/switch";
 import { useState } from "react";
 import { GATED_FEATURES, usePaywall } from "renderer/components/Paywall";
 import { electronTrpc } from "renderer/lib/electron-trpc";

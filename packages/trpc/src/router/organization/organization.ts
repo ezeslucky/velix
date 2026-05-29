@@ -1,14 +1,14 @@
-import { stripeClient } from "@superset/auth/stripe";
-import { db } from "@superset/db/client";
-import { members, organizations } from "@superset/db/schema";
+import { stripeClient } from "@velix/auth/stripe";
+import { db } from "@velix/db/client";
+import { members, organizations } from "@velix/db/schema";
 import {
 	sessions as authSessions,
 	invitations,
 	verifications,
-} from "@superset/db/schema/auth";
-import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
-import { findOrgMembership } from "@superset/db/utils";
-import { canRemoveMember, type OrganizationRole } from "@superset/shared/auth";
+} from "@velix/db/schema/auth";
+import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
+import { findOrgMembership } from "@velix/db/utils";
+import { canRemoveMember, type OrganizationRole } from "@velix/shared/auth";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";

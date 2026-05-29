@@ -1,4 +1,4 @@
-import type { TeardownFailureCause } from "@superset/host-service";
+import type { TeardownFailureCause } from "@velix/host-service";
 import {
 	AlertDialog,
 	AlertDialogContent,
@@ -6,8 +6,8 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
 import { useEffect } from "react";
 import stripAnsi from "strip-ansi";
 import { shouldConfirmDeleteDialogKey } from "../../utils/shouldConfirmDeleteDialogKey";

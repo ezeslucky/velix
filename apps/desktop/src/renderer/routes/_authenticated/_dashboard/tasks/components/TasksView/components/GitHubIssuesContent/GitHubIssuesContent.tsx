@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
+import { Button } from "@velix/ui/button";
+import { Checkbox } from "@velix/ui/checkbox";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {

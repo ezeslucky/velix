@@ -1,11 +1,11 @@
-import { db, dbWs } from "@superset/db/client";
+import { db, dbWs } from "@velix/db/client";
 import {
 	integrationConnections,
 	type LinearConfig,
 	taskStatuses,
 	tasks,
-} from "@superset/db/schema";
-import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
+} from "@velix/db/schema";
+import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";

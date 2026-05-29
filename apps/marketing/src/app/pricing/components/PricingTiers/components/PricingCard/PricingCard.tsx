@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@velix/ui/button";
+import { cn } from "@velix/ui/utils";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import type { PricingTier } from "../../../../constants";

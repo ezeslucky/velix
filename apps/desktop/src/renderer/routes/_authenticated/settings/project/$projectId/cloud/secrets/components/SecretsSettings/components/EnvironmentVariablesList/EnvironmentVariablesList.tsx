@@ -1,12 +1,12 @@
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@velix/ui/select";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	HiArrowsUpDown,

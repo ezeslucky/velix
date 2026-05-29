@@ -1,4 +1,4 @@
-import { COMPANY } from "@superset/shared/constants";
+import { COMPANY } from "@velix/shared/constants";
 import type { Metadata } from "next";
 import Link from "next/link";
 

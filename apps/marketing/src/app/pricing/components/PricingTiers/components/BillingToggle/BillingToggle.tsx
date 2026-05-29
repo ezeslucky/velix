@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 
 interface BillingToggleProps {
 	isYearly: boolean;

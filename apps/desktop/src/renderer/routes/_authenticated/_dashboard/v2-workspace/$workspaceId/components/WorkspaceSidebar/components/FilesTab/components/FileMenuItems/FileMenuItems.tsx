@@ -2,7 +2,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import {
 	ExternalLink,
 	FileText,

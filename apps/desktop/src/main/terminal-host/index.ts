@@ -24,7 +24,7 @@ import {
 import { createServer, type Server, Socket } from "node:net";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { SUPERSET_DIR_NAME } from "shared/constants";
+import { VELIX_DIR_NAME } from "shared/constants";
 import {
 	type CancelCreateOrAttachRequest,
 	type ClearScrollbackRequest,
@@ -55,9 +55,9 @@ import { TerminalHost } from "./terminal-host";
 
 const DAEMON_VERSION = "1.0.0";
 
-// SUPERSET_DIR_NAME is imported from shared/constants for multi-worktree support
+// VELIX_DIR_NAME is imported from shared/constants for multi-worktree support
 // This allows workspace-specific home directories (e.g., ~/.superset-my-feature)
-const SUPERSET_HOME_DIR = join(homedir(), SUPERSET_DIR_NAME);
+const SUPERSET_HOME_DIR = join(homedir(), VELIX_DIR_NAME);
 
 // Socket and token paths
 const SOCKET_PATH = join(SUPERSET_HOME_DIR, "terminal-host.sock");

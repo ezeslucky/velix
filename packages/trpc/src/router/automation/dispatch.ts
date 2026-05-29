@@ -1,18 +1,18 @@
-import { mintUserJwt } from "@superset/auth/server";
-import { dbWs } from "@superset/db/client";
+import { mintUserJwt } from "@velix/auth/server";
+import { dbWs } from "@velix/db/client";
 import {
 	automationRuns,
 	type SelectAutomation,
 	users,
 	v2Hosts,
 	v2UsersHosts,
-} from "@superset/db/schema";
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
+} from "@velix/db/schema";
+import { buildHostRoutingKey } from "@velix/shared/host-routing";
 import {
 	deduplicateBranchName,
 	sanitizeBranchNameWithMaxLength,
 	slugifyForBranch,
-} from "@superset/shared/workspace-launch";
+} from "@velix/shared/workspace-launch";
 import { and, eq } from "drizzle-orm";
 import { RelayDispatchError, relayMutation } from "./relay-client";
 

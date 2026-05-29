@@ -1,6 +1,6 @@
-import { db } from "@superset/db/client";
-import { members } from "@superset/db/schema";
-import * as authSchema from "@superset/db/schema/auth";
+import { db } from "@velix/db/client";
+import { members } from "@velix/db/schema";
+import * as authSchema from "@velix/db/schema/auth";
 import { and, eq } from "drizzle-orm";
 
 export async function getOrganizationOwners(organizationId: string) {

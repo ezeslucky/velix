@@ -1,6 +1,6 @@
-import { dbWs } from "@superset/db/client";
-import { automations } from "@superset/db/schema";
-import { dispatchAutomation } from "@superset/trpc/automation-dispatch";
+import { dbWs } from "@velix/db/client";
+import { automations } from "@velix/db/schema";
+import { dispatchAutomation } from "@velix/trpc/automation-dispatch";
 import { Receiver } from "@upstash/qstash";
 import { eq } from "drizzle-orm";
 import { z } from "zod";

@@ -1,8 +1,8 @@
-import type { BranchPrefixMode } from "@superset/local-db";
+import type { BranchPrefixMode } from "@velix/local-db";
 import {
 	resolveBranchPrefix,
 	sanitizeSegment,
-} from "@superset/shared/workspace-launch";
+} from "@velix/shared/workspace-launch";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -13,20 +13,20 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/select";
+import { toast } from "@velix/ui/sonner";
+import { Switch } from "@velix/ui/switch";
+import { cn } from "@velix/ui/utils";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LuImagePlus, LuTrash2 } from "react-icons/lu";

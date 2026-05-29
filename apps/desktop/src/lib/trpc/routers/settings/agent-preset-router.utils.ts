@@ -1,10 +1,10 @@
-import { PROMPT_TRANSPORTS } from "@superset/local-db";
-import type { AgentDefinition } from "@superset/shared/agent-catalog";
+import { PROMPT_TRANSPORTS } from "@velix/local-db";
+import type { AgentDefinition } from "@velix/shared/agent-catalog";
 import type {
 	AgentPresetPatch,
 	CustomAgentDefinitionPatch,
-} from "@superset/shared/agent-settings";
-import { validateTaskPromptTemplate } from "@superset/shared/agent-settings";
+} from "@velix/shared/agent-settings";
+import { validateTaskPromptTemplate } from "@velix/shared/agent-settings";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 

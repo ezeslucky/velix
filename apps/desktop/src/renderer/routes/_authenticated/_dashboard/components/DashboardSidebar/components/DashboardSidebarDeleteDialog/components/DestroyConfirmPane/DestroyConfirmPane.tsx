@@ -5,10 +5,10 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
-import { Label } from "@superset/ui/label";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { Checkbox } from "@velix/ui/checkbox";
+import { Label } from "@velix/ui/label";
 import { useEffect, useId } from "react";
 import { shouldConfirmDeleteDialogKey } from "../../utils/shouldConfirmDeleteDialogKey";
 

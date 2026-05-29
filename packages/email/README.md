@@ -1,4 +1,4 @@
-# @superset/email
+# @velix/email
 
 Email templates for Superset, built with [React Email](https://react.email).
 
@@ -116,7 +116,7 @@ export default PasswordResetEmail;
 
 ```tsx
 // apps/api/src/routes/auth.ts
-import { WelcomeEmail } from "@superset/email/emails/welcome";
+import { WelcomeEmail } from "@velix/email/emails/welcome";
 import { render } from "@react-email/render";
 
 // Render to HTML
@@ -124,7 +124,7 @@ const html = render(<WelcomeEmail userName="Satya" />);
 
 // Send with your email provider (e.g., Resend, SendGrid)
 await resend.emails.send({
-  from: "noreply@superset.sh",
+  from: "noreply@velix.sh",
   to: user.email,
   subject: "Welcome to Superset!",
   html,
@@ -211,7 +211,7 @@ Common transactional emails to add:
 To preview email templates during development:
 
 ```bash
-bun --filter=@superset/email dev
+bun --filter=@velix/email dev
 ```
 
 Then:

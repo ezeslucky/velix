@@ -1,10 +1,10 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { OverflowFadeContainer } from "@superset/ui/overflow-fade-container";
+} from "@velix/ui/dropdown-menu";
+import { OverflowFadeContainer } from "@velix/ui/overflow-fade-container";
 import { PlusIcon } from "lucide-react";
 import {
 	type ComponentProps,

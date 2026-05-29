@@ -1,5 +1,5 @@
-import { toast } from "@superset/ui/sonner";
-import { Spinner } from "@superset/ui/spinner";
+import { toast } from "@velix/ui/sonner";
+import { Spinner } from "@velix/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";

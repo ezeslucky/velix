@@ -7,8 +7,8 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/dropdown-menu";
+import { cn } from "@velix/ui/utils";
 import {
 	HiCheck,
 	HiChevronUpDown,

@@ -1,13 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
-import { Button } from "@superset/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
+import { Button } from "@velix/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
-import { workspaceTrpc } from "@superset/workspace-client";
+} from "@velix/ui/collapsible";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useEffect, useState } from "react";
 import {
 	LuCheck,

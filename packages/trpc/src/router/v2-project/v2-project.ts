@@ -1,11 +1,11 @@
-import { dbWs } from "@superset/db/client";
+import { dbWs } from "@velix/db/client";
 import {
 	githubRepositories,
 	organizations,
 	v2Projects,
-} from "@superset/db/schema";
-import { getCurrentTxid } from "@superset/db/utils";
-import { parseGitHubRemote } from "@superset/shared/github-remote";
+} from "@velix/db/schema";
+import { getCurrentTxid } from "@velix/db/utils";
+import { parseGitHubRemote } from "@velix/shared/github-remote";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { del } from "@vercel/blob";

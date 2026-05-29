@@ -6,7 +6,7 @@ import {
 	type RemoteControlMode,
 	type RemoteControlServerMessage,
 	type RemoteControlStatus,
-} from "@superset/shared/remote-control-protocol";
+} from "@velix/shared/remote-control-protocol";
 import { FitAddon } from "@xterm/addon-fit";
 import type { ITheme } from "@xterm/xterm";
 import { Terminal } from "@xterm/xterm";

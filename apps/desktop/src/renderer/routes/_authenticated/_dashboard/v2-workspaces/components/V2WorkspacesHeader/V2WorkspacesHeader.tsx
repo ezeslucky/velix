@@ -3,7 +3,7 @@ import {
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
-} from "@superset/ui/input-group";
+} from "@velix/ui/input-group";
 import {
 	Select,
 	SelectContent,
@@ -13,7 +13,7 @@ import {
 	SelectSeparator,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@velix/ui/select";
 import {
 	LuFolders,
 	LuLaptop,

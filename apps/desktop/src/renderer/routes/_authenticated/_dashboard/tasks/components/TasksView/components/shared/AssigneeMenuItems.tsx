@@ -1,5 +1,5 @@
-import type { SelectUser } from "@superset/db/schema";
-import { Avatar } from "@superset/ui/atoms/Avatar";
+import type { SelectUser } from "@velix/db/schema";
+import { Avatar } from "@velix/ui/atoms/Avatar";
 import type { ReactNode } from "react";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 

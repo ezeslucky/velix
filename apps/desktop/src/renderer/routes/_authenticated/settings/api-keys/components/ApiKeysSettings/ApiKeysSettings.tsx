@@ -1,6 +1,6 @@
-import { COMPANY } from "@superset/shared/constants";
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
+import { COMPANY } from "@velix/shared/constants";
+import { alert } from "@velix/ui/atoms/Alert";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -8,11 +8,11 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dialog";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { Skeleton } from "@velix/ui/skeleton";
+import { toast } from "@velix/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useState } from "react";
 import {

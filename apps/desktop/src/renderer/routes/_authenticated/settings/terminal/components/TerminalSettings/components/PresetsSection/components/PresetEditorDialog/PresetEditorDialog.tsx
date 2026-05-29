@@ -1,24 +1,24 @@
-import type { HostAgentConfig } from "@superset/host-service/settings";
-import type { ExecutionMode, TerminalPreset } from "@superset/local-db";
-import { Alert, AlertDescription } from "@superset/ui/alert";
-import { Button } from "@superset/ui/button";
+import type { HostAgentConfig } from "@velix/host-service/settings";
+import type { ExecutionMode, TerminalPreset } from "@velix/local-db";
+import { Alert, AlertDescription } from "@velix/ui/alert";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
+} from "@velix/ui/dialog";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { Switch } from "@superset/ui/switch";
+} from "@velix/ui/select";
+import { Switch } from "@velix/ui/switch";
 import { Link } from "@tanstack/react-router";
 import { ExternalLink, Trash2 } from "lucide-react";
 import { useMemo } from "react";

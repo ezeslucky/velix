@@ -1,15 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { WebClient } from "@slack/web-api";
-import { FEATURE_FLAGS } from "@superset/shared/constants";
+import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { env } from "@/env";
 import { posthog } from "@/lib/analytics";
 import { DEFAULT_SLACK_MODEL } from "../../../constants";
 import type { AgentAction } from "../slack-blocks";
 import type { SlackImageAsset } from "../slack-image-assets";
 import {
-	createSupersetMcpClient,
-	createSupersetMcpV2Client,
+	createVelixMcpClient,
+	createVelixMcpV2Client,
 	mcpToolToAnthropicTool,
 	parseToolName,
 } from "./mcp-clients";
@@ -329,7 +329,7 @@ const TOOL_PROGRESS_STATUS: Record<string, string> = {
 };
 
 // v1 tools excluded from the Slack agent's tool list (preloaded as context).
-const DENIED_SUPERSET_TOOLS_V1 = new Set([
+const DENIED_VELIX_TOOLS_V1 = new Set([
 	"switch_workspace",
 	"get_app_context",
 	"list_members",
@@ -338,7 +338,7 @@ const DENIED_SUPERSET_TOOLS_V1 = new Set([
 ]);
 
 // v2 tools excluded for the same reason.
-const DENIED_SUPERSET_TOOLS_V2 = new Set([
+const DENIED_VELIX_TOOLS_V2 = new Set([
 	"organization_members_list",
 	"tasks_statuses_list",
 	"hosts_list",
@@ -399,11 +399,11 @@ async function handleGetChannelHistory({
 	return JSON.stringify({ messages });
 }
 
-const SYSTEM_PROMPT = `You are a helpful assistant in Slack for Superset, a platform for managing tasks and running coding agents in workspaces.
+const SYSTEM_PROMPT = `You are a helpful assistant in Slack for Velix, a platform for managing tasks and running coding agents in workspaces.
 
 You can:
-- Create, update, search, and manage tasks using superset_* tools
-- Spawn workspaces and launch coding agents to do the work using superset_* tools
+- Create, update, search, and manage tasks using velix_* tools
+- Spawn workspaces and launch coding agents to do the work using velix_* tools
 - Read recent channel messages using slack_get_channel_history
 - Search the web for current information using web_search
 - Help users understand conversations and create actionable items from discussions
@@ -561,48 +561,48 @@ export async function runSlackAgent(
 		console.warn("[slack-agent] Failed to load mcp-v2 flag:", error);
 	}
 
-	let supersetMcp: Client | null = null;
-	let cleanupSuperset: (() => Promise<void>) | null = null;
+	let velixMcp: Client | null = null;
+	let cleanupVelix: (() => Promise<void>) | null = null;
 
 	try {
-		const [threadContext, supersetMcpResult] = await Promise.all([
+		const [threadContext, velixMcpResult] = await Promise.all([
 			fetchThreadContext({
 				token: params.slackToken,
 				channelId: params.channelId,
 				threadTs: params.threadTs,
 			}),
 			useV2
-				? createSupersetMcpV2Client({
+				? createVelixMcpV2Client({
 						organizationId: params.organizationId,
 						userId: params.userId,
 					})
-				: createSupersetMcpClient({
+				: createVelixMcpClient({
 						organizationId: params.organizationId,
 						userId: params.userId,
 					}),
 		]);
 
-		supersetMcp = supersetMcpResult.client;
-		cleanupSuperset = supersetMcpResult.cleanup;
+		velixMcp = velixMcpResult.client;
+		cleanupVelix = velixMcpResult.cleanup;
 
-		const [supersetToolsResult, agentContext] = await Promise.all([
-			supersetMcp.listTools(),
+		const [velixToolsResult, agentContext] = await Promise.all([
+			velixMcp.listTools(),
 			fetchAgentContext({
-				mcpClient: supersetMcp,
+				mcpClient: velixMcp,
 				userId: params.userId,
 				useV2,
 			}),
 		]);
 
 		const deniedTools = useV2
-			? DENIED_SUPERSET_TOOLS_V2
-			: DENIED_SUPERSET_TOOLS_V1;
-		const supersetTools = supersetToolsResult.tools
+			? DENIED_VElIX_TOOLS_V2
+			: DENIED_VElIX_TOOLS_V1;
+		const velixTools = velixToolsResult.tools
 			.filter((t) => !deniedTools.has(t.name))
-			.map((t) => mcpToolToAnthropicTool(t, "superset"));
+			.map((t) => mcpToolToAnthropicTool(t, "velix"));
 
 		const tools: Anthropic.Messages.ToolUnion[] = [
-			...supersetTools,
+			...velixTools,
 			SLACK_GET_CHANNEL_HISTORY_TOOL,
 			{
 				type: "web_search_20250305" as const,
@@ -702,7 +702,7 @@ ${agentContext}`;
 					} else {
 						const { prefix, toolName } = parseToolName(toolUse.name);
 
-						if (prefix !== "superset" || !supersetMcp) {
+						if (prefix !== "velix" || !velixMcp) {
 							toolResults.push({
 								type: "tool_result",
 								tool_use_id: toolUse.id,
@@ -714,7 +714,7 @@ ${agentContext}`;
 							continue;
 						}
 
-						const result = await supersetMcp.callTool({
+						const result = await velixMcp.callTool({
 							name: toolName,
 							arguments: toolUse.input as Record<string, unknown>,
 						});
@@ -779,9 +779,9 @@ ${agentContext}`;
 			actions,
 		};
 	} finally {
-		if (cleanupSuperset) {
+		if (cleanupVelix) {
 			try {
-				await cleanupSuperset();
+				await cleanupVelix();
 			} catch {}
 		}
 	}

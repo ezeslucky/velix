@@ -4,13 +4,13 @@ import {
 	Conversation,
 	ConversationContent,
 	ConversationScrollButton,
-} from "@superset/ui/ai-elements/conversation";
-import { FileDiffTool } from "@superset/ui/ai-elements/file-diff-tool";
+} from "@velix/ui/ai-elements/conversation";
+import { FileDiffTool } from "@velix/ui/ai-elements/file-diff-tool";
 import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
+} from "@velix/ui/ai-elements/message";
 import type { MockDiffFile, MockMessage } from "../../../../../mock-data";
 
 type SessionChatProps = {

@@ -3,4 +3,4 @@ export {
 	buildAgentCommand,
 	buildClaudeCommand,
 	type TaskInput,
-} from "@superset/shared/agent-command";
+} from "@velix/shared/agent-command";

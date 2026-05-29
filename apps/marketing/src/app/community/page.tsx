@@ -1,4 +1,4 @@
-import { COMPANY } from "@superset/shared/constants";
+import { COMPANY } from "@velix/shared/constants";
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -48,7 +48,7 @@ const COMMUNITY_LINKS = [
 	},
 	{
 		name: "YOUTUBE",
-		href: "https://www.youtube.com/@superset-sh",
+		href: "https://www.youtube.com/@ezeslucky",
 		cta: "SUBSCRIBE",
 		icon: (
 			<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
@@ -59,7 +59,7 @@ const COMMUNITY_LINKS = [
 	},
 	{
 		name: "LINKEDIN",
-		href: "https://www.linkedin.com/company/superset-sh",
+		href: "https://www.linkedin.com/company/ezeslucky",
 		cta: "FOLLOW US",
 		icon: (
 			<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">

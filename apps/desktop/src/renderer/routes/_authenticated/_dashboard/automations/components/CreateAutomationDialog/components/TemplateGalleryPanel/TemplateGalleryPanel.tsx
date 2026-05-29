@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { DialogClose } from "@superset/ui/dialog";
+import { Button } from "@velix/ui/button";
+import { DialogClose } from "@velix/ui/dialog";
 import { LuArrowLeft, LuX } from "react-icons/lu";
 import {
 	AUTOMATION_TEMPLATE_CATEGORIES,

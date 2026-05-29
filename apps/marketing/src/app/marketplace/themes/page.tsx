@@ -1,6 +1,6 @@
-import { COMPANY } from "@superset/shared/constants";
-import { Button } from "@superset/ui/button";
-import { ThemePreviewCard } from "@superset/ui/theme-preview-card";
+import { COMPANY } from "@velix/shared/constants";
+import { Button } from "@velix/ui/button";
+import { ThemePreviewCard } from "@velix/ui/theme-preview-card";
 import { Download } from "lucide-react";
 import type { Metadata } from "next";
 import { themeListings } from "@/lib/marketplace";

@@ -1,6 +1,6 @@
-import { ToggleGroup, ToggleGroupItem } from "@superset/ui/toggle-group";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import { ToggleGroup, ToggleGroupItem } from "@velix/ui/toggle-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 
 import {
 	TbFold,

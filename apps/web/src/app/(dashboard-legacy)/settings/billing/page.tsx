@@ -1,8 +1,8 @@
 import {
 	DOWNLOAD_URL_MAC_ARM64,
 	PROTOCOL_SCHEMES,
-} from "@superset/shared/constants";
-import { Button } from "@superset/ui/button";
+} from "@velix/shared/constants";
+import { Button } from "@velix/ui/button";
 import { Download, ExternalLink } from "lucide-react";
 import { HiCheckCircle } from "react-icons/hi2";
 

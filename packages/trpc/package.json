@@ -1,5 +1,5 @@
 {
-	"name": "@superset/trpc",
+	"name": "@velix/trpc",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -24,9 +24,9 @@
 	},
 	"dependencies": {
 		"@linear/sdk": "68.1.1",
-		"@superset/auth": "workspace:*",
-		"@superset/db": "workspace:*",
-		"@superset/shared": "workspace:*",
+		"@velix/auth": "workspace:*",
+		"@velix/db": "workspace:*",
+		"@velix/shared": "workspace:*",
 		"@t3-oss/env-core": "0.13.11",
 		"@trpc/server": "11.16.0",
 		"@upstash/qstash": "2.10.1",
@@ -41,7 +41,7 @@
 		"zod": "4.3.6"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@velix/typescript": "workspace:*",
 		"typescript": "5.9.3"
 	}
 }

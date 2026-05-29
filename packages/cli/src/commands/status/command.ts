@@ -1,5 +1,5 @@
-import { CLIError } from "@superset/cli-framework";
-import { getHostId } from "@superset/shared/host-info";
+import { CLIError } from "@velix/cli-framework";
+import { getHostId } from "@velix/shared/host-info";
 import { formatDistanceToNowStrict } from "date-fns";
 import type { ApiClient } from "../../lib/api-client";
 import { command } from "../../lib/command";

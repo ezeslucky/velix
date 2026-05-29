@@ -1,9 +1,9 @@
 import type {
 	SelectAutomation,
 	SelectAutomationRun,
-} from "@superset/db/schema";
-import { alert } from "@superset/ui/atoms/Alert";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/db/schema";
+import { alert } from "@velix/ui/atoms/Alert";
+import { toast } from "@velix/ui/sonner";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useMutation } from "@tanstack/react-query";

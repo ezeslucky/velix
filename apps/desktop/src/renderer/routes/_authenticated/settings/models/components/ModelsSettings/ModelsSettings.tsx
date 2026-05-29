@@ -1,16 +1,16 @@
-import { chatServiceTrpc } from "@superset/chat/client";
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+import { chatServiceTrpc } from "@velix/chat/client";
+import { Badge } from "@velix/ui/badge";
+import { Button } from "@velix/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { claudeIcon } from "@superset/ui/icons/preset-icons";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
-import { Textarea } from "@superset/ui/textarea";
+} from "@velix/ui/collapsible";
+import { claudeIcon } from "@velix/ui/icons/preset-icons";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { toast } from "@velix/ui/sonner";
+import { Textarea } from "@velix/ui/textarea";
 import { useEffect, useMemo, useState } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import { AnthropicOAuthDialog } from "renderer/components/Chat/ChatInterface/components/ModelPicker/components/AnthropicOAuthDialog";

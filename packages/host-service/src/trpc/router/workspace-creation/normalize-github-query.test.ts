@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { normalizeGitHubQuery } from "./normalize-github-query";
 
-const repo = { owner: "superset-sh", name: "superset" };
+const repo = { owner: "ezeslucky", name: "superset" };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared behaviors (same for both kinds)
@@ -132,7 +132,7 @@ describe("normalizeGitHubQuery — shared behaviors", () => {
 
 		test("SSH-style URL", () => {
 			const result = normalizeGitHubQuery(
-				"git@github.com:superset-sh/superset.git",
+				"git@github.com:ezeslucky/velix.git",
 				repo,
 				"pull",
 			);
@@ -260,7 +260,7 @@ describe("normalizeGitHubQuery — PR URLs", () => {
 
 		test("www prefix", () => {
 			const result = normalizeGitHubQuery(
-				"https://www.github.com/superset-sh/superset/pull/3354",
+				"https://www.github.com/ezeslucky/velix/pull/3354",
 				repo,
 				"pull",
 			);
@@ -270,7 +270,7 @@ describe("normalizeGitHubQuery — PR URLs", () => {
 
 		test("http (not https)", () => {
 			const result = normalizeGitHubQuery(
-				"http://github.com/superset-sh/superset/pull/3354",
+				"http://github.com/ezeslucky/velix/pull/3354",
 				repo,
 				"pull",
 			);
@@ -316,7 +316,7 @@ describe("normalizeGitHubQuery — PR URLs", () => {
 
 		test("different repo name", () => {
 			const result = normalizeGitHubQuery(
-				"https://github.com/superset-sh/other-repo/pull/100",
+				"https://github.com/ezeslucky/other-repo/pull/100",
 				repo,
 				"pull",
 			);
@@ -395,7 +395,7 @@ describe("normalizeGitHubQuery — issue URLs", () => {
 
 		test("www prefix", () => {
 			const result = normalizeGitHubQuery(
-				"https://www.github.com/superset-sh/superset/issues/200",
+				"https://www.github.com/ezeslucky/velix/issues/200",
 				repo,
 				"issue",
 			);
@@ -405,7 +405,7 @@ describe("normalizeGitHubQuery — issue URLs", () => {
 
 		test("http (not https)", () => {
 			const result = normalizeGitHubQuery(
-				"http://github.com/superset-sh/superset/issues/200",
+				"http://github.com/ezeslucky/velix/issues/200",
 				repo,
 				"issue",
 			);
@@ -438,7 +438,7 @@ describe("normalizeGitHubQuery — issue URLs", () => {
 
 		test("different repo", () => {
 			const result = normalizeGitHubQuery(
-				"https://github.com/superset-sh/other-repo/issues/100",
+				"https://github.com/ezeslucky/other-repo/issues/100",
 				repo,
 				"issue",
 			);

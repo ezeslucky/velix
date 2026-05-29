@@ -1,13 +1,13 @@
-import type { GitHubStatus, PullRequestComment } from "@superset/local-db";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
+import type { GitHubStatus, PullRequestComment } from "@velix/local-db";
+import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/collapsible";
+import { Skeleton } from "@velix/ui/skeleton";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
 import { useEffect, useRef, useState } from "react";
 import {
 	LuArrowUpRight,

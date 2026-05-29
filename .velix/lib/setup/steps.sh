@@ -3,19 +3,19 @@
 step_load_env() {
   echo "📂 Loading environment variables..."
 
-  if [ -z "${SUPERSET_ROOT_PATH:-}" ]; then
-    error "SUPERSET_ROOT_PATH not set"
+  if [ -z "${VELIX_ROOT_PATH:-}" ]; then
+    error "VELIX_ROOT_PATH not set"
     return 1
   fi
 
-  if [ ! -f "$SUPERSET_ROOT_PATH/.env" ]; then
-    error "Root .env file not found at $SUPERSET_ROOT_PATH/.env"
+  if [ ! -f "$VELIX_ROOT_PATH/.env" ]; then
+    error "Root .env file not found at $VELIX_ROOT_PATH/.env"
     return 1
   fi
 
   set -a
   # shellcheck source=/dev/null
-  source "$SUPERSET_ROOT_PATH/.env"
+  source "$VELIX_ROOT_PATH/.env"
   set +a
 
   success "Environment variables loaded"
@@ -94,7 +94,7 @@ step_setup_neon_branch() {
     return 1
   fi
 
-  WORKSPACE_NAME="${SUPERSET_WORKSPACE_NAME:-$(basename "$PWD")}"
+  WORKSPACE_NAME="${VELIX_WORKSPACE_NAME:-$(basename "$PWD")}"
 
   # Check if branch already exists
   local branches_output
@@ -222,16 +222,16 @@ step_prepare_electric() {
   # Sanitize workspace name for Docker (valid chars only, max 64 chars)
   local container_suffix
   container_suffix=$(echo "$WORKSPACE_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9._-]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
-  ELECTRIC_CONTAINER=$(echo "superset-electric-$container_suffix" | cut -c1-64)
+  ELECTRIC_CONTAINER=$(echo "velix-electric-$container_suffix" | cut -c1-64)
   ELECTRIC_SECRET="${ELECTRIC_SECRET:-local_electric_dev_secret}"
 
-  # Step 7 allocates SUPERSET_PORT_BASE; Electric must use that reserved port.
-  if [ -z "${SUPERSET_PORT_BASE:-}" ]; then
-    error "SUPERSET_PORT_BASE not set before preparing Electric"
+  # Step 7 allocates VELIX_PORT_BASE; Electric must use that reserved port.
+  if [ -z "${VELIX_PORT_BASE:-}" ]; then
+    error "VELIX_PORT_BASE not set before preparing Electric"
     return 1
   fi
 
-  ELECTRIC_PORT=$((SUPERSET_PORT_BASE + 9))
+  ELECTRIC_PORT=$((VELIX_PORT_BASE + 9))
   ELECTRIC_URL="http://localhost:$ELECTRIC_PORT/v1/shape"
 
   export ELECTRIC_CONTAINER ELECTRIC_PORT ELECTRIC_URL ELECTRIC_SECRET
@@ -322,31 +322,15 @@ step_start_electric() {
   return 0
 }
 
-# Ports we must avoid because the OS (or commonly-installed services) listen on
-# them, OR because Node/Next.js refuses to bind them. Bases whose
-# [base, base+range) window contains any of these are skipped during allocation.
-#
-# - 5000, 7000: macOS Control Center / AirPlay Receiver (Sonoma+). Cannot be
-#   freed without disabling AirPlay Receiver in System Settings, so we just
-#   route around them.
-# - Node/Next.js "unsafe ports" in our [3000, ...) allocation range. Next.js
-#   refuses to start on these with errors like "Bad port: '5060' is reserved
-#   for sip" (see https://nextjs.org/docs/messages/reserved-port).
-#     3659  apple-sasl
-#     4045  lockd / npp
-#     5060  sip
-#     5061  sips
-#     6000  X11
-#     6566  sane-port
-#     6665-6669, 6697  IRC / IRC+TLS
-SUPERSET_RESERVED_PORTS="3659 4045 5000 5060 5061 6000 6566 6665 6666 6667 6668 6669 6697 7000"
+
+VELIX_RESERVED_PORTS="3659 4045 5000 5060 5061 6000 6566 6665 6666 6667 6668 6669 6697 7000"
 
 # Returns 0 if the [base, base+range) window contains no reserved port.
 port_base_is_safe() {
   local base=$1
   local range=$2
   local reserved
-  for reserved in $SUPERSET_RESERVED_PORTS; do
+  for reserved in $VELIX_RESERVED_PORTS; do
     if [ "$reserved" -ge "$base" ] && [ "$reserved" -lt "$((base + range))" ]; then
       return 1
     fi
@@ -355,13 +339,13 @@ port_base_is_safe() {
 }
 
 allocate_port_base() {
-  local alloc_file="$HOME/.superset/port-allocations.json"
-  local lock_dir="$HOME/.superset/port-allocations.lock"
+  local alloc_file="$HOME/.velix/port-allocations.json"
+  local lock_dir="$HOME/.velix/port-allocations.lock"
   local start=3000
   local range=20
 
   # Ensure directory and file exist
-  mkdir -p "$HOME/.superset"
+  mkdir -p "$HOME/.velix"
   if [ ! -f "$alloc_file" ]; then
     echo '{}' > "$alloc_file"
   fi
@@ -380,11 +364,11 @@ allocate_port_base() {
 
   if [ -n "$existing" ]; then
     if port_base_is_safe "$existing" "$range"; then
-      export SUPERSET_PORT_BASE="$existing"
+      export VELIX_PORT_BASE="$existing"
       release_port_alloc_lock "$lock_dir"
       return 0
     fi
-    echo "  Existing port base $existing overlaps a reserved port (${SUPERSET_RESERVED_PORTS}); reallocating..."
+    echo "  Existing port base $existing overlaps a reserved port (${VELIX_RESERVED_PORTS}); reallocating..."
     local tmp_file="${alloc_file}.tmp.$$"
     if ! jq --arg k "$key" 'del(.[$k])' "$alloc_file" > "$tmp_file"; then
       error "Failed to release stale port allocation"
@@ -430,7 +414,7 @@ allocate_port_base() {
     return 1
   fi
 
-  export SUPERSET_PORT_BASE="$candidate"
+  export VELIX_PORT_BASE="$candidate"
   release_port_alloc_lock "$lock_dir"
   return 0
 }
@@ -438,13 +422,13 @@ allocate_port_base() {
 step_write_env() {
   echo "📝 Writing .env file..."
 
-  if [ -z "${SUPERSET_ROOT_PATH:-}" ] || [ ! -f "$SUPERSET_ROOT_PATH/.env" ]; then
+  if [ -z "${VELIX_ROOT_PATH:-}" ] || [ ! -f "$VELIX_ROOT_PATH/.env" ]; then
     error "Root .env file not available"
     return 1
   fi
 
   # Copy root .env
-  if ! cp "$SUPERSET_ROOT_PATH/.env" .env; then
+  if ! cp "$VELIX_ROOT_PATH/.env" .env; then
     error "Failed to copy root .env"
     return 1
   fi
@@ -453,8 +437,8 @@ step_write_env() {
   {
     echo ""
     echo "# Workspace Identity"
-    write_env_var "SUPERSET_WORKSPACE_NAME" "${WORKSPACE_NAME:-$(basename "$PWD")}"
-    write_env_var "SUPERSET_HOME_DIR" "$PWD/superset-dev-data"
+    write_env_var "VELIX_WORKSPACE_NAME" "${WORKSPACE_NAME:-$(basename "$PWD")}"
+    write_env_var "VELIX_HOME_DIR" "$PWD/velix-dev-data"
     echo ""
     echo "# Workspace Database (Neon Branch)"
     if [ -n "${BRANCH_ID:-}" ]; then
@@ -488,7 +472,7 @@ step_write_env() {
     #          +5 desktop vite, +6 notifications, +7 streams, +8 streams internal, +9 electric,
     #          +10 caddy (HTTP/2 reverse proxy for API electric endpoint), +11 code inspector,
     #          +12 wrangler (electric-proxy worker), +13 relay
-    local BASE=$SUPERSET_PORT_BASE
+    local BASE=$VELIX_PORT_BASE
 
     # App ports (fixed offsets from base)
     local WEB_PORT=$((BASE))
@@ -507,8 +491,8 @@ step_write_env() {
     local RELAY_PORT=$((BASE + 13))
 
     echo ""
-    echo "# Workspace Ports (allocated from SUPERSET_PORT_BASE=$BASE, range=20)"
-    write_env_var "SUPERSET_PORT_BASE" "$BASE"
+    echo "# Workspace Ports (allocated from VELIX_PORT_BASE=$BASE, range=20)"
+    write_env_var "VELIX_PORT_BASE" "$BASE"
     write_env_var "WEB_PORT" "$WEB_PORT"
     write_env_var "API_PORT" "$API_PORT"
     write_env_var "MARKETING_PORT" "$MARKETING_PORT"
@@ -536,7 +520,7 @@ step_write_env() {
     write_env_var "EXPO_PUBLIC_API_URL" "http://localhost:$API_PORT"
     write_env_var "RELAY_URL" "http://localhost:$RELAY_PORT"
     write_env_var "NEXT_PUBLIC_RELAY_URL" "http://localhost:$RELAY_PORT"
-    write_env_var "SUPERSET_WEB_URL" "http://localhost:$WEB_PORT"
+    write_env_var "VELIX_WEB_URL" "http://localhost:$WEB_PORT"
     echo ""
     echo "# Streams URLs (overrides from root .env)"
     write_env_var "PORT" "$STREAMS_PORT"
@@ -570,10 +554,10 @@ step_write_env() {
 	CADDYEOF
   success "Caddyfile written"
 
-  # Generate .superset/ports.json for static port name mapping in the desktop app
-  local superset_dir
-  superset_dir="${SUPERSET_SCRIPT_DIR:-$(dirname "$0")}"
-  cat > "$superset_dir/ports.json" <<PORTSJSON
+  # Generate .velix/ports.json for static port name mapping in the desktop app
+  local velix_dir
+  velix_dir="${VELIX_SCRIPT_DIR:-$(dirname "$0")}"
+  cat > "$velix_dir/ports.json" <<PORTSJSON
 {
   "ports": [
     { "port": $WEB_PORT, "label": "Web" },
@@ -592,7 +576,7 @@ step_write_env() {
   ]
 }
 PORTSJSON
-  success "Port name mapping written to .superset/ports.json"
+  success "Port name mapping written to .velix/ports.json"
 
   cat > apps/electric-proxy/.dev.vars <<DEVVARS
 AUTH_URL=http://localhost:$API_PORT
@@ -621,12 +605,12 @@ step_setup_local_mcp() {
     return 1
   fi
 
-  local api_port="${API_PORT:-$((${SUPERSET_PORT_BASE:-3000} + 1))}"
+  local api_port="${API_PORT:-$((${VELIX_PORT_BASE:-3000} + 1))}"
   local local_url="http://localhost:${api_port}/api/agent/mcp"
 
-  # Add or update superset-local entry
+  # Add or update velix-local entry
   local tmp_file="${mcp_file}.tmp.$$"
-  if ! jq --arg url "$local_url" '.mcpServers["superset-local"] = {"type": "http", "url": $url}' "$mcp_file" > "$tmp_file"; then
+  if ! jq --arg url "$local_url" '.mcpServers["velix-local"] = {"type": "http", "url": $url}' "$mcp_file" > "$tmp_file"; then
     error "Failed to set local MCP entry"
     rm -f "$tmp_file"
     return 1
@@ -642,10 +626,10 @@ step_setup_local_mcp() {
 }
 
 step_seed_auth_token() {
-  echo "🔑 Seeding auth token into superset-dev-data/..."
+  echo "🔑 Seeding auth token into velix-dev-data/..."
 
-  local source_token="$HOME/.superset/auth-token.enc"
-  local dev_data_dir="superset-dev-data"
+  local source_token="$HOME/.velix/auth-token.enc"
+  local dev_data_dir="velix-dev-data"
   local dest_token="$dev_data_dir/auth-token.enc"
 
   if [ ! -f "$source_token" ]; then
@@ -674,10 +658,10 @@ step_seed_auth_token() {
 }
 
 step_seed_host_dbs() {
-  echo "🛰️  Seeding host-service DBs into superset-dev-data/host/..."
+  echo "🛰️  Seeding host-service DBs into velix-dev-data/host/..."
 
-  local source_root="$HOME/.superset/host"
-  local dev_data_dir="superset-dev-data"
+  local source_root="$HOME/.velix/host"
+  local dev_data_dir="velix-dev-data"
   local dest_root="$dev_data_dir/host"
   local force_overwrite="$FORCE_OVERWRITE_DATA"
 
@@ -764,10 +748,10 @@ step_seed_host_dbs() {
 }
 
 step_seed_local_db() {
-  echo "💾 Seeding local DB into superset-dev-data/..."
+  echo "💾 Seeding local DB into velix-dev-data/..."
 
-  local source_db="$HOME/.superset/local.db"
-  local dev_data_dir="superset-dev-data"
+  local source_db="$HOME/.velix/local.db"
+  local dev_data_dir="velix-dev-data"
   local dest_db="$dev_data_dir/local.db"
   local force_overwrite="$FORCE_OVERWRITE_DATA"
 

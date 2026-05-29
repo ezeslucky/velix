@@ -1,4 +1,4 @@
-import { CommandEmpty, CommandGroup, CommandList } from "@superset/ui/command";
+import { CommandEmpty, CommandGroup, CommandList } from "@velix/ui/command";
 import { useMemo } from "react";
 import { useCommandContext } from "../../core/ContextProvider";
 import type { Command } from "../../core/types";

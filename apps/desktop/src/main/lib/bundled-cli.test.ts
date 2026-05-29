@@ -25,9 +25,9 @@ describe("bundled CLI", () => {
 	let bundledCliPath: string;
 
 	beforeEach(() => {
-		tempDir = mkdtempSync(path.join(tmpdir(), "superset-bundled-cli-"));
+		tempDir = mkdtempSync(path.join(tmpdir(), "velix-bundled-cli-"));
 		binDir = path.join(tempDir, "bin");
-		bundledCliPath = path.join(tempDir, "resources", "bin", "superset");
+		bundledCliPath = path.join(tempDir, "resources", "bin", "velix");
 		mkdirSync(path.dirname(bundledCliPath), { recursive: true });
 		writeFileSync(bundledCliPath, "#!/bin/sh\n", { mode: 0o755 });
 	});
@@ -37,20 +37,20 @@ describe("bundled CLI", () => {
 	});
 
 	it("uses the platform-specific binary and shim names", () => {
-		expect(getBundledCliBinaryName("darwin")).toBe("superset");
-		expect(getBundledCliShimName("darwin")).toBe("superset");
-		expect(getBundledCliBinaryName("win32")).toBe("superset.exe");
-		expect(getBundledCliShimName("win32")).toBe("superset.cmd");
+		expect(getBundledCliBinaryName("darwin")).toBe("velix");
+		expect(getBundledCliShimName("darwin")).toBe("velix");
+		expect(getBundledCliBinaryName("win32")).toBe("velix.exe");
+		expect(getBundledCliShimName("win32")).toBe("velix.cmd");
 	});
 
 	it("builds a POSIX shim that execs the bundled binary safely", () => {
 		const cliPath =
-			"/Applications/Superset Test.app/Contents/Resources/bin/super'set";
+			"/Applications/Velix Test.app/Contents/Resources/bin/velix";
 		const shim = buildBundledCliShim(cliPath, "darwin");
 
 		expect(shim).toContain(BUNDLED_CLI_SHIM_MARKER);
 		expect(shim).toContain(
-			`exec '/Applications/Superset Test.app/Contents/Resources/bin/super'"'"'set' "$@"`,
+			`exec '/Applications/Velix Test.app/Contents/Resources/bin/velix' "$@"`,
 		);
 	});
 
@@ -60,7 +60,7 @@ describe("bundled CLI", () => {
 			bundledCliPath,
 			platform: "darwin",
 		});
-		const shimPath = path.join(binDir, "superset");
+		const shimPath = path.join(binDir, "velix");
 
 		expect(status).toBe("installed");
 		expect(existsSync(shimPath)).toBe(true);
@@ -69,7 +69,7 @@ describe("bundled CLI", () => {
 	});
 
 	it("updates an existing managed shim", () => {
-		const shimPath = path.join(binDir, "superset");
+		const shimPath = path.join(binDir, "velix");
 		mkdirSync(binDir, { recursive: true });
 		writeFileSync(shimPath, `${BUNDLED_CLI_SHIM_MARKER}\nold\n`, {
 			mode: 0o755,
@@ -85,8 +85,8 @@ describe("bundled CLI", () => {
 		expect(readFileSync(shimPath, "utf-8")).toContain(bundledCliPath);
 	});
 
-	it("does not overwrite an unmanaged superset executable", () => {
-		const shimPath = path.join(binDir, "superset");
+	it("does not overwrite an unmanaged velix executable", () => {
+		const shimPath = path.join(binDir, "velix");
 		mkdirSync(binDir, { recursive: true });
 		writeFileSync(shimPath, "#!/bin/sh\necho custom\n", { mode: 0o755 });
 		chmodSync(shimPath, 0o755);
@@ -104,7 +104,7 @@ describe("bundled CLI", () => {
 	it("returns missing when the bundled binary is unavailable", () => {
 		const status = installBundledCliShim({
 			binDir,
-			bundledCliPath: path.join(tempDir, "missing", "superset"),
+			bundledCliPath: path.join(tempDir, "missing", "velix"),
 			platform: "darwin",
 		});
 

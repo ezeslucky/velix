@@ -1,5 +1,5 @@
-import type { SelectUser } from "@superset/db/schema";
-import { Avatar } from "@superset/ui/atoms/Avatar";
+import type { SelectUser } from "@velix/db/schema";
+import { Avatar } from "@velix/ui/atoms/Avatar";
 import {
 	Command,
 	CommandEmpty,
@@ -7,8 +7,8 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
+} from "@velix/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { useMemo, useState } from "react";
 import { HiCheck, HiChevronDown, HiOutlineUserCircle } from "react-icons/hi2";
 

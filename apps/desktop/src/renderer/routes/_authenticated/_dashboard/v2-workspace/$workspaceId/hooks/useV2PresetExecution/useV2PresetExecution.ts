@@ -1,6 +1,6 @@
-import type { HostAgentConfig } from "@superset/host-service/settings";
-import type { CreatePaneInput, WorkspaceStore } from "@superset/panes";
-import { toast } from "@superset/ui/sonner";
+import type { HostAgentConfig } from "@velix/host-service/settings";
+import type { CreatePaneInput, WorkspaceStore } from "@velix/panes";
+import { toast } from "@velix/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useMemo } from "react";
 import { useV2AgentConfigs } from "renderer/hooks/useV2AgentConfigs";

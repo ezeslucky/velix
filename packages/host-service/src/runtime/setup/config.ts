@@ -2,10 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const PROJECT_SUPERSET_DIR_NAME = ".superset";
+const PROJECT_VELIX_DIR_NAME = ".superset";
 const CONFIG_FILE_NAME = "config.json";
 const LOCAL_CONFIG_FILE_NAME = "config.local.json";
-const SUPERSET_DIR_NAME = ".superset";
+const VELIX_DIR_NAME = ".superset";
 const PROJECTS_DIR_NAME = "projects";
 
 export interface SetupConfig {
@@ -162,7 +162,7 @@ function applyLocalOverlay(
 }
 
 export function getProjectConfigPath(repoPath: string): string {
-	return join(repoPath, PROJECT_SUPERSET_DIR_NAME, CONFIG_FILE_NAME);
+	return join(repoPath, PROJECT_VELIX_DIR_NAME, CONFIG_FILE_NAME);
 }
 
 function getUserOverridePath(
@@ -172,7 +172,7 @@ function getUserOverridePath(
 	if (projectId.includes("/") || projectId.includes("\\")) return null;
 	return join(
 		homeDir,
-		SUPERSET_DIR_NAME,
+		VELIX_DIR_NAME,
 		PROJECTS_DIR_NAME,
 		projectId,
 		CONFIG_FILE_NAME,
@@ -180,7 +180,7 @@ function getUserOverridePath(
 }
 
 function getLocalOverlayPath(repoPath: string): string {
-	return join(repoPath, PROJECT_SUPERSET_DIR_NAME, LOCAL_CONFIG_FILE_NAME);
+	return join(repoPath, PROJECT_VELIX_DIR_NAME, LOCAL_CONFIG_FILE_NAME);
 }
 
 /**

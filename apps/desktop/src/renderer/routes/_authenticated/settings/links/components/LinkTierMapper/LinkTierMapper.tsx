@@ -1,11 +1,11 @@
-import { Label } from "@superset/ui/label";
+import { Label } from "@velix/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@velix/ui/select";
 import { useCallback } from "react";
 import {
 	actionLabel,

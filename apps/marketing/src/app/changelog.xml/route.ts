@@ -1,4 +1,4 @@
-import { COMPANY } from "@superset/shared/constants";
+import { COMPANY } from "@velix/shared/constants";
 import { getChangelogEntries } from "@/lib/changelog";
 
 export async function GET() {

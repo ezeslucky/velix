@@ -1,5 +1,5 @@
-import type { AppRouter } from "@superset/host-service";
-import { Button } from "@superset/ui/button";
+import type { AppRouter } from "@velix/host-service";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -7,8 +7,8 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { ScrollArea } from "@superset/ui/scroll-area";
+} from "@velix/ui/dialog";
+import { ScrollArea } from "@velix/ui/scroll-area";
 import type { inferRouterOutputs } from "@trpc/server";
 import { useEffect, useState } from "react";
 import { CommitRow } from "../CommitRow";

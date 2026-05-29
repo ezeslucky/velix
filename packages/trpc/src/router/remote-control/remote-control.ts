@@ -1,24 +1,24 @@
 import crypto from "node:crypto";
-import { mintUserJwt } from "@superset/auth/server";
-import { dbWs } from "@superset/db/client";
+import { mintUserJwt } from "@velix/auth/server";
+import { dbWs } from "@velix/db/client";
 import {
 	remoteControlSessionModeValues,
 	remoteControlSessionStatusValues,
-} from "@superset/db/enums";
+} from "@velix/db/enums";
 import {
 	users,
 	v2Hosts,
 	v2RemoteControlSessions,
 	v2UsersHosts,
 	v2Workspaces,
-} from "@superset/db/schema";
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
+} from "@velix/db/schema";
+import { buildHostRoutingKey } from "@velix/shared/host-routing";
 import {
 	REMOTE_CONTROL_DEFAULT_TTL_SEC,
 	REMOTE_CONTROL_MAX_TTL_SEC,
 	REMOTE_CONTROL_MIN_TTL_SEC,
 	REMOTE_CONTROL_TOKEN_PARAM,
-} from "@superset/shared/remote-control-protocol";
+} from "@velix/shared/remote-control-protocol";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, lt } from "drizzle-orm";
 import { z } from "zod";

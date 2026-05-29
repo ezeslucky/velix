@@ -5,8 +5,8 @@ import {
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/context-menu";
+import { cn } from "@velix/ui/utils";
 import {
 	LuChevronDown,
 	LuChevronRight,

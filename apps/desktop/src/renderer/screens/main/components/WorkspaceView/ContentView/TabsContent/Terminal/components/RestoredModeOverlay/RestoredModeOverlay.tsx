@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Card } from "@superset/ui/card";
+import { Button } from "@velix/ui/button";
+import { Card } from "@velix/ui/card";
 import { LuTerminal } from "react-icons/lu";
 
 interface RestoredModeOverlayProps {

@@ -6,8 +6,8 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	EnterEnabledAlertDialogContent,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
 
 interface CloseProjectDialogProps {
 	projectName: string;

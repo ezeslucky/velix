@@ -1,5 +1,5 @@
 /**
- * Build @superset/sdk into a publish-ready ./dist directory.
+ * Build @velix/sdk into a publish-ready ./dist directory.
  *
  *   bun run scripts/build.ts
  *

@@ -1,4 +1,4 @@
-import { chatServiceTrpc } from "@superset/chat/client";
+import { chatServiceTrpc } from "@velix/chat/client";
 import {
 	ModelSelector,
 	ModelSelectorContent,
@@ -7,9 +7,9 @@ import {
 	ModelSelectorList,
 	ModelSelectorLogo,
 	ModelSelectorTrigger,
-} from "@superset/ui/ai-elements/model-selector";
-import { PromptInputButton } from "@superset/ui/ai-elements/prompt-input";
-import { claudeIcon } from "@superset/ui/icons/preset-icons";
+} from "@velix/ui/ai-elements/model-selector";
+import { PromptInputButton } from "@velix/ui/ai-elements/prompt-input";
+import { claudeIcon } from "@velix/ui/icons/preset-icons";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDownIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";

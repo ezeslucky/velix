@@ -2,7 +2,7 @@
 
 ## Background
 
-`superset-sh/superset` publishes multiple distinct release streams to a single
+`ezeslucky/velix` publishes multiple distinct release streams to a single
 GitHub repo:
 
 - Desktop stable (`desktop-v*` tags)
@@ -134,7 +134,7 @@ Before step 5:
 - ✅ `desktop-latest` rolling release exists and is current.
 - ✅ A test desktop build pointing at `desktop-latest` successfully auto-updates.
 - ✅ The pre-step-2 desktop build (still pointing at `/releases/latest`) successfully auto-updates AS LONG AS no non-prerelease CLI release has been published in the interim.
-- ✅ `gh api repos/superset-sh/superset/releases/latest --jq .tag_name` returns a `desktop-v*` tag (i.e. CLI's `--prerelease` workaround is still effective).
+- ✅ `gh api repos/ezeslucky/velix/releases/latest --jq .tag_name` returns a `desktop-v*` tag (i.e. CLI's `--prerelease` workaround is still effective).
 
 ### Step 5 — Drop `--prerelease` workaround from `build-cli.yml`
 

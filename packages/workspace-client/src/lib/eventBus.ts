@@ -2,9 +2,9 @@ import type {
 	AgentLifecycleEventType,
 	ClientMessage,
 	ServerMessage,
-} from "@superset/host-service/events";
-import type { AgentIdentity } from "@superset/shared/agent-identity";
-import type { FsWatchEvent } from "@superset/workspace-fs/host";
+} from "@velix/host-service/events";
+import type { AgentIdentity } from "@velix/shared/agent-identity";
+import type { FsWatchEvent } from "@velix/workspace-fs/host";
 import { primeRelayAffinity } from "./primeRelayAffinity";
 
 export type { AgentIdentity };

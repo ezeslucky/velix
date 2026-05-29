@@ -50,9 +50,9 @@ describe("getPullRequestRepoArgs", () => {
 		expect(
 			getPullRequestRepoArgs({
 				isFork: true,
-				upstreamUrl: "git@github.com:superset-sh/superset.git",
+				upstreamUrl: "git@github.com:ezeslucky/velix.git",
 			}),
-		).toEqual(["--repo", "superset-sh/superset"]);
+		).toEqual(["--repo", "ezeslucky/velix"]);
 	});
 
 	test("returns no repo args for non-forks", () => {
@@ -113,7 +113,7 @@ describe("shouldRefreshCachedRepoContext", () => {
 	test("treats SSH and HTTPS forms of the same repo as equal", () => {
 		expect(
 			shouldRefreshCachedRepoContext({
-				originUrl: "git@github.com:Superset-Sh/superset.git",
+				originUrl: "git@github.com:ezeslucky/velix.git",
 				cachedRepoContext: {
 					repoUrl: "https://github.com/ezeslucky/velix",
 					upstreamUrl: "https://github.com/ezeslucky/velix",
@@ -126,7 +126,7 @@ describe("shouldRefreshCachedRepoContext", () => {
 	test("returns true when origin no longer matches the cached repo", () => {
 		expect(
 			shouldRefreshCachedRepoContext({
-				originUrl: "https://github.com/Kitenite/superset",
+				originUrl: "https://github.com/ezeslucky/velix",
 				cachedRepoContext: {
 					repoUrl: "https://github.com/ezeslucky/velix",
 					upstreamUrl: "https://github.com/ezeslucky/velix",

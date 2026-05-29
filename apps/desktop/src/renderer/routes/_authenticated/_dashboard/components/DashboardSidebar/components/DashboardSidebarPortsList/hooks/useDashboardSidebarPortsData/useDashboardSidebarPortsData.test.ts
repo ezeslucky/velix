@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { PortChangedPayload } from "@superset/workspace-client";
+import type { PortChangedPayload } from "@velix/workspace-client";
 import {
 	applyPortEventsToHostPortsResult,
 	deriveHostPortQueryTargets,

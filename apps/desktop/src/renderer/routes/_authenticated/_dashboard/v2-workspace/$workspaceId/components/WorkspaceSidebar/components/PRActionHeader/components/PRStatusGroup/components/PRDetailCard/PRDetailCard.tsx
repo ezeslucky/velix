@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import { formatDistanceToNow } from "date-fns";
 import {
 	LuArrowUpRight,

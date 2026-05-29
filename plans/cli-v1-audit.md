@@ -280,7 +280,7 @@ New `superset update` command at
 
 - Detects target (`darwin-arm64`, `linux-x64`).
 - Fetches latest `cli-v*` release from GitHub
-  (`/repos/superset-sh/superset/releases/latest`).
+  (`/repos/ezeslucky/velix/releases/latest`).
 - Downloads matching `superset-<target>.tar.gz` asset.
 - Extracts to a tempdir; verifies the new layout has `bin/superset`.
 - Atomic-replaces the install root: rename current → `.bak`, move new

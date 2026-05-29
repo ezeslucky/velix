@@ -1,9 +1,4 @@
-/**
- * Workspace Service — Desktop Entry Point
- *
- * Starts the host-service HTTP server on a port assigned by the coordinator.
- * The coordinator polls health.check to know when it's ready.
- */
+
 
 import { serve } from "@hono/node-server";
 import {
@@ -13,12 +8,12 @@ import {
 	LocalGitCredentialProvider,
 	LocalModelProvider,
 	PskHostAuthProvider,
-} from "@superset/host-service";
+} from "@velix/host-service";
 import {
 	initTerminalBaseEnv,
 	resolveTerminalBaseEnv,
-} from "@superset/host-service/terminal-env";
-import { connectRelay } from "@superset/host-service/tunnel";
+} from "@velix/host-service/terminal-env";
+import { connectRelay } from "@velix/host-service/tunnel";
 import { loadToken } from "lib/trpc/routers/auth/utils/auth-functions";
 import { writeManifest } from "main/lib/host-service-manifest";
 import { env } from "./env";
@@ -84,14 +79,14 @@ async function main(): Promise<void> {
 			const { token } = await loadToken();
 			return token ?? env.AUTH_TOKEN;
 		},
-		apiUrl: env.SUPERSET_API_URL,
+		apiUrl: env.VELIX_API_URL,
 	});
 
 	const { app, injectWebSocket, api } = createApp({
 		config: {
 			organizationId: env.ORGANIZATION_ID,
 			dbPath: env.HOST_DB_PATH,
-			cloudApiUrl: env.SUPERSET_API_URL,
+			cloudApiUrl: env.VELIX_API_URL,
 			migrationsFolder: env.HOST_MIGRATIONS_FOLDER,
 			allowedOrigins: [
 				`http://localhost:${env.DESKTOP_VITE_PORT}`,

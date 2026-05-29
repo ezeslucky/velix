@@ -8,7 +8,7 @@ import {
 	type RemoteControlMode,
 	type RemoteControlRevokeReason,
 	type RemoteControlTokenClaims,
-} from "@superset/shared/remote-control-protocol";
+} from "@velix/shared/remote-control-protocol";
 
 interface ViewerSocket {
 	close(reason?: RemoteControlRevokeReason): void;

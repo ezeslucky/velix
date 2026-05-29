@@ -1,11 +1,11 @@
-import { Badge } from "@superset/ui/badge";
+import { Badge } from "@velix/ui/badge";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
+} from "@velix/ui/card";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";

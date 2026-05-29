@@ -1,5 +1,5 @@
 {
-	"name": "@superset/tab-bar",
+	"name": "@velix/tab-bar",
 	"version": "0.0.1",
 	"main": "src/index.tsx",
 	"private": true,

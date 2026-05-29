@@ -1,6 +1,6 @@
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { DiscardConfirmDialog } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/components/DiscardConfirmDialog";
 import type { ChangesetFile } from "../../../../../useChangeset";

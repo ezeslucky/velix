@@ -1,11 +1,11 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { db, dbWs } from "@superset/db/client";
-import { tasks } from "@superset/db/schema";
-import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
+import { db, dbWs } from "@velix/db/client";
+import { tasks } from "@velix/db/schema";
+import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
 import {
 	generateBaseTaskSlug,
 	generateUniqueTaskSlug,
-} from "@superset/shared/task-slug";
+} from "@velix/shared/task-slug";
 import { and, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
 import { getMcpContext } from "../../utils";

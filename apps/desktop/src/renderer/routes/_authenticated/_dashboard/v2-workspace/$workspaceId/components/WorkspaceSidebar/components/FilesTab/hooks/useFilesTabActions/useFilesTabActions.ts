@@ -1,7 +1,7 @@
 import type { FileTree, FileTreeRenameEvent } from "@pierre/trees";
-import { alert } from "@superset/ui/atoms/Alert";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { alert } from "@velix/ui/atoms/Alert";
+import { toast } from "@velix/ui/sonner";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useCallback } from "react";
 import { FILE_EXPLORER_ROW_HEIGHT } from "../../constants";
 import {

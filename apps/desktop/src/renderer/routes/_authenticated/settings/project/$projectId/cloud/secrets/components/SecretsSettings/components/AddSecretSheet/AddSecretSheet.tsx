@@ -1,18 +1,18 @@
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+import { alert } from "@velix/ui/atoms/Alert";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
 import {
 	Sheet,
 	SheetContent,
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
-} from "@superset/ui/sheet";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
-import { Textarea } from "@superset/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/sheet";
+import { toast } from "@velix/ui/sonner";
+import { Switch } from "@velix/ui/switch";
+import { Textarea } from "@velix/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	HiOutlineArrowDownTray,

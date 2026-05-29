@@ -1,5 +1,5 @@
 import { useVirtualizer, Virtualizer } from "@pierre/diffs/react";
-import type { RendererContext } from "@superset/panes";
+import type { RendererContext } from "@velix/panes";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSettings } from "renderer/stores/settings";
 import type { DiffPaneData, PaneViewerData } from "../../../../types";

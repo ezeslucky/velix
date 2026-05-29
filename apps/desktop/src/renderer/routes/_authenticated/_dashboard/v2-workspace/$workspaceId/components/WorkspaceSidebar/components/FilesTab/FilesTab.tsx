@@ -9,9 +9,9 @@ import {
 	FileTree as PierreFileTree,
 	useFileTree as usePierreFileTree,
 } from "@pierre/trees/react";
-import type { AppRouter } from "@superset/host-service";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import type { AppRouter } from "@velix/host-service";
+import { toast } from "@velix/ui/sonner";
+import { workspaceTrpc } from "@velix/workspace-client";
 import type { inferRouterOutputs } from "@trpc/server";
 import {
 	FilePlus,

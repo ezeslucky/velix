@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import { lazy, Suspense } from "react";
 
 const Dithering = lazy(() =>

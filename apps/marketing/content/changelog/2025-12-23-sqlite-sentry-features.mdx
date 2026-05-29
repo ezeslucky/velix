@@ -7,7 +7,7 @@ image: /changelog/docs.png
 ## SQLite Local Database <PRBadge url="https://github.com/ezeslucky/velix/pull/477" />
 
 - Desktop app now uses a local SQLite-backed database with automatic migration from the legacy JSON store
-- Adds `@superset/local-db` package with Drizzle ORM schema for SQLite
+- Adds `@velix/local-db` package with Drizzle ORM schema for SQLite
 - Migrates all database operations from lowdb (db.json) to SQLite using better-sqlite3
 - UUID defaults for all ID fields (prep for local-first architecture)
 

@@ -1,6 +1,6 @@
-import { db } from "@superset/db/client";
-import { submittedPrompts } from "@superset/db/schema";
-import { COMPANY } from "@superset/shared/constants";
+import { db } from "@velix/db/client";
+import { submittedPrompts } from "@velix/db/schema";
+import { COMPANY } from "@velix/shared/constants";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -121,7 +121,7 @@ export const supportRouter = createTRPCRouter({
 
 			try {
 				await resend.emails.send({
-					from: "Superset <noreply@superset.sh>",
+					from: "Superset <noreply@velix.sh>",
 					to: SUPPORT_EMAIL,
 					replyTo: user.email,
 					subject: "Superset V1 to V2 migration issue",
