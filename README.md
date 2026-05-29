@@ -181,6 +181,7 @@ We welcome contributions! If you have a suggestion that would make Velix better:
 
 You can also [open issues](https://github.com/ezeslucky/velix/issues) for bugs or feature requests.
 
+
 ## Community
 
 Join the Velix community to get help, share feedback, and connect with other users:
