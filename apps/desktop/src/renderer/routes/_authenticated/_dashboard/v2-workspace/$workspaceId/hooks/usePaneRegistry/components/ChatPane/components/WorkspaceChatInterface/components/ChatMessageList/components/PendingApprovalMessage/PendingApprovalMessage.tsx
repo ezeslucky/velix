@@ -1,5 +1,5 @@
-import { Message, MessageContent } from "@superset/ui/ai-elements/message";
-import { Button } from "@superset/ui/button";
+import { Message, MessageContent } from "@velix/ui/ai-elements/message";
+import { Button } from "@velix/ui/button";
 import { useEffect, useRef, useState } from "react";
 import type { UseChatDisplayReturn } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/usePaneRegistry/components/ChatPane/hooks/useWorkspaceChatDisplay";
 

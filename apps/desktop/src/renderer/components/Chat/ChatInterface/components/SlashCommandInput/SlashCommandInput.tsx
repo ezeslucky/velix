@@ -1,5 +1,5 @@
-import { usePromptInputController } from "@superset/ui/ai-elements/prompt-input";
-import { Popover, PopoverAnchor } from "@superset/ui/popover";
+import { usePromptInputController } from "@velix/ui/ai-elements/prompt-input";
+import { Popover, PopoverAnchor } from "@velix/ui/popover";
 import { useCallback } from "react";
 import {
 	resolveCommandAction,

@@ -1,13 +1,13 @@
-import { FEATURE_FLAGS } from "@superset/shared/constants";
+import { FEATURE_FLAGS } from "@velix/shared/constants";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { ExternalLink, Radio } from "lucide-react";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useCallback, useEffect, useState } from "react";

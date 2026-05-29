@@ -1,4 +1,4 @@
-import { CLIError } from "@superset/cli-framework";
+import { CLIError } from "@velix/cli-framework";
 import { type ApiClient, createApiClient } from "./api-client";
 import { refreshAccessToken } from "./auth";
 import { readConfig, type SupersetConfig, writeConfig } from "./config";

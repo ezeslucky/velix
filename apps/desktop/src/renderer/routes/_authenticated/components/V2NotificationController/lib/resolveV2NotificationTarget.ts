@@ -1,5 +1,5 @@
-import type { WorkspaceState } from "@superset/panes";
-import type { AgentLifecyclePayload } from "@superset/workspace-client";
+import type { WorkspaceState } from "@velix/panes";
+import type { AgentLifecyclePayload } from "@velix/workspace-client";
 import type {
 	PaneViewerData,
 	TerminalPaneData,

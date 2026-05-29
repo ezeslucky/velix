@@ -1,5 +1,5 @@
-import { alert } from "@superset/ui/atoms/Alert";
-import { toast } from "@superset/ui/sonner";
+import { alert } from "@velix/ui/atoms/Alert";
+import { toast } from "@velix/ui/sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useDashboardSidebarSectionRename } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar/components/DashboardSidebarSectionRenameContext";

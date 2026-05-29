@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import { LuCheck, LuLoaderCircle, LuX } from "react-icons/lu";
 import type {
 	V2WorkspacePrChecksStatus,

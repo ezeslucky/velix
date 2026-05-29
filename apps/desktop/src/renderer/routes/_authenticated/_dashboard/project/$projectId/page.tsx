@@ -1,23 +1,23 @@
-import { sanitizeSegment } from "@superset/shared/workspace-launch";
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
+import { sanitizeSegment } from "@velix/shared/workspace-launch";
+import { Button } from "@velix/ui/button";
+import { Checkbox } from "@velix/ui/checkbox";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
+} from "@velix/ui/collapsible";
 import {
 	Command,
 	CommandEmpty,
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { toast } from "@superset/ui/sonner";
-import { Textarea } from "@superset/ui/textarea";
+} from "@velix/ui/command";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { toast } from "@velix/ui/sonner";
+import { Textarea } from "@velix/ui/textarea";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";

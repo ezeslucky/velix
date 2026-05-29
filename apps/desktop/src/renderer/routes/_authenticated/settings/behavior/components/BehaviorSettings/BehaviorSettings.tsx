@@ -1,13 +1,13 @@
-import type { FileOpenMode } from "@superset/local-db";
-import { Label } from "@superset/ui/label";
+import type { FileOpenMode } from "@velix/local-db";
+import { Label } from "@velix/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { Switch } from "@superset/ui/switch";
+} from "@velix/ui/select";
+import { Switch } from "@velix/ui/switch";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import {
 	isItemVisible,

@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Spinner } from "@superset/ui/spinner";
+import { Button } from "@velix/ui/button";
+import { Spinner } from "@velix/ui/spinner";
 import type { ReactNode } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 

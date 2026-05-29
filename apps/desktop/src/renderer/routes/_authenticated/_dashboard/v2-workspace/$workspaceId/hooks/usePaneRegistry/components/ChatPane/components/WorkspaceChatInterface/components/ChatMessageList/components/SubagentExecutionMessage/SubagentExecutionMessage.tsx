@@ -2,8 +2,8 @@ import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
-import { cn } from "@superset/ui/lib/utils";
+} from "@velix/ui/ai-elements/message";
+import { cn } from "@velix/ui/lib/utils";
 import { SubagentInnerToolCall } from "renderer/components/Chat/components/SubagentInnerToolCall";
 import {
 	type SubagentEntries,

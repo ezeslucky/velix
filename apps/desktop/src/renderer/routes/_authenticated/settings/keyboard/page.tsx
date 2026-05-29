@@ -5,14 +5,14 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Kbd, KbdGroup } from "@superset/ui/kbd";
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { Kbd, KbdGroup } from "@velix/ui/kbd";
+import { Label } from "@velix/ui/label";
+import { toast } from "@velix/ui/sonner";
+import { Switch } from "@velix/ui/switch";
+import { cn } from "@velix/ui/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";

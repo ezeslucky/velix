@@ -1,9 +1,5 @@
-// v1-only. Dies with the v1 UI sunset. Don't evolve this module — v2 already
-// resolves PRs via host-service (`packages/host-service/src/runtime/pull-requests`
-// backing `git.getPullRequest` + `pullRequests.getByWorkspaces`). Everything
-// under `renderer/screens/main/` + `routes/_authenticated/_dashboard/workspace/`
-// gets deleted together; no port needed.
-import type { CheckItem, GitHubStatus } from "@superset/local-db";
+
+import type { CheckItem, GitHubStatus } from "@velix/local-db";
 import { execGitWithShellPath } from "../git-client";
 import { execWithShellEnv } from "../shell-env";
 import { getPullRequestRepoArgs } from "./repo-context";

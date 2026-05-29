@@ -1,6 +1,6 @@
-import { Button } from "@superset/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@superset/ui/tabs";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@velix/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@velix/ui/tabs";
+import { cn } from "@velix/ui/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	HiArrowTopRightOnSquare,

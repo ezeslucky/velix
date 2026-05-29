@@ -1,5 +1,5 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { type ComponentPropsWithoutRef, forwardRef } from "react";
 import { ProjectThumbnail } from "renderer/routes/_authenticated/components/ProjectThumbnail";

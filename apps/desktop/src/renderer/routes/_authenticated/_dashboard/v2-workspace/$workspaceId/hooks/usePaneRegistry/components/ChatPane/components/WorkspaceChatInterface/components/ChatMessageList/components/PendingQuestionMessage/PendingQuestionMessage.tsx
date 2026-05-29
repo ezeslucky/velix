@@ -2,9 +2,9 @@ import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+} from "@velix/ui/ai-elements/message";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { UseChatDisplayReturn } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/usePaneRegistry/components/ChatPane/hooks/useWorkspaceChatDisplay";
 

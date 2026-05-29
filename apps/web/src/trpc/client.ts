@@ -1,4 +1,4 @@
-import type { AppRouter } from "@superset/trpc";
+import type { AppRouter } from "@velix/trpc";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import SuperJSON from "superjson";
 

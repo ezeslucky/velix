@@ -1,4 +1,4 @@
-import { toast } from "@superset/ui/sonner";
+import { toast } from "@velix/ui/sonner";
 import { track } from "renderer/lib/analytics";
 import type { Command, CommandContext } from "./types";
 

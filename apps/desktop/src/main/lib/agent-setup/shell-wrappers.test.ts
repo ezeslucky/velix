@@ -19,7 +19,7 @@ import {
 
 const TEST_ROOT = path.join(
 	tmpdir(),
-	`superset-shell-wrappers-${process.pid}-${Date.now()}`,
+	`ezesluckyell-wrappers-${process.pid}-${Date.now()}`,
 );
 const TEST_BIN_DIR = path.join(TEST_ROOT, "bin");
 const TEST_ZSH_DIR = path.join(TEST_ROOT, "zsh");
@@ -841,7 +841,7 @@ export SUPERSET_WORKSPACE_PATH="/wrong/path"
 			expect(args[2]).toContain(`set -l _superset_bin "${TEST_BIN_DIR}"`);
 			// Both markers are emitted so old v1 daemons (777 scanner) and new
 			// scanners (133;A) both detect readiness without a daemon restart.
-			expect(args[2]).toContain("\\033]777;superset-shell-ready\\007");
+			expect(args[2]).toContain("\\033]777;ezesluckyell-ready\\007");
 			expect(args[2]).toContain("\\033]133;A\\007");
 		});
 
@@ -857,7 +857,7 @@ export SUPERSET_WORKSPACE_PATH="/wrong/path"
 			expect(args[2]).toContain(
 				'set -l _superset_bin "/tmp/with space/quote\\"buck\\$slash\\\\bin"',
 			);
-			expect(args[2]).toContain("777;superset-shell-ready");
+			expect(args[2]).toContain("777;ezesluckyell-ready");
 			expect(args[2]).toContain("133;A");
 		});
 
@@ -869,7 +869,7 @@ export SUPERSET_WORKSPACE_PATH="/wrong/path"
 			const rcfile = readFileSync(path.join(TEST_BASH_DIR, "rcfile"), "utf-8");
 
 			for (const wrapper of [zlogin, rcfile]) {
-				expect(wrapper).toContain("\\033]777;superset-shell-ready\\007");
+				expect(wrapper).toContain("\\033]777;ezesluckyell-ready\\007");
 				expect(wrapper).toContain("\\033]133;A\\007");
 			}
 		});

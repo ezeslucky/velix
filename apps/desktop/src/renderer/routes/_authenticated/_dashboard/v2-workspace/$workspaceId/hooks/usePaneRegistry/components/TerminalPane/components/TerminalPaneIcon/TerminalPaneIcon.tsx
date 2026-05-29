@@ -1,4 +1,4 @@
-import { BUILTIN_AGENT_LABELS } from "@superset/shared/agent-catalog";
+import { BUILTIN_AGENT_LABELS } from "@velix/shared/agent-catalog";
 import { TerminalSquare } from "lucide-react";
 import { usePresetIcon } from "renderer/assets/app-icons/preset-icons";
 import {

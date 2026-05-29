@@ -83,7 +83,7 @@ The CLI uses two clients:
 Routing rule for workspace/project commands:
 
 ```ts
-import { getHashedDeviceId } from "@superset/shared/device-info";
+import { getHashedDeviceId } from "@velix/shared/device-info";
 
 const target = options.host ?? getHashedDeviceId();
 if (target === getHashedDeviceId()) {
@@ -830,7 +830,7 @@ These changes must land in the API/server before the v1 CLI ships:
   automation dispatch.
 - **Host service writes `{ hostId, hostName }` into the manifest** on
   startup. Both fields are derived from
-  `@superset/shared/device-info.getHashedDeviceId()` /
+  `@velix/shared/device-info.getHashedDeviceId()` /
   `getDeviceName()`. The CLI does not depend on these for routing — it
   computes `getHashedDeviceId()` itself — but `status` displays
   them so users can see their own hostId without `hosts list`.
@@ -883,7 +883,7 @@ These changes must land in the API/server before the v1 CLI ships:
   **What `machineId` means per platform** (orthogonal to the PK shape;
   same column accepts any of these):
   - Desktop: `getHashedDeviceId()` from
-    `@superset/shared/device-info`.
+    `@velix/shared/device-info`.
   - Mobile (iOS): `Application.getIosIdForVendor()`.
   - Mobile (Android): `Application.getAndroidId()` or Expo equivalent.
   - Web: `crypto.randomUUID()` generated once on first load,

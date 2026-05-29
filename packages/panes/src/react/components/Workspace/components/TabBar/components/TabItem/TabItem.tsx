@@ -1,14 +1,14 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { OverflowFadeText } from "@superset/ui/overflow-fade-text";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/context-menu";
+import { OverflowFadeText } from "@velix/ui/overflow-fade-text";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { PencilIcon, XIcon } from "lucide-react";
 import { type ReactNode, useCallback, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";

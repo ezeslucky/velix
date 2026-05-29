@@ -1,5 +1,5 @@
 import type { DiffLineAnnotation } from "@pierre/diffs/react";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useMemo } from "react";
 import { useSettings } from "renderer/stores/settings";
 

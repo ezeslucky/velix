@@ -1,4 +1,4 @@
-import { SidebarCard } from "@superset/ui/sidebar-card";
+import { SidebarCard } from "@velix/ui/sidebar-card";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";

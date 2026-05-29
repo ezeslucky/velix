@@ -1,6 +1,6 @@
 # Host-service recovery (#4299) — shipped
 
-**Issue:** [superset-sh/superset#4299](https://github.com/ezeslucky/velix/issues/4299) — after Cmd+R the v2 right pane goes blank because the renderer keeps getting handed a dead host-service port.
+**Issue:** [velix/velix#4299](https://github.com/ezeslucky/velix/issues/4299) — after Cmd+R the v2 right pane goes blank because the renderer keeps getting handed a dead host-service port.
 
 **Root cause:** `tryAdopt` only checked `isProcessAlive(pid)` + app-version. A live-but-not-serving host-service (hung on migrations, deadlocked, port no longer bound) got adopted as `running`, and `getConnection` returned its dead port forever — an absorbing state nothing climbed out of.
 

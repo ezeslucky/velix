@@ -1,6 +1,6 @@
-import { dbWs } from "@superset/db/client";
-import { automations } from "@superset/db/schema";
-import { nextOccurrenceAfter } from "@superset/shared/rrule";
+import { dbWs } from "@velix/db/client";
+import { automations } from "@velix/db/schema";
+import { nextOccurrenceAfter } from "@velix/shared/rrule";
 import { Client, Receiver } from "@upstash/qstash";
 import { and, eq, lte } from "drizzle-orm";
 

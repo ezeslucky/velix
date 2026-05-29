@@ -1,35 +1,9 @@
 import { isAbsolute, normalize, resolve, sep } from "node:path";
-import { projects, worktrees } from "@superset/local-db";
+import { projects, worktrees } from "@velix/local-db";
 import { eq } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 
-/**
- * Security model for desktop app filesystem access:
- *
- * THREAT MODEL:
- * While a compromised renderer can execute commands via terminal panes,
- * the File Viewer presents a distinct threat: malicious repositories can
- * contain symlinks that trick users into reading/writing sensitive files
- * (e.g., `docs/config.yml` → `~/.bashrc`). Users clicking these links
- * don't know they're accessing files outside the repo.
- *
- * PRIMARY BOUNDARY: assertRegisteredWorktree()
- * - Only worktree paths registered in localDb are accessible via tRPC
- * - Prevents direct filesystem access to unregistered paths
- *
- * SECONDARY: validateRelativePath()
- * - Rejects absolute paths and ".." traversal segments
- * - Defense in depth against path manipulation
- *
- * SYMLINK PROTECTION:
- * - Filesystem operations should delegate to `workspace-fs`, which enforces
- *   workspace-boundary and symlink-escape checks for reads and writes.
- * - This module remains focused on registered-worktree and relative-path validation.
- */
 
-/**
- * Security error codes for path validation failures.
- */
 export type PathValidationErrorCode =
 	| "ABSOLUTE_PATH"
 	| "PATH_TRAVERSAL"

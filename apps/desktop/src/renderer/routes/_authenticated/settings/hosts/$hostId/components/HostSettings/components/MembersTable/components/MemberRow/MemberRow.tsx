@@ -1,12 +1,12 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { TableCell, TableRow } from "@superset/ui/table";
+} from "@velix/ui/select";
+import { TableCell, TableRow } from "@velix/ui/table";
 import { HiOutlineTrash } from "react-icons/hi2";
 
 export interface MemberRowData {

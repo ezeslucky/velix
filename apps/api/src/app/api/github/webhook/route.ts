@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { webhookEvents } from "@superset/db/schema";
+import { db } from "@velix/db/client";
+import { webhookEvents } from "@velix/db/schema";
 import { eq, sql } from "drizzle-orm";
 
 import { webhooks } from "./webhooks";

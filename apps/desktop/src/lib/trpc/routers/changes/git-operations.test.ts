@@ -121,7 +121,7 @@ describe("existing PR push target resolution", () => {
 				remotes: [
 					{
 						name: "origin",
-						fetchUrl: "git@github.com:superset-sh/superset.git",
+						fetchUrl: "git@github.com:velix/velix.git",
 					},
 				],
 				pr: {
@@ -138,17 +138,17 @@ describe("existing PR push target resolution", () => {
 				remotes: [
 					{
 						name: "origin",
-						fetchUrl: "git@github.com:superset-sh/superset.git",
+						fetchUrl: "git@github.com:velix/velix.git",
 					},
 					{
 						name: "kitenite",
-						fetchUrl: "git@github.com:kitenite/superset.git",
-						pushUrl: "git@github.com:kitenite/superset.git",
+						fetchUrl: "git@github.com:kitenite/velix.git",
+						pushUrl: "git@github.com:kitenite/velix.git",
 					},
 				],
 				pr: {
 					headRepositoryOwner: "kitenite",
-					headRepositoryName: "superset",
+					headRepositoryName: "velix",
 					isCrossRepository: true,
 				},
 				fallbackRemote: "origin",
@@ -162,12 +162,12 @@ describe("existing PR push target resolution", () => {
 				remotes: [
 					{
 						name: "origin",
-						fetchUrl: "git@github.com:superset-sh/superset.git",
+						fetchUrl: "git@github.com:velix/velix.git",
 					},
 				],
 				pr: {
 					headRepositoryOwner: "kitenite",
-					headRepositoryName: "superset",
+					headRepositoryName: "velix",
 					isCrossRepository: true,
 				},
 				fallbackRemote: "origin",
@@ -179,10 +179,10 @@ describe("existing PR push target resolution", () => {
 		expect(
 			getExistingPRHeadRepoUrl({
 				headRepositoryOwner: "kitenite",
-				headRepositoryName: "superset",
+				headRepositoryName: "velix",
 				isCrossRepository: true,
 			}),
-		).toBe("https://github.com/kitenite/superset");
+		).toBe("https://github.com/ezeslucky/velix");
 	});
 
 	test("retargets push when the tracked branch differs from the linked PR head", () => {

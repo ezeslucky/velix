@@ -1,4 +1,4 @@
-import { CLIError, positional } from "@superset/cli-framework";
+import { CLIError, positional } from "@velix/cli-framework";
 import { command } from "../../../lib/command";
 import { readConfig, writeConfig } from "../../../lib/config";
 

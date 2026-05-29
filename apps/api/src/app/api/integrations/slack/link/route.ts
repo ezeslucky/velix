@@ -1,8 +1,8 @@
 import { createHmac } from "node:crypto";
-import { auth } from "@superset/auth/server";
-import { db } from "@superset/db/client";
-import { integrationConnections, usersSlackUsers } from "@superset/db/schema";
-import { findOrgMembership } from "@superset/db/utils";
+import { auth } from "@velix/auth/server";
+import { db } from "@velix/db/client";
+import { integrationConnections, usersSlackUsers } from "@velix/db/schema";
+import { findOrgMembership } from "@velix/db/utils";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { env } from "@/env";
@@ -62,7 +62,7 @@ export async function GET(request: Request) {
 
 	if (!connection) {
 		return new Response(
-			"Slack workspace not connected to any Superset organization.",
+			"Slack workspace not connected to any Velix organization.",
 			{ status: 404 },
 		);
 	}

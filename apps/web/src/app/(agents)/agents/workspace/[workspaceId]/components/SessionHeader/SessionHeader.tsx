@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+import { Badge } from "@velix/ui/badge";
+import { Button } from "@velix/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { MockSession } from "../../../../../mock-data";

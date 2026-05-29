@@ -1,9 +1,9 @@
 import {
 	getInvitableRoles,
 	type OrganizationRole,
-} from "@superset/shared/auth";
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
+} from "@velix/shared/auth";
+import { alert } from "@velix/ui/atoms/Alert";
+import { Button } from "@velix/ui/button";
 import { useState } from "react";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { GATED_FEATURES, usePaywall } from "renderer/components/Paywall";

@@ -5,13 +5,13 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
 import {
 	WorkspaceClientProvider,
 	workspaceTrpc,
-} from "@superset/workspace-client";
+} from "@velix/workspace-client";
 import { useEffect, useState } from "react";
 import {
 	getHostServiceHeaders,

@@ -9,7 +9,7 @@
 //
 // Usage:
 //   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --dry-run
-//   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --test=satya@superset.sh
+//   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --test=satya@velix.sh
 //   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --send
 
 if (process.env.NEXT_PUBLIC_MARKETING_URL !== "https://superset.sh") {
@@ -19,21 +19,21 @@ if (process.env.NEXT_PUBLIC_MARKETING_URL !== "https://superset.sh") {
 	process.exit(1);
 }
 
-import { db } from "@superset/db/client";
+import { db } from "@velix/db/client";
 import {
 	users as authUsers,
 	integrationConnections,
 	organizations,
-} from "@superset/db/schema";
+} from "@velix/db/schema";
 import {
 	type DisconnectedConnection,
 	IntegrationDisconnectedEmail,
-} from "@superset/email/emails/integration-disconnected";
+} from "@velix/email/emails/integration-disconnected";
 import { aliasedTable, and, eq, isNull } from "drizzle-orm";
 import { Resend } from "resend";
 
-const FROM = "Superset <noreply@superset.sh>";
-const REPLY_TO = "founders@superset.sh";
+const FROM = "Superset <noreply@velix.sh>";
+const REPLY_TO = "founders@velix.sh";
 
 function parseArgs() {
 	const args = process.argv.slice(2);
@@ -43,7 +43,7 @@ function parseArgs() {
 	const testEmail = testArg
 		? testArg.includes("=")
 			? testArg.split("=")[1]
-			: "satya@superset.sh"
+			: "satya@velix.sh"
 		: null;
 	if (!dryRun && !send && !testEmail) {
 		console.error("Pass one of: --dry-run, --test[=email], --send");

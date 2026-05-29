@@ -2,21 +2,21 @@ import { apiKey } from "@better-auth/api-key";
 import { expo } from "@better-auth/expo";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { stripe } from "@better-auth/stripe";
-import { db } from "@superset/db/client";
-import { members, subscriptions } from "@superset/db/schema";
-import type { sessions } from "@superset/db/schema/auth";
-import * as authSchema from "@superset/db/schema/auth";
-import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
-import { MemberAddedEmail } from "@superset/email/emails/member-added";
-import { MemberAddedBillingEmail } from "@superset/email/emails/member-added-billing";
-import { MemberRemovedEmail } from "@superset/email/emails/member-removed";
-import { MemberRemovedBillingEmail } from "@superset/email/emails/member-removed-billing";
-import { OrganizationInvitationEmail } from "@superset/email/emails/organization-invitation";
-import { PaymentFailedEmail } from "@superset/email/emails/payment-failed";
-import { SubscriptionCancelledEmail } from "@superset/email/emails/subscription-cancelled";
-import { SubscriptionStartedEmail } from "@superset/email/emails/subscription-started";
-import { canInvite, type OrganizationRole } from "@superset/shared/auth";
-import { getTrustedVercelPreviewOrigins } from "@superset/shared/vercel-preview-origins";
+import { db } from "@velix/db/client";
+import { members, subscriptions } from "@velix/db/schema";
+import type { sessions } from "@velix/db/schema/auth";
+import * as authSchema from "@velix/db/schema/auth";
+import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
+import { MemberAddedEmail } from "@velix/email/emails/member-added";
+import { MemberAddedBillingEmail } from "@velix/email/emails/member-added-billing";
+import { MemberRemovedEmail } from "@velix/email/emails/member-removed";
+import { MemberRemovedBillingEmail } from "@velix/email/emails/member-removed-billing";
+import { OrganizationInvitationEmail } from "@velix/email/emails/organization-invitation";
+import { PaymentFailedEmail } from "@velix/email/emails/payment-failed";
+import { SubscriptionCancelledEmail } from "@velix/email/emails/subscription-cancelled";
+import { SubscriptionStartedEmail } from "@velix/email/emails/subscription-started";
+import { canInvite, type OrganizationRole } from "@velix/shared/auth";
+import { getTrustedVercelPreviewOrigins } from "@velix/shared/vercel-preview-origins";
 import { Client } from "@upstash/qstash";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -314,7 +314,7 @@ export const auth = betterAuth({
 				});
 
 				await resend.emails.send({
-					from: "Superset <noreply@superset.sh>",
+					from: "Superset <noreply@velix.sh>",
 					to: data.email,
 					subject: `${data.inviter.user.name} invited you to join ${data.organization.name}`,
 					react: OrganizationInvitationEmail({
@@ -584,7 +584,7 @@ export const auth = betterAuth({
 
 					if (acceptedInvitation) {
 						await resend.emails.send({
-							from: "Superset <noreply@superset.sh>",
+							from: "Superset <noreply@velix.sh>",
 							to: user.email,
 							subject: `You've been added to ${organization.name}`,
 							react: MemberAddedEmail({
@@ -632,7 +632,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "Superset <noreply@velix.sh>",
 							to: owner.email,
 							subject: `Billing update: New member added to ${organization.name}`,
 							react: MemberAddedBillingEmail({
@@ -669,7 +669,7 @@ export const auth = betterAuth({
 
 				afterRemoveMember: async ({ user, organization }) => {
 					await resend.emails.send({
-						from: "Superset <noreply@superset.sh>",
+						from: "Superset <noreply@velix.sh>",
 						to: user.email,
 						subject: `You've been removed from ${organization.name}`,
 						react: MemberRemovedEmail({
@@ -721,7 +721,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "Superset <noreply@velix.sh>",
 							to: owner.email,
 							subject: `Billing update: Member removed from ${organization.name}`,
 							react: MemberRemovedBillingEmail({
@@ -854,7 +854,7 @@ export const auth = betterAuth({
 				) => {
 					if (plan.name === "enterprise") {
 						throw new Error(
-							"Enterprise subscriptions are managed by admins. Contact founders@superset.sh.",
+							"Enterprise subscriptions are managed by admins. Contact founders@velix.sh.",
 						);
 					}
 
@@ -909,7 +909,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "Superset <noreply@velix.sh>",
 							to: owner.email,
 							subject: `Welcome to Superset ${plan.name}!`,
 							react: SubscriptionStartedEmail({
@@ -962,7 +962,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "Superset <noreply@velix.sh>",
 							to: owner.email,
 							subject: `Your ${subscription.plan} subscription has been cancelled`,
 							react: SubscriptionCancelledEmail({
@@ -1028,7 +1028,7 @@ export const auth = betterAuth({
 
 						await resend.batch.send(
 							owners.map((owner) => ({
-								from: "Superset <noreply@superset.sh>",
+								from: "Superset <noreply@velix.sh>",
 								to: owner.email,
 								subject: `Payment failed for ${org.name}`,
 								react: PaymentFailedEmail({

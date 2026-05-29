@@ -5,8 +5,8 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
 import { useEffect, useState } from "react";
 import { HiExclamationTriangle } from "react-icons/hi2";
 import { LuGitBranch, LuLoader } from "react-icons/lu";

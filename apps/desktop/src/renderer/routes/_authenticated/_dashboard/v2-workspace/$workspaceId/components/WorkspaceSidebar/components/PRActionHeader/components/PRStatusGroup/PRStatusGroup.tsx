@@ -4,15 +4,15 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "@superset/ui/hover-card";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
-import { workspaceTrpc } from "@superset/workspace-client";
+} from "@velix/ui/hover-card";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useMemo } from "react";
 import { VscChevronDown, VscGitMerge, VscLoading } from "react-icons/vsc";
 import { PRIcon, type PRState } from "renderer/screens/main/components/PRIcon";

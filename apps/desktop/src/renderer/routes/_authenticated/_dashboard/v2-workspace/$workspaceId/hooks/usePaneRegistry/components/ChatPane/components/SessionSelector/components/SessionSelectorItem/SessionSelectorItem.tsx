@@ -1,6 +1,6 @@
-import { alert } from "@superset/ui/atoms/Alert";
-import { DropdownMenuItem } from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+import { alert } from "@velix/ui/atoms/Alert";
+import { DropdownMenuItem } from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
 import { HiMiniTrash } from "react-icons/hi2";
 
 interface SessionSelectorItemProps {

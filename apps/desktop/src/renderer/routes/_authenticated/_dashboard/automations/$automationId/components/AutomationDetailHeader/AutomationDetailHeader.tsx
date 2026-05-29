@@ -5,9 +5,9 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@superset/ui/breadcrumb";
-import { Button } from "@superset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/breadcrumb";
+import { Button } from "@velix/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { LuClock, LuPause, LuPlay, LuTrash2 } from "react-icons/lu";
 
 interface AutomationDetailHeaderProps {

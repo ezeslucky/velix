@@ -21,14 +21,14 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
 import {
 	WorkspaceClientProvider,
 	workspaceTrpc,
-} from "@superset/workspace-client";
+} from "@velix/workspace-client";
 import { useState } from "react";
 import { HiChevronRight } from "react-icons/hi2";
 import {

@@ -1,9 +1,9 @@
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
-import { Input } from "@superset/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { toast } from "@superset/ui/sonner";
+import { Avatar } from "@velix/ui/atoms/Avatar";
+import { Button } from "@velix/ui/button";
+import { Checkbox } from "@velix/ui/checkbox";
+import { Input } from "@velix/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { toast } from "@velix/ui/sonner";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { HiOutlinePaperAirplane, HiOutlinePlus } from "react-icons/hi2";

@@ -29,9 +29,9 @@ import { join } from "node:path";
 import {
 	isPositiveInteger,
 	signalProcessTreeAndGroups,
-} from "@superset/pty-daemon/process-tree";
+} from "@velix/pty-daemon/process-tree";
 import { app } from "electron";
-import { SUPERSET_DIR_NAME } from "shared/constants";
+import { VELIX_DIR_NAME } from "shared/constants";
 import { throwIfAborted } from "../terminal/abort";
 import { TerminalAttachCanceledError } from "../terminal/errors";
 import {
@@ -74,7 +74,7 @@ enum ConnectionState {
 const DEBUG_CLIENT = process.env.SUPERSET_TERMINAL_DEBUG === "1";
 
 // Get from shared constants for multi-worktree support (imported at top of file)
-const SUPERSET_HOME_DIR = join(homedir(), SUPERSET_DIR_NAME);
+const SUPERSET_HOME_DIR = join(homedir(), VELIX_DIR_NAME);
 
 const SOCKET_PATH = join(SUPERSET_HOME_DIR, "terminal-host.sock");
 const TOKEN_PATH = join(SUPERSET_HOME_DIR, "terminal-host.token");
@@ -183,7 +183,7 @@ export class TerminalHostClient extends EventEmitter {
 		super();
 		if (DEBUG_CLIENT) {
 			console.log("[TerminalHostClient] Initialized with paths:", {
-				SUPERSET_DIR_NAME,
+				VELIX_DIR_NAME,
 				SUPERSET_HOME_DIR,
 				SOCKET_PATH,
 				NODE_ENV: process.env.NODE_ENV,

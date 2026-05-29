@@ -1,11 +1,11 @@
-import { Command, CommandInput } from "@superset/ui/command";
+import { Command, CommandInput } from "@velix/ui/command";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
+} from "@velix/ui/dialog";
 import { ArrowLeftIcon } from "lucide-react";
 import {
 	createContext,

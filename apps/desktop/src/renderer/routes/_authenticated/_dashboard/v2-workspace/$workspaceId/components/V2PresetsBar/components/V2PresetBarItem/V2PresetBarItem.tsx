@@ -1,13 +1,13 @@
-import type { HostAgentConfig } from "@superset/host-service/settings";
-import { Button } from "@superset/ui/button";
+import type { HostAgentConfig } from "@velix/host-service/settings";
+import { Button } from "@velix/ui/button";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/context-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useEffect, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { HiMiniCommandLine } from "react-icons/hi2";

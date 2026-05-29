@@ -1,11 +1,11 @@
-import type { UseChatDisplayReturn } from "@superset/chat/client";
+import type { UseChatDisplayReturn } from "@velix/chat/client";
 import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+} from "@velix/ui/ai-elements/message";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type PendingQuestion = UseChatDisplayReturn["pendingQuestion"];

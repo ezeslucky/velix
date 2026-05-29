@@ -38,12 +38,12 @@ describe("GitHub pull request REST queries", () => {
 						sha: "abc123",
 						repo: {
 							name: "superset",
-							owner: { login: "superset-sh" },
+							owner: { login: "ezeslucky" },
 						},
 					},
 					base: {
 						repo: {
-							full_name: "superset-sh/superset",
+							full_name: "ezeslucky/velix",
 						},
 					},
 				},
@@ -52,8 +52,8 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestByHeadFromGh(
 			execGh,
-			{ owner: "superset-sh", name: "superset" },
-			{ owner: "superset-sh", repo: "superset", branch: "fix/sidebar" },
+			{ owner: "ezeslucky", name: "superset" },
+			{ owner: "ezeslucky", repo: "superset", branch: "fix/sidebar" },
 		);
 
 		expect(result).toEqual({
@@ -65,7 +65,7 @@ describe("GitHub pull request REST queries", () => {
 			headRefName: "fix/sidebar",
 			headRefOid: "abc123",
 			isCrossRepository: false,
-			headRepositoryOwner: { login: "superset-sh" },
+			headRepositoryOwner: { login: "ezeslucky" },
 			headRepository: { name: "superset" },
 			updatedAt: "2026-05-08T12:00:00Z",
 		});
@@ -75,11 +75,11 @@ describe("GitHub pull request REST queries", () => {
 					"api",
 					"--method",
 					"GET",
-					"repos/superset-sh/superset/pulls",
+					"repos/ezeslucky/velix/pulls",
 					"-f",
 					"state=all",
 					"-f",
-					"head=superset-sh:fix/sidebar",
+					"head=ezeslucky:fix/sidebar",
 					"-f",
 					"sort=updated",
 					"-f",
@@ -112,7 +112,7 @@ describe("GitHub pull request REST queries", () => {
 					},
 					base: {
 						repo: {
-							full_name: "superset-sh/superset",
+							full_name: "ezeslucky/velix",
 						},
 					},
 				},
@@ -134,7 +134,7 @@ describe("GitHub pull request REST queries", () => {
 					},
 					base: {
 						repo: {
-							full_name: "superset-sh/superset",
+							full_name: "ezeslucky/velix",
 						},
 					},
 				},
@@ -143,7 +143,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestByHeadFromGh(
 			execGh,
-			{ owner: "superset-sh", name: "superset" },
+			{ owner: "ezeslucky", name: "superset" },
 			{ owner: "fork-owner", repo: "fork-repo", branch: "fix/sidebar" },
 		);
 
@@ -170,7 +170,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestReviewDecisionFromGh(
 			execGh,
-			{ owner: "superset-sh", name: "superset" },
+			{ owner: "ezeslucky", name: "superset" },
 			42,
 			"OPEN",
 		);
@@ -182,7 +182,7 @@ describe("GitHub pull request REST queries", () => {
 					"api",
 					"--method",
 					"GET",
-					"repos/superset-sh/superset/pulls/42/reviews",
+					"repos/ezeslucky/velix/pulls/42/reviews",
 					"-f",
 					"per_page=100",
 				],
@@ -195,7 +195,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestReviewDecisionFromGh(
 			execGh,
-			{ owner: "superset-sh", name: "superset" },
+			{ owner: "ezeslucky", name: "superset" },
 			42,
 			"OPEN",
 		);
@@ -229,7 +229,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestChecksFromGh(
 			execGh,
-			{ owner: "superset-sh", name: "superset" },
+			{ owner: "ezeslucky", name: "superset" },
 			"abc123",
 		);
 
@@ -258,7 +258,7 @@ describe("GitHub pull request REST queries", () => {
 					"api",
 					"--method",
 					"GET",
-					"repos/superset-sh/superset/commits/abc123/check-runs",
+					"repos/ezeslucky/velix/commits/abc123/check-runs",
 					"-f",
 					"per_page=100",
 				],
@@ -268,7 +268,7 @@ describe("GitHub pull request REST queries", () => {
 					"api",
 					"--method",
 					"GET",
-					"repos/superset-sh/superset/commits/abc123/statuses",
+					"repos/ezeslucky/velix/commits/abc123/statuses",
 					"-f",
 					"per_page=100",
 				],

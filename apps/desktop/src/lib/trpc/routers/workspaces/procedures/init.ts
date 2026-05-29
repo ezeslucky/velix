@@ -1,5 +1,5 @@
-import { workspaces, worktrees } from "@superset/local-db";
-import { deduplicateBranchName } from "@superset/shared/workspace-launch";
+import { workspaces, worktrees } from "@velix/local-db";
+import { deduplicateBranchName } from "@velix/shared/workspace-launch";
 import { observable } from "@trpc/server/observable";
 import { eq } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";

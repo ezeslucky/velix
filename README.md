@@ -2,7 +2,7 @@
 
 # Code 10x Faster With No Switching Cost
 
-Superset orchestrates CLI-based coding agents across isolated git worktrees, with built-in terminal, review, and open-in-editor workflows.
+Velix orchestrates CLI-based coding agents across isolated git worktrees, with built-in terminal, review, and open-in-editor workflows.
 
 - **Run multiple agents simultaneously** without context switching overhead
 - **Isolate each task** in its own git worktree so agents don't interfere with each other
@@ -27,7 +27,7 @@ Wait less, ship more.
 
 ## Supported Agents
 
-Superset works with any CLI-based coding agent, including:
+Velix works with any CLI-based coding agent, including:
 
 | Agent | Status |
 |:------|:-------|
@@ -41,7 +41,7 @@ Superset works with any CLI-based coding agent, including:
 | [Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) | Fully supported |
 | Any CLI agent | Will work |
 
-If it runs in a terminal, it runs on Superset
+If it runs in a terminal, it runs on Velix
 
 ## Requirements
 
@@ -57,7 +57,7 @@ If it runs in a terminal, it runs on Superset
 
 ### Quick Start (Pre-built)
 
-**[Download Superset for macOS](https://github.com/ezeslucky/velix/releases/latest)**
+**[Download Velix for macOS](https://github.com/ezeslucky/velix/releases/latest)**
 
 ### Build from Source
 
@@ -115,8 +115,8 @@ open apps/desktop/release
 
 ```json
 {
-  "setup": ["./.superset/setup.sh"],
-  "teardown": ["./.superset/teardown.sh"]
+  "setup": ["./.velix/setup.sh"],
+  "teardown": ["./.velix/teardown.sh"]
 }
 ```
 
@@ -129,7 +129,7 @@ open apps/desktop/release
 
 ```bash
 #!/bin/bash
-# .superset/setup.sh
+# .velix/setup.sh
 
 # Copy environment variables
 cp ../.env .env
@@ -142,8 +142,8 @@ echo "Workspace ready!"
 ```
 
 Scripts have access to environment variables:
-- `SUPERSET_WORKSPACE_NAME` — Name of the workspace
-- `SUPERSET_ROOT_PATH` — Path to the main repository
+- `VELIX_WORKSPACE_NAME` — Name of the workspace
+- `VELIX_ROOT_PATH` — Path to the main repository
 
 ## Mastra Dependencies
 
@@ -171,7 +171,7 @@ This repo uses the published upstream `mastracode` and `@mastra/*` packages dire
 
 ## Contributing
 
-We welcome contributions! If you have a suggestion that would make Superset better:
+We welcome contributions! If you have a suggestion that would make Velix better:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -181,15 +181,9 @@ We welcome contributions! If you have a suggestion that would make Superset bett
 
 You can also [open issues](https://github.com/ezeslucky/velix/issues) for bugs or feature requests.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions and code of conduct.
-
-<a href="https://github.com/ezeslucky/velix/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=superset-sh/superset" />
-</a>
-
 ## Community
 
-Join the Superset community to get help, share feedback, and connect with other users:
+Join the Velix community to get help, share feedback, and connect with other users:
 
 
 - **[Twitter](https://x.com/ezeslucky)** — Follow for updates and announcements

@@ -1,4 +1,4 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@velix/local-db";
 import { create } from "zustand";
 
 export interface SetPreferredOpenInAppTarget {

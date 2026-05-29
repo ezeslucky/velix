@@ -5,10 +5,10 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { Label } from "@velix/ui/label";
+import { toast } from "@velix/ui/sonner";
 import { useMemo, useState } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 

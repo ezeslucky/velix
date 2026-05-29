@@ -1,8 +1,8 @@
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { RefreshCw } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useChangeset } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/useChangeset";

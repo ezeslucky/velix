@@ -8,7 +8,7 @@ import {
 	type RemoteControlErrorCode,
 	type RemoteControlMode,
 	type RemoteControlServerMessage,
-} from "@superset/shared/remote-control-protocol";
+} from "@velix/shared/remote-control-protocol";
 import type { Hono } from "hono";
 import { z } from "zod";
 import {
@@ -26,7 +26,7 @@ import {
 // Runtime validation for inbound WebSocket payloads. Without this, a
 // malformed `runCommand` (no `command` field) or `resize` (string `cols`)
 // would propagate as an uncaught exception out of `onMessage`. Mirrors
-// `RemoteControlClientMessage` in `@superset/shared/remote-control-protocol`.
+// `RemoteControlClientMessage` in `@velix/shared/remote-control-protocol`.
 const clientMessageSchema = z.discriminatedUnion("type", [
 	z.object({ type: z.literal("ping"), nonce: z.string().optional() }),
 	z.object({ type: z.literal("stop") }),

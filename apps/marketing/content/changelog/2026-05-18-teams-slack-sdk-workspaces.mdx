@@ -68,7 +68,7 @@ The `superset` CLI grew real project and workspace commands and a cross-device l
 ```bash
 # install
 curl -fsSL https://superset.sh/cli/install.sh | sh
-# or: brew install superset-sh/tap/superset
+# or: brew install ezeslucky/tap/superset
 # or: it's already bundled with the desktop app at ~/.superset/bin/superset
 
 # sign in (opens a browser, or prints a code for a second device)
@@ -79,14 +79,14 @@ superset projects create
 superset workspaces open
 ```
 
-The accompanying **TypeScript SDK** <PRBadge url="https://github.com/ezeslucky/velix/pull/3937" /> (`@superset_sh/sdk`) mirrors the CLI 1:1 — same procedures, same shapes — so anything you can do from your shell, you can do from a script, a CI job, or an internal tool.
+The accompanying **TypeScript SDK** <PRBadge url="https://github.com/ezeslucky/velix/pull/3937" /> (`@velix_sh/sdk`) mirrors the CLI 1:1 — same procedures, same shapes — so anything you can do from your shell, you can do from a script, a CI job, or an internal tool.
 
 ```bash
-npm install @superset_sh/sdk
+npm install @velix_sh/sdk
 ```
 
 ```ts
-import Superset from '@superset_sh/sdk';
+import Superset from '@velix_sh/sdk';
 const client = new Superset(); // reads SUPERSET_API_KEY / SUPERSET_ORGANIZATION_ID
 await client.automations.run('<automation-id>');
 ```
@@ -97,10 +97,10 @@ Linux `superset start` and `superset update` are now fixed <PRBadge url="https:/
 
 ![Superset Slack bot spinning up a workspace and reporting back in-thread](/changelog/slack.png)
 
-`@superset` in Slack is now an actual agent, not a task-filer. Mention it in a channel or DM it from anywhere, and it can:
+`@velix` in Slack is now an actual agent, not a task-filer. Mention it in a channel or DM it from anywhere, and it can:
 
 - **Create, update, search, and triage tasks** from the conversation it's standing in — pulling assignees, statuses, and priorities from your team's Linear/Superset setup.
-- **Spin up a cloud workspace and launch a coding agent** to actually do the work. For code-change requests (e.g. "@superset bump our Sentry SDK to v9 across all apps"), it now defaults to spawning a workspace and agent rather than just filing a ticket <PRBadge url="https://github.com/ezeslucky/velix/pull/4660" />.
+- **Spin up a cloud workspace and launch a coding agent** to actually do the work. For code-change requests (e.g. "@velix bump our Sentry SDK to v9 across all apps"), it now defaults to spawning a workspace and agent rather than just filing a ticket <PRBadge url="https://github.com/ezeslucky/velix/pull/4660" />.
 - **Read the thread or channel history** on its own to gather context — no need to copy-paste the prior messages.
 - **Search the web with citations** when a request needs up-to-date info.
 - **Unfurl Superset task and workspace links** with rich previews when they're shared in a channel.
@@ -109,7 +109,7 @@ Linux `superset start` and `superset update` are now fixed <PRBadge url="https:/
 
 1. In the dashboard, go to **Integrations → Slack**.
 2. Click **Connect** to install the Superset Slack app into your workspace (OAuth).
-3. Mention `@superset` in any channel, or open a DM with the bot, and describe what you want done.
+3. Mention `@velix` in any channel, or open a DM with the bot, and describe what you want done.
 
 If Slack was already connected before this release, no action needed — proactive workspace creation is on by default.
 

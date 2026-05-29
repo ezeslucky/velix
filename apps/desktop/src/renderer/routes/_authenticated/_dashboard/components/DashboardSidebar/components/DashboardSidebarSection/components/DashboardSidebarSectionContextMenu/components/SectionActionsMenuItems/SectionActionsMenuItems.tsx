@@ -4,14 +4,14 @@ import {
 	ContextMenuSub,
 	ContextMenuSubContent,
 	ContextMenuSubTrigger,
-} from "@superset/ui/context-menu";
+} from "@velix/ui/context-menu";
 import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import { HiCheck } from "react-icons/hi2";
 import { LuPalette, LuPencil, LuTrash2 } from "react-icons/lu";
 import {

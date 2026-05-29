@@ -1,10 +1,10 @@
-import type { SelectTaskStatus } from "@superset/db/schema";
+import type { SelectTaskStatus } from "@velix/db/schema";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import { useMemo, useState } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import {

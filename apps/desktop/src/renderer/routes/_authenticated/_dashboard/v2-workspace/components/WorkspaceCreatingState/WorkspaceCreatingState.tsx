@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@velix/ui/button";
+import { cn } from "@velix/ui/utils";
 import { Check, GitBranch, Loader2, RotateCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import "./WorkspaceCreatingState.css";

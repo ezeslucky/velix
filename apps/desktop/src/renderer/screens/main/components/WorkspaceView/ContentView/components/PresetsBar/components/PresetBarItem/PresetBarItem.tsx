@@ -1,13 +1,13 @@
-import type { TerminalPreset } from "@superset/local-db";
-import { Button } from "@superset/ui/button";
+import type { TerminalPreset } from "@velix/local-db";
+import { Button } from "@velix/ui/button";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/context-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useEffect, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { HiMiniCommandLine } from "react-icons/hi2";

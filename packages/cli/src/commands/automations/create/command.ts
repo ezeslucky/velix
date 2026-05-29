@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { string } from "@superset/cli-framework";
+import { string } from "@velix/cli-framework";
 import { command } from "../../../lib/command";
 import { formatAutomationDate } from "../format";
 

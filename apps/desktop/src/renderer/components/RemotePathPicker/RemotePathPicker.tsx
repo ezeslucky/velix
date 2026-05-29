@@ -6,8 +6,8 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@superset/ui/breadcrumb";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/breadcrumb";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -15,11 +15,11 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { ScrollArea } from "@superset/ui/scroll-area";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/dialog";
+import { ScrollArea } from "@velix/ui/scroll-area";
+import { Skeleton } from "@velix/ui/skeleton";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment, useEffect, useState } from "react";
 import {

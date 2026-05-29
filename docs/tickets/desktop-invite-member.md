@@ -104,8 +104,8 @@ export const invitationRateLimit = new Ratelimit({
 ### 4. `apps/desktop/src/renderer/routes/_authenticated/settings/team/types.ts`
 
 ```typescript
-import type { SelectInvitation, SelectMember, SelectUser } from "@superset/db/schema/auth";
-import type { OrganizationRole } from "@superset/shared/auth";
+import type { SelectInvitation, SelectMember, SelectUser } from "@velix/db/schema/auth";
+import type { OrganizationRole } from "@velix/shared/auth";
 
 export type TeamMember = SelectUser &
   SelectMember & {
@@ -123,14 +123,14 @@ export type InvitationRow = SelectInvitation & {
 Replace entire file:
 
 ```typescript
-import { canInvite, getInvitableRoles, ORGANIZATION_ROLES, type OrganizationRole } from "@superset/shared/auth";
-import { Button } from "@superset/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@superset/ui/select";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { canInvite, getInvitableRoles, ORGANIZATION_ROLES, type OrganizationRole } from "@velix/shared/auth";
+import { Button } from "@velix/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@velix/ui/dialog";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@velix/ui/select";
+import { toast } from "@velix/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useState } from "react";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { authClient } from "renderer/lib/auth-client";
@@ -263,11 +263,11 @@ export * from "./InviteMemberButton";
 ### 7. `apps/desktop/src/renderer/routes/_authenticated/settings/team/components/InvitationActions/InvitationActions.tsx`
 
 ```typescript
-import type { SelectInvitation } from "@superset/db/schema";
-import type { OrganizationRole } from "@superset/shared/auth";
-import { Button } from "@superset/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+import type { SelectInvitation } from "@velix/db/schema";
+import type { OrganizationRole } from "@velix/shared/auth";
+import { Button } from "@velix/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
 import { useState } from "react";
 import { HiEllipsisVertical, HiOutlineEnvelope, HiOutlineXMark } from "react-icons/hi2";
 import { authClient } from "renderer/lib/auth-client";
@@ -351,10 +351,10 @@ import {
 	canRemoveMember,
 	getRoleSortPriority,
 	type OrganizationRole,
-} from "@superset/shared/auth";
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Badge } from "@superset/ui/badge";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@velix/shared/auth";
+import { Avatar } from "@velix/ui/atoms/Avatar";
+import { Badge } from "@velix/ui/badge";
+import { Skeleton } from "@velix/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -362,7 +362,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@velix/ui/table";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -715,9 +715,9 @@ describe("canInvite", () => {
 
 Add imports at top:
 ```typescript
-import { OrganizationInvitationEmail } from "@superset/email/emails/organization-invitation";
-import { resend } from "@superset/email/lib/resend";
-import { canInvite, type OrganizationRole } from "@superset/shared/auth";
+import { OrganizationInvitationEmail } from "@velix/email/emails/organization-invitation";
+import { resend } from "@velix/email/lib/resend";
+import { canInvite, type OrganizationRole } from "@velix/shared/auth";
 import { and } from "drizzle-orm";
 import { invitationRateLimit } from "./lib/rate-limit";
 ```
@@ -732,7 +732,7 @@ plugins: [
       const inviteLink = `${env.NEXT_PUBLIC_WEB_URL}/accept-invitation/${data.id}`;
 
       await resend.emails.send({
-        from: "Superset <noreply@superset.sh>",
+        from: "Superset <noreply@velix.sh>",
         to: data.email,
         subject: `${data.inviter.user.name} invited you to join ${data.organization.name}`,
         react: OrganizationInvitationEmail({
@@ -784,7 +784,7 @@ import type {
   SelectTaskStatus,
   SelectUser,
   SelectInvitation,
-} from "@superset/db/schema";
+} from "@velix/db/schema";
 ```
 
 Update `OrgCollections` interface (around line 22):
@@ -843,7 +843,7 @@ Add to dependencies:
 Add to dependencies:
 ```json
 "dependencies": {
-  "@superset/email": "workspace:*",
+  "@velix/email": "workspace:*",
   "@upstash/ratelimit": "^2.0.4",
   "@upstash/redis": "^1.34.3"
 }
@@ -868,7 +868,7 @@ bun install
 
 2. Set up Resend API key in `.env`:
    - Get API key from https://resend.com
-   - Verify sender domain `noreply@superset.sh`
+   - Verify sender domain `noreply@velix.sh`
 
 ## Acceptance Tests
 

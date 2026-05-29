@@ -1,5 +1,5 @@
-import type { workspaceTrpc } from "@superset/workspace-client";
-import type { FsWatchEvent } from "@superset/workspace-fs/client";
+import type { workspaceTrpc } from "@velix/workspace-client";
+import type { FsWatchEvent } from "@velix/workspace-fs/client";
 import { isImageFile } from "shared/file-types";
 import type {
 	ConflictResolution,

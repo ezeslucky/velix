@@ -8,12 +8,12 @@ import {
 	ContextMenuSubContent,
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
+} from "@velix/ui/context-menu";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "@superset/ui/hover-card";
+} from "@velix/ui/hover-card";
 import { useMemo, useRef, useState } from "react";
 import {
 	LuArrowRightLeft,

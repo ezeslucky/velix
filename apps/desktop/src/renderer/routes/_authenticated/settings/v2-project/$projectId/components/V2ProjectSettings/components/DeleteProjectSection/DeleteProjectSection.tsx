@@ -8,9 +8,9 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";

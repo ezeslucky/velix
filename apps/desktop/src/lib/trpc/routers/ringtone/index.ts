@@ -163,9 +163,7 @@ export const createRingtoneRouter = (getWindow: () => BrowserWindow | null) => {
 			return getCustomRingtoneInfo();
 		}),
 
-		/**
-		 * Imports a custom ringtone file from disk and stores it in the Superset home assets directory.
-		 */
+		
 		importCustom: publicProcedure.mutation(async () => {
 			const window = getWindow();
 			const openDialogOptions: OpenDialogOptions = {

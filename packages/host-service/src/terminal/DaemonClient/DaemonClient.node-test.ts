@@ -6,8 +6,8 @@ import { strict as assert } from "node:assert";
 import * as os from "node:os";
 import * as path from "node:path";
 import { after, before, test } from "node:test";
-import { Server } from "@superset/pty-daemon";
-import { CURRENT_PROTOCOL_VERSION } from "@superset/pty-daemon/protocol";
+import { Server } from "@velix/pty-daemon";
+import { CURRENT_PROTOCOL_VERSION } from "@velix/pty-daemon/protocol";
 import { DaemonClient } from "./DaemonClient.ts";
 
 const sockPath = path.join(

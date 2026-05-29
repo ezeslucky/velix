@@ -3,10 +3,10 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { useMatchRoute, useNavigate } from "@tanstack/react-router";
 import { HiMiniPlus, HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import {

@@ -1,4 +1,4 @@
-import { sanitizeUserBranchName } from "@superset/shared/workspace-launch";
+import { sanitizeUserBranchName } from "@velix/shared/workspace-launch";
 import {
 	PromptInput,
 	PromptInputButton,
@@ -7,12 +7,12 @@ import {
 	PromptInputTextarea,
 	PromptInputTools,
 	useProviderAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { isEnterSubmit } from "@superset/ui/lib/keyboard";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/ai-elements/prompt-input";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { isEnterSubmit } from "@velix/ui/lib/keyboard";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpIcon } from "lucide-react";

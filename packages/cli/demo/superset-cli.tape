@@ -136,7 +136,7 @@ Type "# ...or in Claude Code:"
 Sleep 400ms
 Enter
 Sleep 250ms
-Type "#   /plugin install superset@superset"
+Type "#   /plugin install superset@velix"
 Sleep 1.4s
 Enter
 Sleep 700ms

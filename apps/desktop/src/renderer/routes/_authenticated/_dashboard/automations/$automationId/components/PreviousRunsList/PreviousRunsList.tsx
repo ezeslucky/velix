@@ -1,6 +1,6 @@
-import type { SelectAutomationRun } from "@superset/db/schema";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import type { SelectAutomationRun } from "@velix/db/schema";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { formatDistanceStrict } from "date-fns";
 import { useNow } from "renderer/hooks/useNow";

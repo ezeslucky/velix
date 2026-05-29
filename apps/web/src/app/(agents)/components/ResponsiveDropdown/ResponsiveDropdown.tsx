@@ -1,13 +1,13 @@
 "use client";
 
-import { Drawer, DrawerContent, DrawerTitle } from "@superset/ui/drawer";
+import { Drawer, DrawerContent, DrawerTitle } from "@velix/ui/drawer";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { useIsMobile } from "@superset/ui/hooks/use-mobile";
+} from "@velix/ui/dropdown-menu";
+import { useIsMobile } from "@velix/ui/hooks/use-mobile";
 import {
 	cloneElement,
 	isValidElement,

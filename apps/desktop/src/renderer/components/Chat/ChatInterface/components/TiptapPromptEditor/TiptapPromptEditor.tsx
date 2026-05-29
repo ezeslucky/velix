@@ -1,7 +1,7 @@
 import {
 	usePromptInputAttachments,
 	usePromptInputController,
-} from "@superset/ui/ai-elements/prompt-input";
+} from "@velix/ui/ai-elements/prompt-input";
 import {
 	Command,
 	CommandEmpty,
@@ -9,9 +9,9 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverAnchor, PopoverContent } from "@superset/ui/popover";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/command";
+import { Popover, PopoverAnchor, PopoverContent } from "@velix/ui/popover";
+import { cn } from "@velix/ui/utils";
 import { type Editor, Extension } from "@tiptap/core";
 import { Document } from "@tiptap/extension-document";
 import { HardBreak } from "@tiptap/extension-hard-break";

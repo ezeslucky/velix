@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { GitHubStatus, PullRequestComment } from "@superset/local-db";
+import type { GitHubStatus, PullRequestComment } from "@velix/local-db";
 import {
 	clearGitHubCachesForWorktree,
 	getCachedGitHubStatus,
@@ -43,12 +43,12 @@ describe("clearGitHubCachesForWorktree", () => {
 
 		const commentsCacheKey = makePullRequestCommentsCacheKey({
 			worktreePath,
-			repoNameWithOwner: "superset-sh/superset",
+			repoNameWithOwner: "ezeslucky/velix",
 			pullRequestNumber: 2681,
 		});
 		const otherCommentsCacheKey = makePullRequestCommentsCacheKey({
 			worktreePath: otherWorktreePath,
-			repoNameWithOwner: "superset-sh/superset",
+			repoNameWithOwner: "ezeslucky/velix",
 			pullRequestNumber: 2682,
 		});
 

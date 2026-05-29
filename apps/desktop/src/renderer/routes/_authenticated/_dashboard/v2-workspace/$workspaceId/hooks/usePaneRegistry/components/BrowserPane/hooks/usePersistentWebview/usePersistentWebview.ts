@@ -1,4 +1,4 @@
-import type { RendererContext } from "@superset/panes";
+import type { RendererContext } from "@velix/panes";
 import { useCallback, useEffect, useRef } from "react";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import type {

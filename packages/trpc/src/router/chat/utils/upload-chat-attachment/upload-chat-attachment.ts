@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { chatAttachments } from "@superset/db/schema";
+import { db } from "@velix/db/client";
+import { chatAttachments } from "@velix/db/schema";
 import { TRPCError } from "@trpc/server";
 import { del, put } from "@vercel/blob";
 

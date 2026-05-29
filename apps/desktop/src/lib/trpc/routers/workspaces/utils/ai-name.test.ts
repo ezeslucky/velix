@@ -23,11 +23,11 @@ type SelectedWorkspace =
 	  }
 	| null;
 
-mock.module("@superset/chat/server/shared", () => ({
+mock.module("@velix/chat/server/shared", () => ({
 	getSmallModel: getSmallModelMock,
 }));
 
-mock.module("@superset/chat/server/desktop", () => ({
+mock.module("@velix/chat/server/desktop", () => ({
 	generateTitleFromMessage: generateTitleFromMessageMock,
 }));
 
@@ -60,7 +60,7 @@ mock.module("main/lib/local-db", () => ({
 	localDb: localDbMock,
 }));
 
-mock.module("@superset/local-db", () => ({
+mock.module("@velix/local-db", () => ({
 	workspaces: {
 		id: "id",
 		branch: "branch",

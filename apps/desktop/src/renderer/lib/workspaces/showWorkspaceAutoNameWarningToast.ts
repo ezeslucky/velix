@@ -1,4 +1,4 @@
-import { toast } from "@superset/ui/sonner";
+import { toast } from "@velix/ui/sonner";
 
 export function showWorkspaceAutoNameWarningToast({
 	description,

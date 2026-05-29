@@ -4,7 +4,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@velix/ui/select";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";

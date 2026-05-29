@@ -1,5 +1,5 @@
-import { Badge } from "@superset/ui/badge";
-import { cn } from "@superset/ui/utils";
+import { Badge } from "@velix/ui/badge";
+import { cn } from "@velix/ui/utils";
 import type { ComponentType } from "react";
 import type { ProFeature } from "../../constants";
 import { PRO_FEATURES } from "../../constants";

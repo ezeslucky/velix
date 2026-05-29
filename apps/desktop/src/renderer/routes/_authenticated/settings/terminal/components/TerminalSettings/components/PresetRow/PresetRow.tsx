@@ -1,7 +1,7 @@
-import type { HostAgentConfig } from "@superset/host-service/settings";
-import { normalizeExecutionMode } from "@superset/local-db";
-import { Badge } from "@superset/ui/badge";
-import { cn } from "@superset/ui/utils";
+import type { HostAgentConfig } from "@velix/host-service/settings";
+import { normalizeExecutionMode } from "@velix/local-db";
+import { Badge } from "@velix/ui/badge";
+import { cn } from "@velix/ui/utils";
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";

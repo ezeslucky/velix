@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import { Fragment, type ReactNode, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 

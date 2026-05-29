@@ -1,4 +1,4 @@
-import { Kbd, KbdGroup } from "@superset/ui/kbd";
+import { Kbd, KbdGroup } from "@velix/ui/kbd";
 import { useCallback } from "react";
 import { LuSearch } from "react-icons/lu";
 import { getDispatchChord, useHotkeyDisplay } from "renderer/hotkeys";

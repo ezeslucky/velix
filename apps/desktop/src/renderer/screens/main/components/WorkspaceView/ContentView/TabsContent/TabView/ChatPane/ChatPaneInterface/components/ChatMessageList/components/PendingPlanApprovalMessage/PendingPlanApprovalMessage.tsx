@@ -1,12 +1,12 @@
-import type { UseChatDisplayReturn } from "@superset/chat/client";
+import type { UseChatDisplayReturn } from "@velix/chat/client";
 import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
-import { Button } from "@superset/ui/button";
-import { Switch } from "@superset/ui/switch";
-import { Textarea } from "@superset/ui/textarea";
+} from "@velix/ui/ai-elements/message";
+import { Button } from "@velix/ui/button";
+import { Switch } from "@velix/ui/switch";
+import { Textarea } from "@velix/ui/textarea";
 import { useEffect, useId, useRef, useState } from "react";
 
 type PendingPlanApproval = UseChatDisplayReturn["pendingPlanApproval"];

@@ -1,8 +1,8 @@
 "use client";
 
-import { authClient } from "@superset/auth/client";
-import type { RouterOutputs } from "@superset/trpc";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
+import { authClient } from "@velix/auth/client";
+import type { RouterOutputs } from "@velix/trpc";
+import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -11,13 +11,13 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	useSidebar,
-} from "@superset/ui/sidebar";
+} from "@velix/ui/sidebar";
 import {
 	LuBadgeCheck,
 	LuBell,

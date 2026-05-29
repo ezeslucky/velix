@@ -1,17 +1,17 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@velix/local-db";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
+} from "@velix/ui/collapsible";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/context-menu";
+import { cn } from "@velix/ui/utils";
 import { type ReactNode, useState } from "react";
 import {
 	VscAdd,

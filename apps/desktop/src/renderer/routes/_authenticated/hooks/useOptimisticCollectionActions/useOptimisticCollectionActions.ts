@@ -1,5 +1,5 @@
-import type { TaskPriority, V2UsersHostRole } from "@superset/db/enums";
-import { toast } from "@superset/ui/sonner";
+import type { TaskPriority, V2UsersHostRole } from "@velix/db/enums";
+import { toast } from "@velix/ui/sonner";
 import { useCallback, useMemo } from "react";
 import { isDesktopChatDevMode } from "renderer/lib/dev-chat";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

@@ -1,4 +1,4 @@
-import { sanitizeSegment } from "@superset/shared/workspace-launch";
+import { sanitizeSegment } from "@velix/shared/workspace-launch";
 
 export function deriveBranchName({
 	slug,

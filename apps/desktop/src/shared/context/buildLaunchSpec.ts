@@ -1,5 +1,5 @@
-import { renderPromptTemplate } from "@superset/shared/agent-prompt-template";
-import type { ResolvedAgentConfig } from "@superset/shared/agent-settings";
+import { renderPromptTemplate } from "@velix/shared/agent-prompt-template";
+import type { ResolvedAgentConfig } from "@velix/shared/agent-settings";
 import type {
 	AgentLaunchSpec,
 	ContentPart,

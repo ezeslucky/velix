@@ -2,8 +2,8 @@ import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "@superset/ui/hover-card";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/hover-card";
+import { cn } from "@velix/ui/utils";
 import type { ReactNode } from "react";
 
 interface ImageHoverPreviewProps {

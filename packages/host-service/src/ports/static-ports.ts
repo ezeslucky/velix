@@ -1,8 +1,8 @@
 import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { parseStaticPortsConfig } from "@superset/port-scanner";
+import { parseStaticPortsConfig } from "@velix/port-scanner";
 
-const PROJECT_SUPERSET_DIR_NAME = ".superset";
+const PROJECT_VELIX_DIR_NAME = ".superset";
 const PORTS_FILE_NAME = "ports.json";
 
 interface LabelCacheEntry {
@@ -12,7 +12,7 @@ interface LabelCacheEntry {
 }
 
 function getPortsPath(worktreePath: string): string {
-	return join(worktreePath, PROJECT_SUPERSET_DIR_NAME, PORTS_FILE_NAME);
+	return join(worktreePath, PROJECT_VELIX_DIR_NAME, PORTS_FILE_NAME);
 }
 
 function isMissingPathError(error: unknown): boolean {

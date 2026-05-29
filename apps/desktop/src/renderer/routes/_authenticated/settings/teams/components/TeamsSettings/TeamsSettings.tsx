@@ -1,4 +1,4 @@
-import { Skeleton } from "@superset/ui/skeleton";
+import { Skeleton } from "@velix/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -6,7 +6,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@velix/ui/table";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "renderer/lib/auth-client";

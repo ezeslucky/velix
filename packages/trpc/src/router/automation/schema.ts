@@ -1,4 +1,4 @@
-import { automationSessionKindValues } from "@superset/db/schema";
+import { automationSessionKindValues } from "@velix/db/schema";
 import { z } from "zod";
 
 const agentSchema = z.string().min(1).max(200);

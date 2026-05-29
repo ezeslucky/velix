@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { teams } from "@superset/db/schema";
+import { db } from "@velix/db/client";
+import { teams } from "@velix/db/schema";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";

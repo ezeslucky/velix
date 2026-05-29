@@ -1,13 +1,13 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { InputGroup, InputGroupInput } from "@superset/ui/input-group";
-import { Label } from "@superset/ui/label";
+} from "@velix/ui/dialog";
+import { InputGroup, InputGroupInput } from "@velix/ui/input-group";
+import { Label } from "@velix/ui/label";
 
 interface AnthropicApiKeyDialogProps {
 	open: boolean;

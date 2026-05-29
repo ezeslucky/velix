@@ -1,6 +1,6 @@
-import type { AutomationPromptSource } from "@superset/db/schema";
-import { Badge } from "@superset/ui/badge";
-import { cn } from "@superset/ui/utils";
+import type { AutomationPromptSource } from "@velix/db/schema";
+import { Badge } from "@velix/ui/badge";
+import { cn } from "@velix/ui/utils";
 import { format, isSameYear } from "date-fns";
 
 interface VersionRowProps {

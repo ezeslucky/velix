@@ -1,7 +1,7 @@
-import type { ResolvedAgentConfig } from "@superset/shared/agent-settings";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Textarea } from "@superset/ui/textarea";
+import type { ResolvedAgentConfig } from "@velix/shared/agent-settings";
+import { Input } from "@velix/ui/input";
+import { Label } from "@velix/ui/label";
+import { Textarea } from "@velix/ui/textarea";
 import type { AgentEditableField } from "../../agent-card.types";
 
 interface AgentCardFieldsProps {

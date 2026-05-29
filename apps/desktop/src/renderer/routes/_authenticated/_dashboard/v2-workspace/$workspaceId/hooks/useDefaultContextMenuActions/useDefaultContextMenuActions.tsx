@@ -3,7 +3,7 @@ import {
 	type PaneRegistry,
 	type RendererContext,
 	resolveTabTitle,
-} from "@superset/panes";
+} from "@velix/panes";
 import { useMemo } from "react";
 import {
 	LuColumns2,

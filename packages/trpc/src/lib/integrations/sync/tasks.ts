@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { integrationConnections, tasks } from "@superset/db/schema";
+import { db } from "@velix/db/client";
+import { integrationConnections, tasks } from "@velix/db/schema";
 import { Client } from "@upstash/qstash";
 import { eq } from "drizzle-orm";
 import { env } from "../../../env";

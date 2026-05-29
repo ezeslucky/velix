@@ -2,9 +2,9 @@ import type {
 	SelectTask,
 	SelectTaskStatus,
 	SelectUser,
-} from "@superset/db/schema";
-import { Badge } from "@superset/ui/badge";
-import { Checkbox } from "@superset/ui/checkbox";
+} from "@velix/db/schema";
+import { Badge } from "@velix/ui/badge";
+import { Checkbox } from "@velix/ui/checkbox";
 import { eq, isNull } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import {

@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@velix/ui/button";
+import { cn } from "@velix/ui/utils";
 import type { ComponentProps } from "react";
 
 type Variant = "primary" | "secondary" | "link";

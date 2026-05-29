@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Spinner } from "@superset/ui/spinner";
+import { Button } from "@velix/ui/button";
+import { Spinner } from "@velix/ui/spinner";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { LuLayoutGrid } from "react-icons/lu";

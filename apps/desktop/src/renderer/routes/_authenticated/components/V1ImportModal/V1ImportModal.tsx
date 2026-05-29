@@ -1,10 +1,10 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogTitle,
-} from "@superset/ui/dialog";
+} from "@velix/ui/dialog";
 import { env } from "renderer/env.renderer";
 import { authClient } from "renderer/lib/auth-client";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";

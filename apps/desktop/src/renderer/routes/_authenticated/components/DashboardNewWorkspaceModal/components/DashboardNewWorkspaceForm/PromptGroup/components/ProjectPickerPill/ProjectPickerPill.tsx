@@ -6,10 +6,10 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { toast } from "@velix/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { HiCheck, HiChevronUpDown, HiMiniPlus } from "react-icons/hi2";

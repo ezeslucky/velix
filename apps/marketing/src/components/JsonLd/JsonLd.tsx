@@ -1,4 +1,4 @@
-import { COMPANY } from "@superset/shared/constants";
+import { COMPANY } from "@velix/shared/constants";
 
 function serializeJsonLd(schema: unknown): string {
 	const json = JSON.stringify(schema);

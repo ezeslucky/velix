@@ -1,12 +1,12 @@
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
+import { alert } from "@velix/ui/atoms/Alert";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogClose,
 	DialogContent,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dialog";
+import { toast } from "@velix/ui/sonner";
 import {
 	keepPreviousData,
 	useMutation,

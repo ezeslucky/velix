@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import { mergeAttributes, Node } from "@tiptap/core";
 import {
 	type NodeViewProps,

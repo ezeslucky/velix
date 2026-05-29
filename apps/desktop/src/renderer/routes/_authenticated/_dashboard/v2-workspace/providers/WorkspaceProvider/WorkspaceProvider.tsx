@@ -1,5 +1,5 @@
-import type { SelectV2Workspace } from "@superset/db/schema";
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
+import type { SelectV2Workspace } from "@velix/db/schema";
+import { buildHostRoutingKey } from "@velix/shared/host-routing";
 import { createContext, type ReactNode, useContext } from "react";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
 import {

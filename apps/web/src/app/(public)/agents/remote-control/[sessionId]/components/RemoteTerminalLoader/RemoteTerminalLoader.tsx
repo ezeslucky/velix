@@ -1,6 +1,6 @@
 "use client";
 
-import { REMOTE_CONTROL_TOKEN_PARAM } from "@superset/shared/remote-control-protocol";
+import { REMOTE_CONTROL_TOKEN_PARAM } from "@velix/shared/remote-control-protocol";
 import { useEffect, useState } from "react";
 import { RemoteTerminal } from "../RemoteTerminal";
 

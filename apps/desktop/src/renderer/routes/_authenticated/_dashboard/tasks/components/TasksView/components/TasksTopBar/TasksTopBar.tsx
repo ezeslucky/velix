@@ -1,7 +1,7 @@
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@superset/ui/tabs";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@velix/ui/tabs";
+import { cn } from "@velix/ui/utils";
 import { useRef, useState } from "react";
 import { GoGitPullRequest, GoIssueOpened } from "react-icons/go";
 import {

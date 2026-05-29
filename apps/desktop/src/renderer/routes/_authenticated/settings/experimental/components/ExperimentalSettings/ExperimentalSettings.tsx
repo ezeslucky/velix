@@ -8,10 +8,10 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Label } from "@superset/ui/label";
-import { Switch } from "@superset/ui/switch";
+} from "@velix/ui/alert-dialog";
+import { Button } from "@velix/ui/button";
+import { Label } from "@velix/ui/label";
+import { Switch } from "@velix/ui/switch";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	useIsV2CloudEnabled,

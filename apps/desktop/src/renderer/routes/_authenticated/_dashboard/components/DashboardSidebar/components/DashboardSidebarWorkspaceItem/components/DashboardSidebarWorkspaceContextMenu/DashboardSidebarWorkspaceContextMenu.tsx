@@ -8,7 +8,7 @@ import {
 	ContextMenuSubContent,
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
+} from "@velix/ui/context-menu";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import {

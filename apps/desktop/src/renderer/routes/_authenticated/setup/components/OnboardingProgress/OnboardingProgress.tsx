@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { HiArrowLeft } from "react-icons/hi2";
 import { LuCheck } from "react-icons/lu";

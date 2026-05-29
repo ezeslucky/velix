@@ -25,7 +25,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
 				header: <div className="w-10 h-4"></div>,
 			}}
 			editOnGithub={{
-				owner: "superset-sh",
+				owner: "ezeslucky",
 				repo: "superset",
 				path: `apps/docs/content/docs/${page.path}`,
 			}}

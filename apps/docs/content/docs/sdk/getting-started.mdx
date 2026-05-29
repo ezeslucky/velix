@@ -4,7 +4,7 @@ description: Drive Superset programmatically from any TypeScript or JavaScript c
 ---
 
 <Callout type="warn">
-The SDK is in early alpha — it is not meant for production use and may be removed in the future. Stay on the latest version (`@superset_sh/sdk@latest`) while we iterate.
+The SDK is in early alpha — it is not meant for production use and may be removed in the future. Stay on the latest version (`@velix_sh/sdk@latest`) while we iterate.
 </Callout>
 
 The Superset TypeScript SDK lets you create and manage your workspaces, tasks, projects, and automations from code — anything you can do in the dashboard, your scripts and services can do too.
@@ -23,22 +23,22 @@ Everything is fully typed and works in Node, Bun, and Deno. The bundle also runs
 <Tabs items={["npm", "pnpm", "yarn", "bun"]}>
 <Tab value="npm">
 ```bash
-npm install @superset_sh/sdk
+npm install @velix_sh/sdk
 ```
 </Tab>
 <Tab value="pnpm">
 ```bash
-pnpm add @superset_sh/sdk
+pnpm add @velix_sh/sdk
 ```
 </Tab>
 <Tab value="yarn">
 ```bash
-yarn add @superset_sh/sdk
+yarn add @velix_sh/sdk
 ```
 </Tab>
 <Tab value="bun">
 ```bash
-bun add @superset_sh/sdk
+bun add @velix_sh/sdk
 ```
 </Tab>
 </Tabs>
@@ -58,7 +58,7 @@ export SUPERSET_ORGANIZATION_ID=…
 ## Create the client
 
 ```ts
-import Superset from '@superset_sh/sdk';
+import Superset from '@velix_sh/sdk';
 
 const client = new Superset();
 // reads SUPERSET_API_KEY and SUPERSET_ORGANIZATION_ID from env
@@ -126,7 +126,7 @@ The client retries automatically on network errors and 429/5xx responses, so tra
 The SDK throws typed errors for any non-success response, so you can catch what you actually care about:
 
 ```ts
-import Superset, { APIError, NotFoundError, RateLimitError } from '@superset_sh/sdk';
+import Superset, { APIError, NotFoundError, RateLimitError } from '@velix_sh/sdk';
 
 const client = new Superset();
 

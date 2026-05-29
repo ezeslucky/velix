@@ -2,7 +2,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { type ReactNode, useCallback, useRef, useState } from "react";
 

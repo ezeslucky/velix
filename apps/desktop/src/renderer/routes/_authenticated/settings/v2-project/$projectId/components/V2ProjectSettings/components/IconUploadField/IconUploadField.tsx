@@ -4,8 +4,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dropdown-menu";
+import { toast } from "@velix/ui/sonner";
 import { useCallback, useRef, useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { LuImagePlus, LuTrash2, LuUpload } from "react-icons/lu";

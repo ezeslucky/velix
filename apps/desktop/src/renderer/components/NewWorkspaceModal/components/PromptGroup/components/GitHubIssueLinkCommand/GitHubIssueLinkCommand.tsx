@@ -1,4 +1,4 @@
-import { Checkbox } from "@superset/ui/checkbox";
+import { Checkbox } from "@velix/ui/checkbox";
 import {
 	Command,
 	CommandEmpty,
@@ -6,8 +6,8 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverAnchor, PopoverContent } from "@superset/ui/popover";
+} from "@velix/ui/command";
+import { Popover, PopoverAnchor, PopoverContent } from "@velix/ui/popover";
 import Fuse from "fuse.js";
 import type React from "react";
 import type { RefObject } from "react";

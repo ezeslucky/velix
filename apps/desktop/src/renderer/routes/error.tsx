@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";

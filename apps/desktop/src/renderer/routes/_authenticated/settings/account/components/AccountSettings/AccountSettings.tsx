@@ -1,7 +1,7 @@
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { toast } from "@superset/ui/sonner";
+import { Avatar } from "@velix/ui/atoms/Avatar";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { toast } from "@velix/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useState } from "react";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";

@@ -1,6 +1,6 @@
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { Button } from "@velix/ui/button";
+import { Input } from "@velix/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	LuChevronsDownUp,

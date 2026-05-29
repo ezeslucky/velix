@@ -1,5 +1,5 @@
-import { cn } from "@superset/ui/lib/utils";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { cn } from "@velix/ui/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { ArrowUpIcon, Loader2Icon, PencilIcon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 

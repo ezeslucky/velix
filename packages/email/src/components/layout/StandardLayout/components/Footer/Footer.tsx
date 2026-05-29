@@ -53,7 +53,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 						/>
 					</Link>
 					<Link
-						href="https://www.linkedin.com/company/superset-sh"
+						href="https://www.linkedin.com/company/ezeslucky"
 						className="inline-block"
 					>
 						<Img

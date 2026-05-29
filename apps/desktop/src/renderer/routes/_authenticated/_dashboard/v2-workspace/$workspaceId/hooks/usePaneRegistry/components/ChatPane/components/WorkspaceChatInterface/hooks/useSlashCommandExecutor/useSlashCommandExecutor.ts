@@ -1,5 +1,5 @@
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { toast } from "@velix/ui/sonner";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useCallback } from "react";
 import type {
 	McpOverviewPayload,

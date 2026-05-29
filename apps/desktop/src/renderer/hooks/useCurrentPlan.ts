@@ -1,7 +1,7 @@
 import {
 	isActiveSubscriptionStatus,
 	type PlanTier,
-} from "@superset/shared/billing";
+} from "@velix/shared/billing";
 import { useLiveQuery } from "@tanstack/react-db";
 import { authClient } from "renderer/lib/auth-client";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useCallback, useRef, useState } from "react";
 
 interface ShadowClickHintProps {

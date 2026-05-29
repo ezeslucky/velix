@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -6,8 +6,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Settings } from "lucide-react";
 import {

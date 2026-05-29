@@ -1,5 +1,5 @@
-import { Checkbox } from "@superset/ui/checkbox";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { Checkbox } from "@velix/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { ChevronDown, ChevronRight, Eye, EyeOff } from "lucide-react";
 import { useId } from "react";
 import { LuCheck, LuCopy, LuUndo2 } from "react-icons/lu";

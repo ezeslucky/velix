@@ -2,11 +2,11 @@ import type {
 	ContextMenuActionConfig,
 	PaneRegistry,
 	RendererContext,
-} from "@superset/panes";
-import { alert } from "@superset/ui/atoms/Alert";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
-import { workspaceTrpc } from "@superset/workspace-client";
+} from "@velix/panes";
+import { alert } from "@velix/ui/atoms/Alert";
+import { toast } from "@velix/ui/sonner";
+import { cn } from "@velix/ui/utils";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { Circle, GitCompareArrows, Globe, MessageSquare } from "lucide-react";
 import { useMemo } from "react";
 import {

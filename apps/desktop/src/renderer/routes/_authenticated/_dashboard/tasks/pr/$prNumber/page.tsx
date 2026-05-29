@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { ScrollArea } from "@superset/ui/scroll-area";
+import { Button } from "@velix/ui/button";
+import { ScrollArea } from "@velix/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";

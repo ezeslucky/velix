@@ -2,7 +2,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@superset/ui/sidebar";
+} from "@velix/ui/sidebar";
 import Image from "next/image";
 
 export function AppSidebarHeader() {
@@ -13,13 +13,13 @@ export function AppSidebarHeader() {
 					<a href="/">
 						<Image
 							src="/icon.png"
-							alt="Superset"
+							alt="velix"
 							width={32}
 							height={32}
 							className="size-8 rounded-lg"
 						/>
 						<div className="flex flex-col gap-0.5 leading-none">
-							<span className="font-medium">Superset</span>
+							<span className="font-medium">Velix</span>
 						</div>
 					</a>
 				</SidebarMenuButton>

@@ -1,5 +1,5 @@
 import { expoClient } from "@better-auth/expo/client";
-import type { auth } from "@superset/auth/server";
+import type { auth } from "@velix/auth/server";
 import {
 	customSessionClient,
 	organizationClient,

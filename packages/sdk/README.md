@@ -7,14 +7,14 @@ Full docs: **<https://docs.superset.sh/docs/sdk/getting-started>**
 ## Install
 
 ```bash
-npm install @superset_sh/sdk
-# or: bun add @superset_sh/sdk
+npm install @velix_sh/sdk
+# or: bun add @velix_sh/sdk
 ```
 
 ## Quickstart
 
 ```ts
-import Superset from '@superset_sh/sdk';
+import Superset from '@velix_sh/sdk';
 
 const client = new Superset({
   apiKey: process.env.SUPERSET_API_KEY,             // sk_live_…
@@ -61,7 +61,7 @@ Keys starting with `sk_live_` or `sk_test_` are sent as `x-api-key`; anything el
 ## Errors
 
 ```ts
-import { APIError, NotFoundError, RateLimitError } from '@superset_sh/sdk';
+import { APIError, NotFoundError, RateLimitError } from '@velix_sh/sdk';
 
 try {
   await client.tasks.create({ title: '' });

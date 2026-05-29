@@ -1,6 +1,6 @@
-import { Button } from "@superset/ui/button";
-import { Label } from "@superset/ui/label";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@velix/ui/button";
+import { Label } from "@velix/ui/label";
+import { cn } from "@velix/ui/utils";
 import type { ReactNode } from "react";
 
 interface ConfigRowProps {

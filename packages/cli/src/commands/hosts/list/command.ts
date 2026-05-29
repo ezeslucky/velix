@@ -1,5 +1,5 @@
-import { CLIError, table } from "@superset/cli-framework";
-import { getHostId } from "@superset/shared/host-info";
+import { CLIError, table } from "@velix/cli-framework";
+import { getHostId } from "@velix/shared/host-info";
 import { command } from "../../../lib/command";
 
 export default command({

@@ -19,7 +19,7 @@ import {
 	type ClientMessage,
 	encodeFrame,
 	FrameDecoder,
-} from "@superset/pty-daemon/protocol";
+} from "@velix/pty-daemon/protocol";
 import {
 	DaemonSupervisor,
 	probeDaemonVersion,

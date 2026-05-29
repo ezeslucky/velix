@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { parseStaticPortsConfig } from "@superset/port-scanner";
-import { PORTS_FILE_NAME, PROJECT_SUPERSET_DIR_NAME } from "shared/constants";
+import { parseStaticPortsConfig } from "@velix/port-scanner";
+import { PORTS_FILE_NAME, PROJECT_VELIX_DIR_NAME } from "shared/constants";
 import type { StaticPortsResult } from "shared/types";
 
 /**
@@ -13,7 +13,7 @@ import type { StaticPortsResult } from "shared/types";
 export function loadStaticPorts(worktreePath: string): StaticPortsResult {
 	const portsPath = join(
 		worktreePath,
-		PROJECT_SUPERSET_DIR_NAME,
+		PROJECT_VELIX_DIR_NAME,
 		PORTS_FILE_NAME,
 	);
 
@@ -50,7 +50,7 @@ export function loadStaticPorts(worktreePath: string): StaticPortsResult {
 export function hasStaticPortsConfig(worktreePath: string): boolean {
 	const portsPath = join(
 		worktreePath,
-		PROJECT_SUPERSET_DIR_NAME,
+		PROJECT_VELIX_DIR_NAME,
 		PORTS_FILE_NAME,
 	);
 	return existsSync(portsPath);

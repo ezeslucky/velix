@@ -3,8 +3,8 @@ import {
 	CommandGroup,
 	CommandList,
 	CommandItem as RawCommandItem,
-} from "@superset/ui/command";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/command";
+import { toast } from "@velix/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useDeferredValue, useMemo } from "react";
 import {

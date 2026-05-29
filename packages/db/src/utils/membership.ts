@@ -1,4 +1,4 @@
-import { ACTIVE_SUBSCRIPTION_STATUSES } from "@superset/shared/billing";
+import { ACTIVE_SUBSCRIPTION_STATUSES } from "@velix/shared/billing";
 import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { db } from "../client";

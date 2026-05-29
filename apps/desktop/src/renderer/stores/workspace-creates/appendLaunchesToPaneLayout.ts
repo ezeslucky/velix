@@ -1,4 +1,4 @@
-import { createWorkspaceStore, type WorkspaceState } from "@superset/panes";
+import { createWorkspaceStore, type WorkspaceState } from "@velix/panes";
 import type {
 	ChatPaneData,
 	PaneViewerData,

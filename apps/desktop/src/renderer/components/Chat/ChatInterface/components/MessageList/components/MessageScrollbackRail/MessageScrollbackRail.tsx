@@ -1,10 +1,10 @@
-import { useConversationContext } from "@superset/ui/ai-elements/conversation";
+import { useConversationContext } from "@velix/ui/ai-elements/conversation";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "@superset/ui/hover-card";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/hover-card";
+import { cn } from "@velix/ui/utils";
 import type { UIMessage } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 

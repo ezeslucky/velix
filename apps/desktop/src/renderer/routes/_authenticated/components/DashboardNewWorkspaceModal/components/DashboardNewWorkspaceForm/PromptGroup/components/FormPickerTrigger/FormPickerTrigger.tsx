@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@velix/ui/utils";
 import type { ComponentProps } from "react";
 
 // Shared trigger for the top-of-modal pickers (Device / Project / Branch).

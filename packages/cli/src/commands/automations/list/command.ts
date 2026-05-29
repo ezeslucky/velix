@@ -1,4 +1,4 @@
-import { string, table } from "@superset/cli-framework";
+import { string, table } from "@velix/cli-framework";
 import { command } from "../../../lib/command";
 import { formatAutomationDate } from "../format";
 

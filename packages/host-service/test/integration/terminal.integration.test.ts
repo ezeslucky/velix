@@ -11,7 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Server } from "@superset/pty-daemon";
+import { Server } from "@velix/pty-daemon";
 import { TRPCClientError } from "@trpc/client";
 import {
 	disposeDaemonClient,

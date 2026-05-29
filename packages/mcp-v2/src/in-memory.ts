@@ -1,8 +1,8 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { mintUserJwt } from "@superset/auth/server";
-import { db } from "@superset/db/client";
-import { members, users } from "@superset/db/schema";
+import { mintUserJwt } from "@velix/auth/server";
+import { db } from "@velix/db/client";
+import { members, users } from "@velix/db/schema";
 import { eq } from "drizzle-orm";
 import type { McpContext } from "./auth";
 import type { McpToolCallEmitter } from "./define-tool";

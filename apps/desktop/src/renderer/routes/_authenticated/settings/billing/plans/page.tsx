@@ -1,8 +1,8 @@
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
-import { cn } from "@superset/ui/utils";
+import { Badge } from "@velix/ui/badge";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
+import { Switch } from "@velix/ui/switch";
+import { cn } from "@velix/ui/utils";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { differenceInDays, format } from "date-fns";
@@ -268,7 +268,7 @@ function PlansPage() {
 
 		if (action === "contact") {
 			track("enterprise_trial_requested", { source: "billing_plans" });
-			openUrl.mutate("mailto:founders@superset.sh");
+			openUrl.mutate("mailto:founders@velix.sh");
 			return;
 		}
 
@@ -380,7 +380,7 @@ function PlansPage() {
 								track("billing_support_contacted", {
 									source: "billing_plans_inline",
 								});
-								openUrl.mutate("mailto:founders@superset.sh");
+								openUrl.mutate("mailto:founders@velix.sh");
 							}}
 							className="inline-flex items-center gap-1 text-primary hover:underline"
 						>

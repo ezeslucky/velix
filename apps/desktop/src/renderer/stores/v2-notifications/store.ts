@@ -1,4 +1,4 @@
-import type { Pane, Tab } from "@superset/panes";
+import type { Pane, Tab } from "@velix/panes";
 import {
 	type ActivePaneStatus,
 	getHighestPriorityStatus,

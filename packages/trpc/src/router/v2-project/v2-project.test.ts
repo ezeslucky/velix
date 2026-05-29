@@ -80,7 +80,7 @@ const tx = { update: txUpdate, insert: txInsert };
 
 const transactionMock = mock(async (cb: (tx: unknown) => unknown) => cb(tx));
 
-mock.module("@superset/db/client", () => ({
+mock.module("@velix/db/client", () => ({
 	db: {
 		query: {
 			members: {
@@ -102,7 +102,7 @@ mock.module("@superset/db/client", () => ({
 	},
 }));
 
-mock.module("@superset/db/schema", () => ({
+mock.module("@velix/db/schema", () => ({
 	v2Projects: {
 		id: "v2_projects.id",
 		organizationId: "v2_projects.organization_id",
@@ -150,11 +150,11 @@ mock.module("@superset/db/schema", () => ({
 	},
 }));
 
-mock.module("@superset/db/utils", () => ({
+mock.module("@velix/db/utils", () => ({
 	getCurrentTxid: getCurrentTxidMock,
 }));
 
-mock.module("@superset/shared/github-remote", () => ({
+mock.module("@velix/shared/github-remote", () => ({
 	parseGitHubRemote: parseGitHubRemoteMock,
 }));
 

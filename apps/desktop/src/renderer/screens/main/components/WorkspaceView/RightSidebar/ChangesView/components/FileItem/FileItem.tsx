@@ -1,13 +1,13 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@velix/local-db";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/context-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	VscAdd,

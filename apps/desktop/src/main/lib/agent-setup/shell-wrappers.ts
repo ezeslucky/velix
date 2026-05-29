@@ -226,7 +226,7 @@ rehash 2>/dev/null || true
 # still match against their own scanner.
 # Protocol ref: https://gitlab.freedesktop.org/Per_Bothner/specifications/blob/master/proposals/semantic-prompts.md
 __superset_prompt_mark() {
-  printf "\\033]777;superset-shell-ready\\007\\033]133;A\\007"
+  printf "\\033]777;ezesluckyell-ready\\007\\033]133;A\\007"
 }
 # Keep our hook LAST so it fires after direnv and other precmd hooks complete.
 precmd_functions=(\${precmd_functions[@]} __superset_prompt_mark)
@@ -276,7 +276,7 @@ export PS1=$'\\[\\e[1;38;2;52;211;153m\\]❯\\[\\e[0m\\] '
 # Shell readiness markers — see zsh wrapper for rationale on emitting both.
 # Protocol ref: https://gitlab.freedesktop.org/Per_Bothner/specifications/blob/master/proposals/semantic-prompts.md
 __superset_prompt_mark() {
-  printf "\\033]777;superset-shell-ready\\007\\033]133;A\\007"
+  printf "\\033]777;ezesluckyell-ready\\007\\033]133;A\\007"
 }
 # Hook via PROMPT_COMMAND. Supports both scalar and array forms (Bash 5.1+).
 if [[ "$(declare -p PROMPT_COMMAND 2>/dev/null)" == "declare -a"* ]]; then
@@ -331,7 +331,7 @@ export function getShellArgs(
 				`contains -- "$_superset_bin" $PATH`,
 				`or set -gx PATH "$_superset_bin" $PATH`,
 				`function _superset_prompt_mark --on-event fish_prompt`,
-				`printf '\\033]777;superset-shell-ready\\007\\033]133;A\\007'`,
+				`printf '\\033]777;ezesluckyell-ready\\007\\033]133;A\\007'`,
 				`end`,
 			].join("; "),
 		];

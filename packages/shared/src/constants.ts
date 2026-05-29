@@ -14,7 +14,7 @@ export const PROTOCOL_SCHEMES = {
 export const COMPANY = {
 	NAME: "Superset",
 	DOMAIN: "superset.sh",
-	EMAIL_DOMAIN: "@superset.sh",
+	EMAIL_DOMAIN: "@velix.sh",
 	GITHUB_URL: "https://github.com/ezeslucky/velix",
 	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.superset.sh",
 	MARKETING_URL: process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh",
@@ -26,9 +26,9 @@ export const COMPANY = {
 		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh") +
 		"/changelog",
 	X_URL: "https://x.com/ezeslucky",
-	LINKEDIN_URL: "https://www.linkedin.com/company/superset-sh",
-	YOUTUBE_URL: "https://www.youtube.com/@superset-sh",
-	MAIL_TO: "mailto:founders@superset.sh",
+	LINKEDIN_URL: "https://www.linkedin.com/company/ezeslucky",
+	YOUTUBE_URL: "https://www.youtube.com/@ezeslucky",
+	MAIL_TO: "mailto:founders@velix.sh",
 	REPORT_ISSUE_URL: "https://github.com/ezeslucky/velix/issues/new",
 	DISCORD_URL: "https://discord.gg/cZeD9WYcV7",
 	STATUS_URL: "https://status.superset.sh",
@@ -79,8 +79,8 @@ export const FEATURE_FLAGS = {
 	/** When enabled, blocks remote agent execution on the desktop (e.g., for enterprise orgs). */
 	DISABLE_REMOTE_AGENT: "disable-remote-agent",
 	/**
-	 * Routes the Slack agent to the v2 MCP server (`@superset/mcp-v2`)
-	 * instead of v1 (`@superset/mcp`). Evaluated against the linking
+	 * Routes the Slack agent to the v2 MCP server (`@velix/mcp-v2`)
+	 * instead of v1 (`@velix/mcp`). Evaluated against the linking
 	 * user's id (the Superset user behind the Slack mention) so it
 	 * piggybacks on the existing All Access cohort. Off → v1.
 	 */

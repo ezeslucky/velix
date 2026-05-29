@@ -3,9 +3,9 @@ import type {
 	SelectUser,
 	SelectV2Host,
 	SelectV2Workspace,
-} from "@superset/db/schema";
-import { COMPANY } from "@superset/shared/constants";
-import { describeSchedule } from "@superset/shared/rrule";
+} from "@velix/db/schema";
+import { COMPANY } from "@velix/shared/constants";
+import { describeSchedule } from "@velix/shared/rrule";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -15,25 +15,25 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+} from "@velix/ui/alert-dialog";
+import { Badge } from "@velix/ui/badge";
+import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@velix/ui/dropdown-menu";
 import {
 	Empty,
 	EmptyDescription,
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@superset/ui/empty";
-import { toast } from "@superset/ui/sonner";
-import { Tabs, TabsList, TabsTrigger } from "@superset/ui/tabs";
-import { cn } from "@superset/ui/utils";
+} from "@velix/ui/empty";
+import { toast } from "@velix/ui/sonner";
+import { Tabs, TabsList, TabsTrigger } from "@velix/ui/tabs";
+import { cn } from "@velix/ui/utils";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";

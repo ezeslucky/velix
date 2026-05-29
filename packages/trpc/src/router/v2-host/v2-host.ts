@@ -1,7 +1,7 @@
-import { db, dbWs } from "@superset/db/client";
-import { v2UsersHostRoleValues } from "@superset/db/enums";
-import { members, v2Hosts, v2UsersHosts } from "@superset/db/schema";
-import { getCurrentTxid } from "@superset/db/utils";
+import { db, dbWs } from "@velix/db/client";
+import { v2UsersHostRoleValues } from "@velix/db/enums";
+import { members, v2Hosts, v2UsersHosts } from "@velix/db/schema";
+import { getCurrentTxid } from "@velix/db/utils";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod";

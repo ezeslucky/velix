@@ -1,6 +1,6 @@
-import type { RendererContext } from "@superset/panes";
-import { cn } from "@superset/ui/utils";
-import { workspaceTrpc } from "@superset/workspace-client";
+import type { RendererContext } from "@velix/panes";
+import { cn } from "@velix/ui/utils";
+import { workspaceTrpc } from "@velix/workspace-client";
 import "@xterm/xterm/css/xterm.css";
 import {
 	useCallback,

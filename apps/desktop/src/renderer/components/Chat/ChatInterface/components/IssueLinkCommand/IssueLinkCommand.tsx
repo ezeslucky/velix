@@ -1,4 +1,4 @@
-import { Checkbox } from "@superset/ui/checkbox";
+import { Checkbox } from "@velix/ui/checkbox";
 import {
 	Command,
 	CommandEmpty,
@@ -6,9 +6,9 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useLiveQuery } from "@tanstack/react-db";
 import Fuse from "fuse.js";
 import type { ReactNode } from "react";

@@ -1,11 +1,11 @@
 import {
 	BUILTIN_AGENT_LABELS,
 	type BuiltinAgentId,
-} from "@superset/shared/agent-catalog";
+} from "@velix/shared/agent-catalog";
 import type {
 	AgentIdentity,
 	AgentLifecyclePayload,
-} from "@superset/workspace-client";
+} from "@velix/workspace-client";
 
 interface V2NativeNotificationContentOptions {
 	workspaceName: string;

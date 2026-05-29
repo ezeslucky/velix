@@ -1,21 +1,21 @@
-import type { GitHubStatus } from "@superset/local-db";
-import { Button } from "@superset/ui/button";
+import type { GitHubStatus } from "@velix/local-db";
+import { Button } from "@velix/ui/button";
 import {
 	Command,
 	CommandEmpty,
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
+} from "@velix/ui/command";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
 	VscCheck,

@@ -1,6 +1,6 @@
-import { db, dbWs } from "@superset/db/client";
-import { chatSessions } from "@superset/db/schema";
-import { getCurrentTxid } from "@superset/db/utils";
+import { db, dbWs } from "@velix/db/client";
+import { chatSessions } from "@velix/db/schema";
+import { getCurrentTxid } from "@velix/db/utils";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";

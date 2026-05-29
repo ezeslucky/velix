@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { LuCheck, LuClipboard } from "react-icons/lu";
 

@@ -1,7 +1,7 @@
-import type { ResolvedAgentConfig } from "@superset/shared/agent-settings";
-import { CardDescription, CardHeader, CardTitle } from "@superset/ui/card";
-import { Switch } from "@superset/ui/switch";
-import { cn } from "@superset/ui/utils";
+import type { ResolvedAgentConfig } from "@velix/shared/agent-settings";
+import { CardDescription, CardHeader, CardTitle } from "@velix/ui/card";
+import { Switch } from "@velix/ui/switch";
+import { cn } from "@velix/ui/utils";
 import { ChevronDownIcon } from "lucide-react";
 import {
 	getPresetIcon,

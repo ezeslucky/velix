@@ -4,7 +4,7 @@ import {
 	workspaceSections,
 	workspaces,
 	worktrees,
-} from "@superset/local-db";
+} from "@velix/local-db";
 import { TRPCError } from "@trpc/server";
 import { eq, isNotNull, isNull } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
@@ -144,7 +144,7 @@ export const createQueryProcedures = () => {
 								branch: worktree.branch,
 								// Normalize to null to ensure consistent "incomplete init" detection in UI
 								gitStatus: worktree.gitStatus ?? null,
-								createdBySuperset: worktree.createdBySuperset,
+								createdByVelix: worktree.createdByVelix ?? null,
 							}
 						: null,
 				};
@@ -175,7 +175,7 @@ export const createQueryProcedures = () => {
 				lastOpenedAt: number;
 				isUnread: boolean;
 				isUnnamed: boolean;
-				createdBySuperset: boolean | null;
+				createdByVelix: boolean | null;
 			};
 
 			type SectionItem = {
@@ -204,8 +204,8 @@ export const createQueryProcedures = () => {
 			const worktreePathMap: WorktreePathMap = new Map(
 				allWorktrees.map((wt) => [wt.id, wt.path]),
 			);
-			const worktreeCreatedBySupersetMap = new Map(
-				allWorktrees.map((wt) => [wt.id, wt.createdBySuperset]),
+			const worktreeCreatedByVelixMap = new Map(
+				allWorktrees.map((wt) => [wt.id, wt.createdByVelix ?? null]),
 			);
 
 			const allSections = localDb.select().from(workspaceSections).all();
@@ -287,8 +287,8 @@ export const createQueryProcedures = () => {
 						worktreePath,
 						isUnread: workspace.isUnread ?? false,
 						isUnnamed: workspace.isUnnamed ?? false,
-						createdBySuperset: workspace.worktreeId
-							? (worktreeCreatedBySupersetMap.get(workspace.worktreeId) ?? null)
+						createdByVeix: workspace.worktreeId
+							? (worktreeCreatedByVelixMap.get(workspace.worktreeId) ?? null)
 							: null,
 					};
 

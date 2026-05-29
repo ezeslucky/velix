@@ -1,8 +1,8 @@
 import {
 	PromptInputButton,
 	usePromptInputAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@velix/ui/ai-elements/prompt-input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { HiMiniPaperClip } from "react-icons/hi2";
 import { PILL_BUTTON_CLASS } from "../../styles";
 

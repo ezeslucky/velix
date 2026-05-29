@@ -1,8 +1,8 @@
-import { chatServiceTrpc } from "@superset/chat/client";
+import { chatServiceTrpc } from "@velix/chat/client";
 import {
 	PromptInputButton,
 	usePromptInputController,
-} from "@superset/ui/ai-elements/prompt-input";
+} from "@velix/ui/ai-elements/prompt-input";
 import {
 	Command,
 	CommandEmpty,
@@ -10,13 +10,13 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
+} from "@velix/ui/command";
 import {
 	Popover,
 	PopoverAnchor,
 	PopoverContent,
 	PopoverTrigger,
-} from "@superset/ui/popover";
+} from "@velix/ui/popover";
 import {
 	createContext,
 	type ReactNode,

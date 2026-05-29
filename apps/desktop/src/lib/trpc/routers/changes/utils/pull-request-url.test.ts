@@ -10,18 +10,18 @@ describe("pull-request-url", () => {
 		expect(
 			normalizeGitHubRepoUrl("https://github.com/ezeslucky/velix.git"),
 		).toBe("https://github.com/ezeslucky/velix");
-		expect(normalizeGitHubRepoUrl("git@github.com:Kitenite/superset.git")).toBe(
-			"https://github.com/Kitenite/superset",
+		expect(normalizeGitHubRepoUrl("git@github.com:ezeslucky/velix.git")).toBe(
+			"https://github.com/ezeslucky/velix",
 		);
 		expect(
-			normalizeGitHubRepoUrl("ssh://git@github.com/Kitenite/superset.git"),
-		).toBe("https://github.com/Kitenite/superset");
+			normalizeGitHubRepoUrl("ssh://git@github.com/ezeslucky/velix.git"),
+		).toBe("https://github.com/ezeslucky/velix");
 	});
 
 	test("parses upstream refs with slashes in branch names", () => {
-		expect(parseUpstreamRef("kitenite/kitenite/halved-position")).toEqual({
-			remoteName: "kitenite",
-			branchName: "kitenite/halved-position",
+		expect(parseUpstreamRef("ezeslucky/ezeslucky/halved-position")).toEqual({
+			remoteName: "ezeslucky",
+			branchName: "ezeslucky/halved-position",
 		});
 	});
 
@@ -30,11 +30,11 @@ describe("pull-request-url", () => {
 			buildPullRequestCompareUrl({
 				baseRepoUrl: "https://github.com/ezeslucky/velix.git",
 				baseBranch: "main",
-				headRepoOwner: "Kitenite",
-				headBranch: "kitenite/halved-position",
+				headRepoOwner: "ezeslucky",
+				headBranch: "ezeslucky/halved-position",
 			}),
 		).toBe(
-			"https://github.com/ezeslucky/velix/compare/main...Kitenite:kitenite/halved-position?expand=1",
+			"https://github.com/ezeslucky/velix/compare/main...ezeslucky:ezeslucky/halved-position?expand=1",
 		);
 	});
 });

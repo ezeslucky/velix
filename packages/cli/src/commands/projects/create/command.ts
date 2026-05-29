@@ -1,4 +1,4 @@
-import { boolean, CLIError, string } from "@superset/cli-framework";
+import { boolean, CLIError, string } from "@velix/cli-framework";
 import { command } from "../../../lib/command";
 import { requireHostTarget, resolveHostTarget } from "../../../lib/host-target";
 

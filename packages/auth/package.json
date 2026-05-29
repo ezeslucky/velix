@@ -1,5 +1,5 @@
 {
-	"name": "@superset/auth",
+	"name": "@velix/auth",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -31,9 +31,9 @@
 		"@better-auth/expo": "1.6.5",
 		"@better-auth/oauth-provider": "1.6.5",
 		"@better-auth/stripe": "1.6.5",
-		"@superset/db": "workspace:*",
-		"@superset/email": "workspace:*",
-		"@superset/shared": "workspace:*",
+		"@velix/db": "workspace:*",
+		"@velix/email": "workspace:*",
+		"@velix/shared": "workspace:*",
 		"@t3-oss/env-core": "0.13.11",
 		"@t3-oss/env-nextjs": "0.13.11",
 		"@upstash/qstash": "2.10.1",
@@ -47,7 +47,7 @@
 		"zod": "4.3.6"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@velix/typescript": "workspace:*",
 		"@types/node": "24.12.0",
 		"typescript": "5.9.3"
 	}

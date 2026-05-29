@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@velix/ui/button";
 import {
 	Dialog,
 	DialogClose,
@@ -6,8 +6,8 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { toast } from "@superset/ui/sonner";
+} from "@velix/ui/dialog";
+import { toast } from "@velix/ui/sonner";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LuX } from "react-icons/lu";

@@ -67,8 +67,8 @@ mkdir -p "$HOME/code/v1v2-no-remote"
   cd "$HOME/code/v1v2-no-remote"
   git init -q -b main
   echo "# v1v2-no-remote — local-only fixture" > README.md
-  git -c user.email=test@superset.sh -c user.name=Test add README.md
-  git -c user.email=test@superset.sh -c user.name=Test commit -q -m init
+  git -c user.email=test@velix.sh -c user.name=Test add README.md
+  git -c user.email=test@velix.sh -c user.name=Test commit -q -m init
 )
 
 echo "→ creating ~/code/v1v2-ghost (single-remote fixture)"
@@ -79,8 +79,8 @@ mkdir -p "$HOME/code/v1v2-ghost"
   git init -q -b main
   git remote add origin https://github.com/satya-fake-org/v1v2-ghost.git
   echo "# v1v2-ghost fixture" > README.md
-  git -c user.email=test@superset.sh -c user.name=Test add README.md
-  git -c user.email=test@superset.sh -c user.name=Test commit -q -m init
+  git -c user.email=test@velix.sh -c user.name=Test add README.md
+  git -c user.email=test@velix.sh -c user.name=Test commit -q -m init
 )
 
 echo "→ adding worktrees to ~/code/onbook-relocate-clone"
