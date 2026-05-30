@@ -81,7 +81,7 @@ function OnboardingPermissionsPage() {
 		<StepShell backTo={STEP_ROUTES["gh-cli"]} maxWidth="lg">
 			<StepHeader
 				title="Grant macOS permissions"
-				subtitle="Superset needs these to read your repos and drive your terminal."
+				subtitle="Velix needs these to read your repos and drive your terminal."
 			/>
 
 			<div className="overflow-hidden rounded-lg border border-[#2a2827] bg-[#201e1c]">

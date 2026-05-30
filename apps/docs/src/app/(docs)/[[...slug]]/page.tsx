@@ -26,7 +26,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
 			}}
 			editOnGithub={{
 				owner: "ezeslucky",
-				repo: "superset",
+				repo: "velix",
 				path: `apps/docs/content/docs/${page.path}`,
 			}}
 		>

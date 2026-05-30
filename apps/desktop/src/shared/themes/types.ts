@@ -1,12 +1,4 @@
-/**
- * Theme type definitions for the Superset desktop app
- *
- * Themes control UI colors, terminal colors, and editor/diff colors.
- */
 
-/**
- * Default xterm.js terminal colors for dark mode
- */
 export const DEFAULT_TERMINAL_COLORS_DARK: TerminalColors = {
 	background: "#000000",
 	foreground: "#ffffff",

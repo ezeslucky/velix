@@ -1,6 +1,6 @@
 ---
 title: SDK Reference
-description: Method-by-method reference for the Superset TypeScript SDK.
+description: Method-by-method reference for the Velix TypeScript SDK.
 ---
 
 <Callout type="warn">
@@ -10,14 +10,14 @@ The SDK is in early alpha — it is not meant for production use and may be remo
 ## Client
 
 ```ts
-import Superset from '@velix_sh/sdk';
+import Velix from '@velix_sh/sdk';
 
-const client = new Superset({
+const client = new Velix({
   apiKey: 'sk_live_…',
   organizationId: '…',
   // optional:
-  baseURL: 'https://api.superset.sh',
-  relayURL: 'https://relay.superset.sh',
+  baseURL: 'https://api.velix.sh',
+  relayURL: 'https://relay.velix.sh',
   timeout: 60_000,
   maxRetries: 2,
   logLevel: 'warn', // 'off' | 'error' | 'warn' | 'info' | 'debug'
@@ -272,7 +272,7 @@ Create a recurring automation.
 const a = await client.automations.create({
   name: 'Daily leads',
   prompt: 'Find new leads from Linear and update the CRM…',
-  agent: 'claude', // host agent presetId, instance UUID, or 'superset' for built-in chat
+  agent: 'claude', 
   rrule: 'FREQ=DAILY;BYHOUR=6;BYMINUTE=0',
   timezone: 'America/Los_Angeles',
   v2ProjectId: '<uuid>',     // one of v2ProjectId or v2WorkspaceId required

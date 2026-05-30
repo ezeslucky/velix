@@ -1,7 +1,7 @@
 import { ListTodoIcon } from "lucide-react";
 import type { ToolPart } from "../../../../utils/tool-helpers";
 import { getArgs } from "../../../../utils/tool-helpers";
-import { SupersetToolCall } from "../SupersetToolCall";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface TodoItem {
 	id: string;
@@ -49,7 +49,7 @@ export function TaskWriteToolCall({ part }: TaskWriteToolCallProps) {
 	const description = buildDescription(todos);
 
 	return (
-		<SupersetToolCall
+		<VelixToolCall
 			part={part}
 			toolName="Update Tasks"
 			icon={ListTodoIcon}

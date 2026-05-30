@@ -9,10 +9,10 @@ import { SetupButton } from "../../components/SetupButton";
 import {
 	StepHeader,
 	StepShell,
-	SupersetPill,
+	VelixPill,
 } from "../../components/StepShell";
 import { ClaudeBrandIcon } from "../components/ClaudeBrandIcon";
-import { SupersetIcon } from "../components/SupersetIcon";
+import { VelixIcon } from "../components/VelixIcon";
 
 export const Route = createFileRoute(
 	"/_authenticated/setup/providers/claude-code/",
@@ -61,15 +61,15 @@ function ConnectClaudeCodePage() {
 			<StepShell backTo="/setup/providers">
 				<StepHeader
 					icon={
-						<SupersetPill>
+						<VelixPill>
 							<div className="flex size-[44px] items-center justify-center rounded-[10px] bg-[#151110]">
-								<SupersetIcon className="w-7" />
+								<VelixIcon className="w-7" />
 							</div>
 							<ClaudeBrandIcon
 								className="size-[44px] rounded-[10px]"
 								iconClassName="size-7"
 							/>
-						</SupersetPill>
+						</VelixPill>
 					}
 					title="Connect Claude Code"
 					subtitle="Authorize access to your account"

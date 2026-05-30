@@ -8,6 +8,7 @@ import {
 	HiOutlineClipboard,
 } from "react-icons/hi2";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
+import React from "react";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 const ERROR_DETAILS_ID = "error-details";
@@ -46,7 +47,7 @@ export function ErrorPage({ error, info }: ErrorComponentProps) {
 					<div className="flex flex-col items-center gap-2 text-center">
 						<h1 className="text-xl font-semibold">Something went wrong</h1>
 						<p className="text-sm text-muted-foreground">
-							Superset hit an unexpected error. Reload to try again.
+							Velix hit an unexpected error. Reload to try again.
 						</p>
 					</div>
 

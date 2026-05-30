@@ -1,1 +1,1 @@
-export { SupersetIcon } from "./SupersetIcon";
+export { VelixIcon } from "./VelixIcon";

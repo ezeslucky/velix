@@ -1,25 +1,5 @@
 {{MARKER}}
-/**
- * Superset Notification Extension for pi
- *
- * Emits Claude-Code-compatible lifecycle hooks to Superset's notify.sh so
- * the host UI gets a "working" indicator (and completion chime) for pi
- * sessions, the same way it does for Claude Code, Codex, etc.
- *
- * Mapping:
- *   pi `before_agent_start`  → Claude `UserPromptSubmit`  → Superset `Start`
- *   pi `tool_execution_end`  → Claude `PostToolUse`       → progress signal
- *   pi `agent_end`           → Claude `Stop`              → completion / chime
- *   pi `session_end`         → Claude `SessionEnd`        → pane icon detach
- *   pi `session_shutdown`    → Claude `Stop`              → cleanup on quit/reload
- *
- * Activates only when running inside a v2 Superset terminal (detected via
- * SUPERSET_TERMINAL_ID). Outside Superset it's a complete no-op. If notify.sh
- * is missing it's also a no-op (Superset uninstalled / never installed).
- *
- * Hook dispatch is fire-and-forget: failures to spawn or curl never
- * affect the agent loop. notify.sh has its own connect/max timeouts.
- */
+
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { spawn } from "node:child_process";
@@ -28,12 +8,12 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 export default function (pi: ExtensionAPI) {
-	// Only activate inside a v2 Superset terminal.
-	if (!process.env.SUPERSET_TERMINAL_ID) return;
+	// Only activate inside a v2 VELIX terminal.
+	if (!process.env.VELIX_TERMINAL_ID) return;
 
-	const supersetHome =
-		process.env.SUPERSET_HOME_DIR || join(homedir(), ".superset");
-	const notifyScript = join(supersetHome, "hooks", "notify.sh");
+	const velixHome =
+		process.env.VELIX_HOME_DIR || join(homedir(), ".velix");
+	const notifyScript = join(velixHome, "hooks", "notify.sh");
 	if (!existsSync(notifyScript)) return;
 
 	const fire = (eventName: string) => {
@@ -41,7 +21,7 @@ export default function (pi: ExtensionAPI) {
 			const child = spawn(notifyScript, [], {
 				stdio: ["pipe", "ignore", "ignore"],
 				detached: true,
-				env: { ...process.env, SUPERSET_AGENT_ID: "pi" },
+				env: { ...process.env, VELIX_AGENT_ID: "pi" },
 			});
 			child.on("error", () => {
 				/* swallow — never let hook failures affect pi */
@@ -58,7 +38,7 @@ export default function (pi: ExtensionAPI) {
 
 	// Gate every hook on ctx.hasUI: when this is explicitly false (print
 	// mode `-p`, JSON mode), pi is running as a subagent or non-interactive
-	// helper and should NOT drive Superset's working indicator. Interactive
+	// helper and should NOT drive VELIX's working indicator. Interactive
 	// and RPC sessions (the user-facing ones) have hasUI=true.
 	//
 	// We deliberately check `=== false` rather than `!ctx.hasUI` so that pi
@@ -96,7 +76,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Ensure we mark the agent as "stopped" if pi is killed mid-run, so the
-	// Superset working indicator doesn't get stuck on. Fires on Ctrl+C,
+	// VELIX working indicator doesn't get stuck on. Fires on Ctrl+C,
 	// SIGTERM, SIGHUP, /quit, /reload, /new, /resume, /fork.
 	pi.on("session_shutdown", (_event, ctx) => {
 		if (skip(ctx)) return;

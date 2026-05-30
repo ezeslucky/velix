@@ -34,8 +34,8 @@ interface ExperimentalSettingsProps {
 export function ExperimentalSettings({
 	visibleItems,
 }: ExperimentalSettingsProps) {
-	const showSupersetV2 = isItemVisible(
-		SETTING_ITEM_ID.EXPERIMENTAL_SUPERSET_V2,
+	const showVelixV2 = isItemVisible(
+		SETTING_ITEM_ID.EXPERIMENTAL_VELIX_V2,
 		visibleItems,
 	);
 	const showV1Migration = isItemVisible(
@@ -68,18 +68,18 @@ export function ExperimentalSettings({
 			</div>
 
 			<div className="space-y-6">
-				{showSupersetV2 && !isV2OnlyUser && (
+				{showVelixV2 && !isV2OnlyUser && (
 					<div className="flex items-center justify-between gap-6">
 						<div className="min-w-0 flex-1 space-y-0.5">
-							<Label htmlFor="superset-v2" className="text-sm font-medium">
-								Try Superset v2
+							<Label htmlFor="velix-v2" className="text-sm font-medium">
+								Try Velix v2
 							</Label>
 							<p className="text-xs text-muted-foreground">
 								Use the new workspace experience.
 							</p>
 						</div>
 						<Switch
-							id="superset-v2"
+							id="velix-v2"
 							checked={isV2CloudEnabled}
 							onCheckedChange={(enabled) => {
 								track("surface_toggled", {

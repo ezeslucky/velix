@@ -9,14 +9,14 @@ import { getDefaultShell } from "../terminal/env";
  */
 function findBinaryPathsUnix(name: string): string[] {
 	const shell = getDefaultShell();
-	const delimiter = "__SUPERSET_WHICH_DELIMITER__";
+	const delimiter = "__VELIX_WHICH_DELIMITER__";
 	const result = execFileSync(
 		shell,
 		[
 			"-il",
 			"-c",
 			`echo -n "${delimiter}"; which -a -- "$1"; echo -n "${delimiter}"`,
-			"superset-find-binary",
+			"velix-find-binary",
 			name,
 		],
 		{
@@ -46,11 +46,6 @@ function findBinaryPathsWindows(name: string): string[] {
 	return result.trim().split("\r\n").filter(Boolean);
 }
 
-/**
- * Finds the real path of a binary, skipping our wrapper scripts.
- * Filters out all superset bin directories (prod, dev, and workspace-specific)
- * to avoid wrapper scripts calling each other.
- */
 export function findRealBinary(name: string): string | null {
 	try {
 		const isWindows = process.platform === "win32";
@@ -59,16 +54,16 @@ export function findRealBinary(name: string): string | null {
 			: findBinaryPathsUnix(name);
 
 		const homedir = os.homedir();
-		// Filter out wrapper scripts from all superset directories:
-		// - ~/.superset/bin
-		// - ~/.superset-*/bin (workspace-specific instances)
-		const supersetBinDir = path.join(homedir, ".superset", "bin");
-		const supersetPrefix = path.join(homedir, ".superset-");
+		// Filter out wrapper scripts from all velix directories:
+		// - ~/.velix/bin
+		// - ~/.velix-*/bin (workspace-specific instances)
+		const velixBinDir = path.join(homedir, ".velix", "bin");
+		const velixPrefix = path.join(homedir, ".velix-");
 		const paths = allPaths.filter(
 			(p) =>
 				p &&
-				!p.startsWith(supersetBinDir) &&
-				!(p.startsWith(supersetPrefix) && p.includes("/bin/")) &&
+				!p.startsWith(velixBinDir) &&
+				!(p.startsWith(velixPrefix) && p.includes("/bin/")) &&
 				(isWindows || isExecutableUnixPath(p)),
 		);
 		return paths[0] || null;

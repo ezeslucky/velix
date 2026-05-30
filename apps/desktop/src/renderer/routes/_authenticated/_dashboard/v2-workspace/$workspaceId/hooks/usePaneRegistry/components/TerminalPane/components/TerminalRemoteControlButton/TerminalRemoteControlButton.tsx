@@ -227,10 +227,7 @@ export function TerminalRemoteControlButton({
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem
 					onClick={() => {
-						// `window.open(url, "_blank")` is the convention used elsewhere
-						// in the renderer (e.g. DashboardSidebarHelpMenu) — Electron's
-						// main process intercepts and routes to the system browser
-						// so the share opens outside the Superset app.
+						
 						if (active?.webUrl) window.open(active.webUrl, "_blank");
 					}}
 					disabled={!canCopy}

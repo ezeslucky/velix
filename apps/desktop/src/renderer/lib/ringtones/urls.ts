@@ -13,12 +13,12 @@ export const builtInRingtoneUrls: Record<string, string> = {
 		.href,
 	"ping.mp3": new URL("../../../resources/sounds/ping.mp3", import.meta.url)
 		.href,
-	"supersetquick.mp3": new URL(
-		"../../../resources/sounds/supersetquick.mp3",
+	"velixquick.mp3": new URL(
+		"../../../resources/sounds/velixquick.mp3",
 		import.meta.url,
 	).href,
-	"supersetdoowap.mp3": new URL(
-		"../../../resources/sounds/supersetdoowap.mp3",
+	"velixdoowap.mp3": new URL(
+		"../../../resources/sounds/velixdoowap.mp3",
 		import.meta.url,
 	).href,
 	"agentisdonewoman.mp3": new URL(

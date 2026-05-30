@@ -72,11 +72,11 @@ export function StepHeader({ title, subtitle, icon }: StepHeaderProps) {
 	);
 }
 
-interface SupersetPillProps {
+interface VelixPillProps {
 	children: React.ReactNode;
 }
 
-export function SupersetPill({ children }: SupersetPillProps) {
+export function VelixPill({ children }: VelixPillProps) {
 	return (
 		<div className="flex items-center justify-center gap-2 rounded-2xl border border-[#2a2827] bg-[#201e1c] p-2">
 			{children}

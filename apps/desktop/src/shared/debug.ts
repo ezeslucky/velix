@@ -1,24 +1,11 @@
-/**
- * Debug logging utility for development and QA.
- *
- * Enable debug logs by setting environment variable:
- *   SUPERSET_DEBUG=1 bun run desktop
- *
- * Or in .env:
- *   SUPERSET_DEBUG=1
- *
- * Usage:
- *   import { debugLog } from "shared/debug";
- *   debugLog("notifications", "Received hook:", data);
- *   // Logs: [debug:notifications] Received hook: {...}
- */
+
 
 const isDebugEnabled =
 	typeof process !== "undefined" &&
-	(process.env.SUPERSET_DEBUG === "1" || process.env.SUPERSET_DEBUG === "true");
+	(process.env.VELIX_DEBUG === "1" || process.env.VELIX_DEBUG === "true");
 
 /**
- * Log a debug message if SUPERSET_DEBUG is enabled.
+ * Log a debug message if VELIX_DEBUG is enabled.
  *
  * @param namespace - Category for the log (e.g., "notifications", "agent-hooks")
  * @param args - Values to log (same as console.log)

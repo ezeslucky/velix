@@ -139,7 +139,7 @@ export const Paywall = () => {
 					<Button variant="outline" onClick={() => handleOpenChange(false)}>
 						Cancel
 					</Button>
-					<Button onClick={handleUpgrade}>Get Superset Pro</Button>
+					<Button onClick={handleUpgrade}>Get Velix Pro</Button>
 				</div>
 			</DialogContent>
 		</Dialog>

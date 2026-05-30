@@ -1,16 +1,4 @@
-/**
- * Terminal Host Daemon
- *
- * A persistent background process that owns PTYs and terminal emulator state.
- * This allows terminal sessions to survive app restarts and updates.
- *
- * Run with: ELECTRON_RUN_AS_NODE=1 electron dist/main/terminal-host.js
- *
- * IPC Protocol:
- * - Uses NDJSON (newline-delimited JSON) over Unix domain socket
- * - Socket: ~/.superset/terminal-host.sock
- * - Auth token: ~/.superset/terminal-host.token
- */
+
 
 import { randomBytes } from "node:crypto";
 import {
@@ -56,13 +44,13 @@ import { TerminalHost } from "./terminal-host";
 const DAEMON_VERSION = "1.0.0";
 
 // VELIX_DIR_NAME is imported from shared/constants for multi-worktree support
-// This allows workspace-specific home directories (e.g., ~/.superset-my-feature)
-const SUPERSET_HOME_DIR = join(homedir(), VELIX_DIR_NAME);
+// This allows workspace-specific home directories (e.g., ~/.VELIX-my-feature)
+const VELIX_HOME_DIR = join(homedir(), VELIX_DIR_NAME);
 
 // Socket and token paths
-const SOCKET_PATH = join(SUPERSET_HOME_DIR, "terminal-host.sock");
-const TOKEN_PATH = join(SUPERSET_HOME_DIR, "terminal-host.token");
-const PID_PATH = join(SUPERSET_HOME_DIR, "terminal-host.pid");
+const SOCKET_PATH = join(VELIX_HOME_DIR, "terminal-host.sock");
+const TOKEN_PATH = join(VELIX_HOME_DIR, "terminal-host.token");
+const PID_PATH = join(VELIX_HOME_DIR, "terminal-host.pid");
 
 // =============================================================================
 // Logging
@@ -685,15 +673,15 @@ function isSocketLive(): Promise<boolean> {
 }
 
 async function startServer(): Promise<void> {
-	// Ensure superset directory exists with proper permissions
-	if (!existsSync(SUPERSET_HOME_DIR)) {
-		mkdirSync(SUPERSET_HOME_DIR, { recursive: true, mode: 0o700 });
-		log("info", `Created directory: ${SUPERSET_HOME_DIR}`);
+	// Ensure VELIX directory exists with proper permissions
+	if (!existsSync(VELIX_HOME_DIR)) {
+		mkdirSync(VELIX_HOME_DIR, { recursive: true, mode: 0o700 });
+		log("info", `Created directory: ${VELIX_HOME_DIR}`);
 	}
 
 	// Ensure directory has correct permissions
 	try {
-		chmodSync(SUPERSET_HOME_DIR, 0o700);
+		chmodSync(VELIX_HOME_DIR, 0o700);
 	} catch {
 		// May fail if not owner, that's okay
 	}
@@ -824,7 +812,7 @@ function setupSignalHandlers() {
 async function main() {
 	log("info", "Terminal Host Daemon starting...");
 	log("info", `Environment: ${process.env.NODE_ENV || "production"}`);
-	log("info", `Home directory: ${SUPERSET_HOME_DIR}`);
+	log("info", `Home directory: ${VELIX_HOME_DIR}`);
 
 	setupSignalHandlers();
 

@@ -10,10 +10,9 @@ type AttachTask = {
 
 const MAX_CONCURRENT_ATTACHES = 3;
 
-// Debug logging (enable via localStorage.setItem('SUPERSET_TERMINAL_DEBUG', '1'))
 const DEBUG_SCHEDULER =
 	typeof localStorage !== "undefined" &&
-	localStorage.getItem("SUPERSET_TERMINAL_DEBUG") === "1";
+	localStorage.getItem("VELIX_TERMINAL_DEBUG") === "1";
 
 let inFlight = 0;
 const queue: AttachTask[] = [];

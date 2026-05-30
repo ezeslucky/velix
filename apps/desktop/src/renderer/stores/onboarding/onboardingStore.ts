@@ -145,7 +145,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
 					});
 				},
 			}),
-			{ name: "superset-onboarding-v1" },
+			{ name: "velix-onboarding-v1" },
 		),
 		{ name: "OnboardingStore" },
 	),

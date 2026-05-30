@@ -127,14 +127,7 @@ export interface LaunchContext {
 	};
 }
 
-/**
- * V2-native launch spec. Replaces the V1 `AgentLaunchRequest` shape
- * (which flattened prompt to a single string). Maps cleanly to:
- *   - Anthropic Messages API: system blocks + user content parts.
- *   - AI SDK v3: ModelMessage with ContentPart[].
- *   - Terminal adapters: flatten system+user to prompt text, write
- *     attachments to .superset/attachments/, reference by path.
- */
+
 export interface AgentLaunchSpec {
 	agentId: AgentDefinitionId;
 	system: ContentPart[];

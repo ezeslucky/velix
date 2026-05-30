@@ -14,7 +14,7 @@ export interface TerminalAppearance {
 }
 
 export const TERMINAL_FONT_FAMILY_CSS_VARIABLE =
-	"--superset-terminal-font-family";
+	"--velix-terminal-font-family";
 
 export function applyTerminalFontFamilyCssVariable(
 	element: HTMLElement,
