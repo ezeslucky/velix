@@ -1,17 +1,17 @@
 import { cn } from "@velix/ui/utils";
 import { useId } from "react";
 
-interface SupersetLogoProps {
+interface VelixLogoProps {
 	className?: string;
 	gradient?: boolean;
 }
 
-export function SupersetLogo({
+export function VelixLogo({
 	className,
 	gradient = false,
-}: SupersetLogoProps) {
+}: VelixLogoProps) {
 	const reactId = useId();
-	const gradientId = `superset-logo-gradient-${reactId}`;
+	const gradientId = `velix-logo-gradient-${reactId}`;
 
 	return (
 		<svg
@@ -21,9 +21,9 @@ export function SupersetLogo({
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			className={cn("text-foreground", className)}
-			aria-label="Superset"
+			aria-label="Velix"
 		>
-			<title>Superset</title>
+			<title>Velix</title>
 			{gradient && (
 				<defs>
 					<linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">

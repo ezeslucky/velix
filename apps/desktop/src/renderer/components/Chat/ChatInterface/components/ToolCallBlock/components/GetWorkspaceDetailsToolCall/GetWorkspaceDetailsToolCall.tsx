@@ -1,6 +1,6 @@
 import { InfoIcon } from "lucide-react";
 import type { ToolPart } from "../../../../utils/tool-helpers";
-import { SupersetToolCall } from "../SupersetToolCall";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface GetWorkspaceDetailsToolCallProps {
 	part: ToolPart;
@@ -10,7 +10,7 @@ export function GetWorkspaceDetailsToolCall({
 	part,
 }: GetWorkspaceDetailsToolCallProps) {
 	return (
-		<SupersetToolCall
+		<VelixToolCall
 			part={part}
 			toolName="Get workspace details"
 			icon={InfoIcon}

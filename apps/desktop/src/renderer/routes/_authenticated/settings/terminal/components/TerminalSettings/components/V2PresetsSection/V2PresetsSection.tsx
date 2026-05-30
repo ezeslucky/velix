@@ -77,8 +77,6 @@ export function V2PresetsSection({
 		[collections],
 	);
 
-	// V2TerminalPresetRow is a superset of TerminalPreset — safe to cast
-	// for the prop-driven sub-components.
 	const serverPresets = useMemo<TerminalPreset[]>(
 		() => v2Presets as unknown as TerminalPreset[],
 		[v2Presets],

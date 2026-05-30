@@ -1,6 +1,6 @@
 import { FolderTreeIcon } from "lucide-react";
 import type { ToolPart } from "../../../../utils/tool-helpers";
-import { SupersetToolCall } from "../SupersetToolCall";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface ListWorkspacesToolCallProps {
 	part: ToolPart;
@@ -8,7 +8,7 @@ interface ListWorkspacesToolCallProps {
 
 export function ListWorkspacesToolCall({ part }: ListWorkspacesToolCallProps) {
 	return (
-		<SupersetToolCall
+		<VelixToolCall
 			part={part}
 			toolName="List workspaces"
 			icon={FolderTreeIcon}

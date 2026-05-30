@@ -10,14 +10,14 @@ import { app } from "electron";
 import { validate as uuidValidate, version as uuidVersion } from "uuid";
 import { env } from "../../env.main";
 import {
-	ensureSupersetHomeDirExists,
-	SUPERSET_HOME_DIR,
-	SUPERSET_SENSITIVE_FILE_MODE,
+	ensureVelixHomeDirExists,
+	VELIX_HOME_DIR,
+	VELIX_SENSITIVE_FILE_MODE,
 } from "../app-environment";
 
-const DB_PATH = join(SUPERSET_HOME_DIR, "local.db");
+const DB_PATH = join(VELIX_HOME_DIR, "local.db");
 
-ensureSupersetHomeDirExists();
+ensureVelixHomeDirExists();
 
 /**
  * Gets the migrations directory path.
@@ -77,7 +77,7 @@ const migrationsFolder = getMigrationsDirectory();
 
 const sqlite = new Database(DB_PATH);
 try {
-	chmodSync(DB_PATH, SUPERSET_SENSITIVE_FILE_MODE);
+	chmodSync(DB_PATH, VELIX_SENSITIVE_FILE_MODE);
 } catch {
 	// Best-effort; directory permissions should still protect the DB.
 }

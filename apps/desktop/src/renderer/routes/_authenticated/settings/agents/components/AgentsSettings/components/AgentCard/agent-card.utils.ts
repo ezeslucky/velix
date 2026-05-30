@@ -23,7 +23,7 @@ export function getPreviewPrompt(preset: ResolvedAgentConfig): string {
 
 export function getPreviewNoPromptCommand(preset: ResolvedAgentConfig): string {
 	if (preset.kind !== "terminal") {
-		return "Superset opens a chat pane without a shell command.";
+		return "Velix opens a chat pane without a shell command.";
 	}
 
 	return preset.command.trim() || "No command configured.";
@@ -32,13 +32,13 @@ export function getPreviewNoPromptCommand(preset: ResolvedAgentConfig): string {
 export function getPreviewTaskCommand(preset: ResolvedAgentConfig): string {
 	if (preset.kind !== "terminal") {
 		return preset.model
-			? `Superset opens with model ${preset.model}.`
-			: "Superset opens with the rendered task prompt.";
+			? `Velix opens with model ${preset.model}.`
+			: "Velix opens with the rendered task prompt.";
 	}
 
 	return (
 		buildFileCommandFromAgentConfig({
-			filePath: `.superset/task-${SAMPLE_TASK.slug}.md`,
+			filePath: `.velix/task-${SAMPLE_TASK.slug}.md`,
 			config: preset,
 		}) ?? "No prompt-capable command configured."
 	);

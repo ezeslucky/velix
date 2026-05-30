@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import React from "react";
 import { Component } from "react";
 
 export interface BootErrorBoundaryProps {
@@ -47,7 +48,7 @@ export class BootErrorBoundary extends Component<
 			>
 				<div className="select-text" style={{ maxWidth: "520px" }}>
 					<h1 style={{ fontSize: "18px", marginBottom: "8px" }}>
-						Superset failed to start
+						Velix failed to start
 					</h1>
 					<p style={{ fontSize: "14px", opacity: 0.8 }}>
 						The renderer crashed during startup. Please check logs for details.

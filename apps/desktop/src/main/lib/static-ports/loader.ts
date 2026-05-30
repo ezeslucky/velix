@@ -5,7 +5,7 @@ import { PORTS_FILE_NAME, PROJECT_VELIX_DIR_NAME } from "shared/constants";
 import type { StaticPortsResult } from "shared/types";
 
 /**
- * Load and validate static ports configuration from a worktree's .superset/ports.json file.
+ * Load and validate static ports configuration from a worktree's .velix/ports.json file.
  *
  * @param worktreePath - Path to the workspace's worktree directory
  * @returns StaticPortsResult with exists flag, ports array, and any error message
@@ -45,7 +45,7 @@ export function loadStaticPorts(worktreePath: string): StaticPortsResult {
  * Check if a static ports configuration file exists for a worktree.
  *
  * @param worktreePath - Path to the workspace's worktree directory
- * @returns true if .superset/ports.json exists
+ * @returns true if .velix/ports.json exists
  */
 export function hasStaticPortsConfig(worktreePath: string): boolean {
 	const portsPath = join(

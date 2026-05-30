@@ -4,14 +4,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { hasStaticPortsConfig, loadStaticPorts } from "./loader";
 
-const TEST_DIR = join(tmpdir(), `superset-test-loader-${process.pid}`);
+const TEST_DIR = join(tmpdir(), `velix-test-loader-${process.pid}`);
 const WORKTREE_PATH = join(TEST_DIR, "worktree");
-const SUPERSET_DIR = join(WORKTREE_PATH, ".superset");
-const PORTS_FILE = join(SUPERSET_DIR, "ports.json");
+const VELIX_DIR = join(WORKTREE_PATH, ".velix");
+const PORTS_FILE = join(VELIX_DIR, "ports.json");
 
 describe("loadStaticPorts", () => {
 	beforeEach(() => {
-		mkdirSync(SUPERSET_DIR, { recursive: true });
+		mkdirSync(VELIX_DIR, { recursive: true });
 	});
 
 	afterEach(() => {
@@ -278,7 +278,7 @@ describe("loadStaticPorts", () => {
 
 describe("hasStaticPortsConfig", () => {
 	beforeEach(() => {
-		mkdirSync(SUPERSET_DIR, { recursive: true });
+		mkdirSync(VELIX_DIR, { recursive: true });
 	});
 
 	afterEach(() => {

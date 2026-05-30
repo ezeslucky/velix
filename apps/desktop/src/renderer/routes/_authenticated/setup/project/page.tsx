@@ -12,8 +12,8 @@ import { useLocalHostService } from "renderer/routes/_authenticated/providers/Lo
 import { STEP_ROUTES, useOnboardingStore } from "renderer/stores/onboarding";
 import { MOCK_ORG_ID } from "shared/constants";
 import { SetupButton } from "../components/SetupButton";
-import { StepHeader, StepShell, SupersetPill } from "../components/StepShell";
-import { SupersetIcon } from "../providers/components/SupersetIcon";
+import { StepHeader, StepShell, VelixPill } from "../components/StepShell";
+import { VelixIcon } from "../providers/components/VelixIcon";
 
 export const Route = createFileRoute("/_authenticated/setup/project/")({
 	component: OnboardingProjectPage,
@@ -69,19 +69,19 @@ function OnboardingProjectPage() {
 		navigate({ to: STEP_ROUTES["adopt-worktrees"] });
 	};
 
-	const supersetIcon = (
-		<SupersetPill>
+	const velixIcon = (
+		<VelixPill>
 			<div className="flex size-[48px] items-center justify-center rounded-[12px] bg-[#151110]">
-				<SupersetIcon className="w-8" />
+				<VelixIcon className="w-8" />
 			</div>
-		</SupersetPill>
+		</VelixPill>
 	);
 
 	if (isLoading) {
 		return (
 			<StepShell backTo={STEP_ROUTES.permissions}>
 				<StepHeader
-					icon={supersetIcon}
+					icon={velixIcon}
 					title="Loading projects…"
 					subtitle="Checking for existing projects in your organization"
 				/>
@@ -101,7 +101,7 @@ function OnboardingProjectPage() {
 		return (
 			<StepShell backTo={STEP_ROUTES.permissions}>
 				<StepHeader
-					icon={supersetIcon}
+					icon={velixIcon}
 					title="Your projects"
 					subtitle={`${projectCount} project${projectCount === 1 ? "" : "s"} attached. Continue or add another.`}
 				/>
@@ -153,7 +153,7 @@ function OnboardingProjectPage() {
 	return (
 		<StepShell backTo={STEP_ROUTES.permissions}>
 			<StepHeader
-				icon={supersetIcon}
+				icon={velixIcon}
 				title="Select a repository"
 				subtitle="Choose a local folder to start working with"
 			/>

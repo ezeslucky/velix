@@ -1,6 +1,6 @@
 import type { AgentType } from "@velix/shared/agent-command";
 
-export type SupersetManagedBinary = AgentType | "droid";
+export type VelixManagedBinary = AgentType | "droid";
 
 export const DESKTOP_AGENT_SETUP_ACTIONS = [
 	"notify-script",
@@ -101,6 +101,6 @@ export const DESKTOP_AGENT_SETUP_TARGETS = [
 	},
 ] as const satisfies readonly DesktopAgentSetupTarget[];
 
-export const SUPERSET_MANAGED_BINARIES = DESKTOP_AGENT_SETUP_TARGETS.filter(
+export const VELIX_MANAGED_BINARIES = DESKTOP_AGENT_SETUP_TARGETS.filter(
 	(target) => "managedBinary" in target && target.managedBinary,
-).map((target) => target.id) satisfies SupersetManagedBinary[];
+).map((target) => target.id) satisfies VelixManagedBinary[];

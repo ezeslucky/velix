@@ -18,8 +18,8 @@ type AmpApi = {
 		handler: (event?: unknown) => unknown | Promise<unknown>,
 	) => void;
 };
-type SupersetGlobal = typeof globalThis & {
-	__supersetAmpLifecyclePluginV1?: boolean;
+type VelixGlobal = typeof globalThis & {
+	__velixAmpLifecyclePluginV1?: boolean;
 };
 
 function getStringProperty(
@@ -58,7 +58,7 @@ function getSessionId(event: unknown): string | undefined {
 
 function isDebugEnabled(): boolean {
 	const env = typeof process === "undefined" ? {} : process.env ?? {};
-	return ["SUPERSET_DEBUG_HOOKS", "SUPERSET_DEBUG"].some((key) => {
+	return ["VELIX_DEBUG_HOOKS", "VELIX_DEBUG"].some((key) => {
 		const value = env[key];
 		return value === "1" || value === "true" || value === "TRUE";
 	});
@@ -66,22 +66,22 @@ function isDebugEnabled(): boolean {
 
 function debugLog(message: string): void {
 	if (!isDebugEnabled()) return;
-	process?.stderr?.write?.("[superset-amp-plugin] " + message + "\n");
+	process?.stderr?.write?.("[velix-amp-plugin] " + message + "\n");
 }
 
-export default function supersetAmpLifecyclePlugin(amp: AmpApi) {
-	const supersetGlobal = globalThis as SupersetGlobal;
-	if (supersetGlobal.__supersetAmpLifecyclePluginV1) return;
-	supersetGlobal.__supersetAmpLifecyclePluginV1 = true;
+export default function velixAmpLifecyclePlugin(amp: AmpApi) {
+	const velixGlobal = globalThis as VelixGlobal;
+	if (velixGlobal.__velixAmpLifecyclePluginV1) return;
+	velixGlobal.__velixAmpLifecyclePluginV1 = true;
 
 	const env = typeof process === "undefined" ? {} : process.env ?? {};
-	if (!env.SUPERSET_TERMINAL_ID && !env.SUPERSET_TAB_ID) {
-		debugLog("disabled: missing Superset terminal env");
+	if (!env.VELIX_TERMINAL_ID && !env.VELIX_TAB_ID) {
+		debugLog("disabled: missing Velix terminal env");
 		return;
 	}
 
-	const supersetHome = env.SUPERSET_HOME_DIR || join(homedir(), ".superset");
-	const notifyPath = join(supersetHome, "hooks", "notify.sh");
+	const velixHome = env.VELIX_HOME_DIR || join(homedir(), ".velix");
+	const notifyPath = join(velixHome, "hooks", "notify.sh");
 	if (!existsSync(notifyPath)) {
 		debugLog("disabled: notify hook missing at " + notifyPath);
 		return;
@@ -89,9 +89,9 @@ export default function supersetAmpLifecyclePlugin(amp: AmpApi) {
 
 	debugLog(
 		"enabled terminalId=" +
-			(env.SUPERSET_TERMINAL_ID || "") +
+			(env.VELIX_TERMINAL_ID || "") +
 			" tabId=" +
-			(env.SUPERSET_TAB_ID || "") +
+			(env.VELIX_TAB_ID || "") +
 			" notify=" +
 			notifyPath,
 	);
@@ -108,7 +108,7 @@ export default function supersetAmpLifecyclePlugin(amp: AmpApi) {
 			const child = spawn(notifyPath, [], {
 				stdio: ["pipe", "ignore", "ignore"],
 				detached: true,
-				env: { ...env, SUPERSET_AGENT_ID: "amp" },
+				env: { ...env, VELIX_AGENT_ID: "amp" },
 			});
 			child.on("error", (error) => {
 				debugLog("spawn failed event=" + hookEventName + " error=" + error.message);
@@ -124,10 +124,10 @@ export default function supersetAmpLifecyclePlugin(amp: AmpApi) {
 					" sessionId=" +
 					(sessionId || "") +
 					" terminalId=" +
-					(env.SUPERSET_TERMINAL_ID || ""),
+					(env.VELIX_TERMINAL_ID || ""),
 			);
 		} catch (error) {
-			// Best effort only. Superset notifications must never interrupt Amp.
+			// Best effort only. Velix notifications must never interrupt Amp.
 			debugLog(
 				"spawn threw event=" +
 					hookEventName +

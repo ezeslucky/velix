@@ -9,10 +9,10 @@ import { SetupButton } from "../../components/SetupButton";
 import {
 	StepHeader,
 	StepShell,
-	SupersetPill,
+	VelixPill,
 } from "../../components/StepShell";
 import { CodexBrandIcon } from "../components/CodexBrandIcon";
-import { SupersetIcon } from "../components/SupersetIcon";
+import { VelixIcon } from "../components/VelixIcon";
 
 export const Route = createFileRoute("/_authenticated/setup/providers/codex/")({
 	component: ConnectCodexPage,
@@ -57,15 +57,15 @@ function ConnectCodexPage() {
 			<StepShell backTo="/setup/providers">
 				<StepHeader
 					icon={
-						<SupersetPill>
+						<VelixPill>
 							<div className="flex size-[44px] items-center justify-center rounded-[10px] bg-[#151110]">
-								<SupersetIcon className="w-7" />
+								<VelixIcon className="w-7" />
 							</div>
 							<CodexBrandIcon
 								className="size-[44px] rounded-[10px] bg-[#eae8e6]"
 								iconClassName="size-7 text-[#151110]"
 							/>
-						</SupersetPill>
+						</VelixPill>
 					}
 					title="Connect Codex"
 					subtitle="Authorize access to your account"

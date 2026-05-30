@@ -7,7 +7,7 @@ import {
 	toRecord,
 	toStringArray,
 } from "../../utils/taskToolCallHelpers";
-import { SupersetToolCall } from "../SupersetToolCall";
+import { VelixToolCall } from "../VelixToolCall";
 import { TaskItemDisplay } from "../TaskItemDisplay";
 
 interface CreateTaskToolCallProps {
@@ -39,7 +39,7 @@ export function CreateTaskToolCall({ part }: CreateTaskToolCallProps) {
 			: [];
 
 	return (
-		<SupersetToolCall
+		<VelixToolCall
 			part={part}
 			toolName="Create task"
 			icon={FilePlusIcon}

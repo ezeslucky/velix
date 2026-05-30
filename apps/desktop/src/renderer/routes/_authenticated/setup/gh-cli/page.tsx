@@ -72,7 +72,7 @@ function OnboardingGhCliPage() {
 						</div>
 					}
 					title="GitHub CLI is installed"
-					subtitle="You're ready to check out PRs and manage issues from Superset."
+					subtitle="You're ready to check out PRs and manage issues from Velix."
 				/>
 
 				<div className="overflow-hidden rounded-lg border border-[#2a2827] bg-[#201e1c]">
@@ -99,7 +99,7 @@ function OnboardingGhCliPage() {
 		<StepShell backTo={STEP_ROUTES.providers}>
 			<StepHeader
 				title="Install GitHub CLI"
-				subtitle="Superset uses gh for GitHub operations like checking out PRs and managing issues."
+				subtitle="Velix uses gh for GitHub operations like checking out PRs and managing issues."
 			/>
 
 			<div className="space-y-3 rounded-lg border border-[#2a2827] bg-[#201e1c] p-4">

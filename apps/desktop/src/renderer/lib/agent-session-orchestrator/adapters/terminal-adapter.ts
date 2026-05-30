@@ -27,17 +27,17 @@ async function writeTaskPromptFile(
 		throw new Error(`Workspace path not found: ${workspaceId}`);
 	}
 
-	const supersetDirectory = joinAbsolutePath(
+	const velixDirectory = joinAbsolutePath(
 		workspace.worktreePath,
-		".superset",
+		".velix",
 	);
 	await electronTrpcClient.filesystem.createDirectory.mutate({
 		workspaceId,
-		absolutePath: supersetDirectory,
+		absolutePath: velixDirectory,
 	});
 	await electronTrpcClient.filesystem.writeFile.mutate({
 		workspaceId,
-		absolutePath: joinAbsolutePath(supersetDirectory, baseName),
+		absolutePath: joinAbsolutePath(velixDirectory, baseName),
 		content,
 		encoding: "utf-8",
 	});
@@ -109,7 +109,7 @@ async function writeAttachmentFiles(
 
 	const attachmentsDirectory = joinAbsolutePath(
 		workspace.worktreePath,
-		".superset/attachments",
+		".velix/attachments",
 	);
 	await electronTrpcClient.filesystem.createDirectory.mutate({
 		workspaceId,
@@ -173,7 +173,7 @@ async function writeAttachmentFiles(
 		});
 
 		// Return relative path from workspace root
-		writtenPaths.push(`.superset/attachments/${fileName}`);
+		writtenPaths.push(`.velix/attachments/${fileName}`);
 	}
 
 	return writtenPaths;

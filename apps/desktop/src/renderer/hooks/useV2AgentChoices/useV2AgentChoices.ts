@@ -7,13 +7,13 @@ interface UseV2AgentChoicesResult {
 	isFetched: boolean;
 }
 
-const SUPERSET_AGENT: AgentSelectAgent = {
-	id: "superset",
-	label: "Superset",
-	iconId: "superset",
+const VELIX_AGENT: AgentSelectAgent = {
+	id: "velix",
+	label: "Velix",
+	iconId: "velix",
 };
 
-// Superset chat isn't in the host's `host_agent_configs` table — it's
+// Velix chat isn't in the host's `host_agent_configs` table — it's
 // routed by id inside `runAgentInWorkspace`. Append after the host's
 // terminal rows so the user's preferred terminal agents stay on top.
 export function useV2AgentChoices(
@@ -28,7 +28,7 @@ export function useV2AgentChoices(
 				iconId: config.presetId,
 			}),
 		);
-		return [...terminalAgents, SUPERSET_AGENT];
+		return [...terminalAgents, VELIX_AGENT];
 	}, [query.data]);
 
 	return { agents, isFetched: query.isFetched };

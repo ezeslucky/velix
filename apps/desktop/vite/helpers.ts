@@ -76,7 +76,7 @@ export function htmlEnvTransformPlugin(): Plugin {
 			return html
 				.replace(
 					/%NEXT_PUBLIC_API_URL%/g,
-					process.env.NEXT_PUBLIC_API_URL || "https://api.superset.sh",
+					process.env.NEXT_PUBLIC_API_URL || "https://api.velix.sh",
 				)
 				.replace(
 					/%NEXT_PUBLIC_ELECTRIC_URL%/g,
@@ -87,11 +87,11 @@ export function htmlEnvTransformPlugin(): Plugin {
 				)
 				.replace(
 					/%NEXT_PUBLIC_STREAMS_URL%/g,
-					process.env.NEXT_PUBLIC_STREAMS_URL || "https://streams.superset.sh",
+					process.env.NEXT_PUBLIC_STREAMS_URL || "https://streams.velix.sh",
 				)
 				.replace(
 					/%RELAY_URL%/g,
-					process.env.RELAY_URL || "https://relay.superset.sh",
+					process.env.RELAY_URL || "https://relay.velix.sh",
 				);
 		},
 	};

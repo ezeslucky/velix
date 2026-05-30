@@ -4,16 +4,7 @@ import { readFileSync } from "node:fs";
 // biome-ignore lint/style/noRestrictedImports: test file needs fs/path for source verification
 import { join } from "node:path";
 
-/**
- * Regression test for https://github.com/anthropics/superset/issues/2641
- *
- * The "Run in Workspace" button disappeared because TasksView stopped passing
- * selectedTasks / onClearSelection to TasksTopBar, and TableContent stopped
- * exposing the row-selection state from useTasksTable.
- *
- * These tests verify the wiring exists at the source level so the regression
- * cannot silently reappear.
- */
+
 
 const TASKS_VIEW_DIR = __dirname;
 

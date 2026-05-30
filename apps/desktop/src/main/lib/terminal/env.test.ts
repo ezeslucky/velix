@@ -289,13 +289,13 @@ describe("env", () => {
 
 			it("should include shell wrapper control vars", () => {
 				const env = {
-					ZDOTDIR: "/Users/test/.superset-dev/zsh",
-					BASH_ENV: "/Users/test/.superset-dev/bash/rcfile",
+					ZDOTDIR: "/Users/test/.velix-dev/zsh",
+					BASH_ENV: "/Users/test/.velix-dev/bash/rcfile",
 					PATH: "/usr/bin",
 				};
 				const result = buildSafeEnv(env);
-				expect(result.ZDOTDIR).toBe("/Users/test/.superset-dev/zsh");
-				expect(result.BASH_ENV).toBe("/Users/test/.superset-dev/bash/rcfile");
+				expect(result.ZDOTDIR).toBe("/Users/test/.velix-dev/zsh");
+				expect(result.BASH_ENV).toBe("/Users/test/.velix-dev/bash/rcfile");
 			});
 
 			it("should include proxy vars (both cases)", () => {
@@ -464,18 +464,18 @@ describe("env", () => {
 			});
 		});
 
-		describe("includes SUPERSET_* prefix vars", () => {
-			it("should include SUPERSET_* vars (our metadata)", () => {
+		describe("includes VELIX_* prefix vars", () => {
+			it("should include VELIX_* vars (our metadata)", () => {
 				const env = {
-					SUPERSET_PANE_ID: "pane-1",
-					SUPERSET_TAB_ID: "tab-1",
-					SUPERSET_WORKSPACE_ID: "ws-1",
+					VELIX_PANE_ID: "pane-1",
+					VELIX_TAB_ID: "tab-1",
+					VELIX_WORKSPACE_ID: "ws-1",
 					PATH: "/usr/bin",
 				};
 				const result = buildSafeEnv(env);
-				expect(result.SUPERSET_PANE_ID).toBe("pane-1");
-				expect(result.SUPERSET_TAB_ID).toBe("tab-1");
-				expect(result.SUPERSET_WORKSPACE_ID).toBe("ws-1");
+				expect(result.VELIX_PANE_ID).toBe("pane-1");
+				expect(result.VELIX_TAB_ID).toBe("tab-1");
+				expect(result.VELIX_WORKSPACE_ID).toBe("ws-1");
 			});
 		});
 
@@ -536,15 +536,15 @@ describe("env", () => {
 				expect(result.PATHEXT).toBe(".COM;.EXE;.BAT;.CMD");
 			});
 
-			it("should include Superset_* prefix vars case-insensitively on Windows", () => {
+			it("should include Velix_* prefix vars case-insensitively on Windows", () => {
 				const env = {
-					Superset_Pane_Id: "pane-1",
-					SUPERSET_TAB_ID: "tab-1",
+					Velix_Pane_Id: "pane-1",
+					VELIX_TAB_ID: "tab-1",
 					PATH: "/usr/bin",
 				};
 				const result = buildSafeEnv(env, { platform: "win32" });
-				expect(result.Superset_Pane_Id).toBe("pane-1");
-				expect(result.SUPERSET_TAB_ID).toBe("tab-1");
+				expect(result.Velix_Pane_Id).toBe("pane-1");
+				expect(result.VELIX_TAB_ID).toBe("tab-1");
 			});
 
 			it("should preserve original key casing in output", () => {
@@ -592,7 +592,7 @@ describe("env", () => {
 			"DATABASE_URL",
 			"CLERK_SECRET_KEY",
 			"SSL_CERT_FILE",
-			"SUPERSET_HOME_DIR",
+			"VELIX_HOME_DIR",
 		];
 
 		beforeEach(() => {
@@ -668,12 +668,12 @@ describe("env", () => {
 				expect(result.COLORTERM).toBe("truecolor");
 			});
 
-			it("should set Superset-specific env vars", () => {
+			it("should set Velix-specific env vars", () => {
 				const result = buildTerminalEnv(baseParams);
 
-				expect(result.SUPERSET_PANE_ID).toBe("pane-1");
-				expect(result.SUPERSET_TAB_ID).toBe("tab-1");
-				expect(result.SUPERSET_WORKSPACE_ID).toBe("ws-1");
+				expect(result.VELIX_PANE_ID).toBe("pane-1");
+				expect(result.VELIX_TAB_ID).toBe("tab-1");
+				expect(result.VELIX_WORKSPACE_ID).toBe("ws-1");
 			});
 
 			it("should handle optional workspace params", () => {
@@ -684,17 +684,17 @@ describe("env", () => {
 					rootPath: "/root/path",
 				});
 
-				expect(result.SUPERSET_WORKSPACE_NAME).toBe("my-workspace");
-				expect(result.SUPERSET_WORKSPACE_PATH).toBe("/path/to/workspace");
-				expect(result.SUPERSET_ROOT_PATH).toBe("/root/path");
+				expect(result.VELIX_WORKSPACE_NAME).toBe("my-workspace");
+				expect(result.VELIX_WORKSPACE_PATH).toBe("/path/to/workspace");
+				expect(result.VELIX_ROOT_PATH).toBe("/root/path");
 			});
 
 			it("should default optional params to empty string", () => {
 				const result = buildTerminalEnv(baseParams);
 
-				expect(result.SUPERSET_WORKSPACE_NAME).toBe("");
-				expect(result.SUPERSET_WORKSPACE_PATH).toBe("");
-				expect(result.SUPERSET_ROOT_PATH).toBe("");
+				expect(result.VELIX_WORKSPACE_NAME).toBe("");
+				expect(result.VELIX_WORKSPACE_PATH).toBe("");
+				expect(result.VELIX_ROOT_PATH).toBe("");
 			});
 
 			it("should set LANG to a UTF-8 locale", () => {
@@ -702,29 +702,29 @@ describe("env", () => {
 				expect(result.LANG).toContain("UTF-8");
 			});
 
-			it("should include SUPERSET_PORT", () => {
+			it("should include VELIX_PORT", () => {
 				const result = buildTerminalEnv(baseParams);
-				expect(result.SUPERSET_PORT).toBeDefined();
-				expect(typeof result.SUPERSET_PORT).toBe("string");
+				expect(result.VELIX_PORT).toBeDefined();
+				expect(typeof result.VELIX_PORT).toBe("string");
 			});
 
-			it("should preserve SUPERSET_HOME_DIR for app-launched hooks", () => {
-				process.env.SUPERSET_HOME_DIR = "/tmp/superset-home";
+			it("should preserve VELIX_HOME_DIR for app-launched hooks", () => {
+				process.env.VELIX_HOME_DIR = "/tmp/velix-home";
 				const result = buildTerminalEnv(baseParams);
-				expect(result.SUPERSET_HOME_DIR).toBe("/tmp/superset-home");
+				expect(result.VELIX_HOME_DIR).toBe("/tmp/velix-home");
 			});
 		});
 
-		it("should include SUPERSET_ENV for dev/prod separation", () => {
+		it("should include VELIX_ENV for dev/prod separation", () => {
 			const result = buildTerminalEnv(baseParams);
-			expect(result.SUPERSET_ENV).toBeDefined();
-			expect(["development", "production"]).toContain(result.SUPERSET_ENV);
+			expect(result.VELIX_ENV).toBeDefined();
+			expect(["development", "production"]).toContain(result.VELIX_ENV);
 		});
 
-		it("should include SUPERSET_HOOK_VERSION for protocol versioning", () => {
+		it("should include VELIX_HOOK_VERSION for protocol versioning", () => {
 			const result = buildTerminalEnv(baseParams);
-			expect(result.SUPERSET_HOOK_VERSION).toBeDefined();
-			expect(result.SUPERSET_HOOK_VERSION).toBe("2");
+			expect(result.VELIX_HOOK_VERSION).toBeDefined();
+			expect(result.VELIX_HOOK_VERSION).toBe("2");
 		});
 
 		describe("SSL_CERT_FILE fallback on macOS", () => {

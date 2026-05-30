@@ -6,7 +6,7 @@ import {
 } from "renderer/routes/_authenticated/_dashboard/tasks/components/TasksView/components/shared/StatusIcon";
 import type { ToolPart } from "../../../../utils/tool-helpers";
 import { getResult } from "../../../../utils/tool-helpers";
-import { SupersetToolCall } from "../SupersetToolCall";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface ListTaskStatusesToolCallProps {
 	part: ToolPart;
@@ -42,7 +42,7 @@ export function ListTaskStatusesToolCall({
 		: [];
 
 	return (
-		<SupersetToolCall
+		<VelixToolCall
 			part={part}
 			toolName="List task statuses"
 			icon={ListChecksIcon}

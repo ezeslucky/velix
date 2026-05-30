@@ -1,26 +1,13 @@
-/**
- * Standalone workspace name reader for use by predev scripts
- * that cannot import env.shared.ts (Zod validation fails before env is loaded).
- *
- * In-app code should use getWorkspaceName() from env.shared.ts instead.
- */
+
 export function normalizeWorkspaceName(name?: string): string | undefined {
-	if (!name || name === "superset") return undefined;
+	if (!name || name === "velix") return undefined;
 	return name
 		.toLowerCase()
 		.replace(/[^a-z0-9-]/g, "-")
 		.slice(0, 32);
 }
 
-/**
- * Derive a workspace name from worktree path segments relative to:
- * ~/.superset/worktrees/<project>/...
- *
- * Examples:
- * - ["superset", "my-branch", "apps", "desktop"] -> "my-branch"
- * - ["superset", "owner", "workspace", "apps", "desktop"] -> "owner-workspace"
- * - ["superset", "owner", "feature", "x", "apps", "desktop"] -> "owner-feature-x"
- */
+
 export function deriveWorkspaceNameFromWorktreeSegments(
 	segments: string[],
 ): string | undefined {
@@ -43,5 +30,5 @@ export function deriveWorkspaceNameFromWorktreeSegments(
 }
 
 export function getWorkspaceName(): string | undefined {
-	return normalizeWorkspaceName(process.env.SUPERSET_WORKSPACE_NAME);
+	return normalizeWorkspaceName(process.env.VELIX_WORKSPACE_NAME);
 }

@@ -162,12 +162,6 @@ export class TerminalLinkManager {
 			this._terminal.options.linkHandler = this._oscLinkHandler;
 		}
 
-		// 3. SUPERSET ADDITION: Word link detector (lowest priority).
-		// Adapted from VSCode's TerminalWordLinkDetector. VSCode opens a
-		// workspace search on click; ours opens the file directly if it
-		// exists (validated via stat). Catches bare filenames like
-		// "AGENTS.md" that have no path separator or line suffix.
-		// To disable: remove or comment out this block.
 		if (handlers.onFileLinkClick) {
 			const onFileClick = handlers.onFileLinkClick;
 			const wordDetector = new WordLinkDetector(

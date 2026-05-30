@@ -294,12 +294,12 @@ function AutomationsPage() {
 							<p className="text-sm font-medium text-foreground">
 								Supercharge automations with the{" "}
 								<code className="select-text cursor-text rounded bg-background/80 px-1 py-0.5 font-mono text-[13px]">
-									superset
+									velix
 								</code>{" "}
 								CLI
 							</p>
 							<p className="text-sm leading-relaxed text-muted-foreground">
-								It&apos;s available in every Superset terminal. Tell the agent
+								It&apos;s available in every Velix terminal. Tell the agent
 								to use it to spin up workspaces, run tasks, or manage other
 								automations.{" "}
 								<a

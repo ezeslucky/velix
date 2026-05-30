@@ -1,13 +1,13 @@
 ---
 title: Getting Started
-description: Drive Superset programmatically from any TypeScript or JavaScript codebase.
+description: Drive Velix programmatically from any TypeScript or JavaScript codebase.
 ---
 
 <Callout type="warn">
 The SDK is in early alpha — it is not meant for production use and may be removed in the future. Stay on the latest version (`@velix_sh/sdk@latest`) while we iterate.
 </Callout>
 
-The Superset TypeScript SDK lets you create and manage your workspaces, tasks, projects, and automations from code — anything you can do in the dashboard, your scripts and services can do too.
+The Velix TypeScript SDK lets you create and manage your workspaces, tasks, projects, and automations from code — anything you can do in the dashboard, your scripts and services can do too.
 
 A few things you might use it for:
 
@@ -47,21 +47,21 @@ We're under active development — the SDK follows the API as it grows, so **sta
 
 ## Get an API key
 
-1. Open the [Superset desktop app](https://superset.sh/download) → **Settings → API Keys** → **Create**. The key starts with `sk_live_…` — copy it now (you won't be able to see it again).
+1. Open the [Velix desktop app](https://velix.sh/download) → **Settings → API Keys** → **Create**. The key starts with `sk_live_…` — copy it now (you won't be able to see it again).
 2. Note your **organization ID** — find it in the org switcher inside the desktop app.
 
 ```bash
-export SUPERSET_API_KEY=sk_live_…
-export SUPERSET_ORGANIZATION_ID=…
+export VELIX_API_KEY=sk_live_…
+export VELIX_ORGANIZATION_ID=…
 ```
 
 ## Create the client
 
 ```ts
-import Superset from '@velix_sh/sdk';
+import Velix from '@velix_sh/sdk';
 
-const client = new Superset();
-// reads SUPERSET_API_KEY and SUPERSET_ORGANIZATION_ID from env
+const client = new Velix();
+
 ```
 
 That's all the setup. From here, every resource works the same way:
@@ -110,7 +110,7 @@ See the [reference](/docs/sdk/reference) for every method, parameter, and return
 You can configure the client explicitly instead of (or alongside) the env vars:
 
 ```ts
-const client = new Superset({
+const client = new Velix({
   apiKey: 'sk_live_…',
   organizationId: '…',
   timeout: 60_000,            // default: 60s per request
@@ -126,9 +126,9 @@ The client retries automatically on network errors and 429/5xx responses, so tra
 The SDK throws typed errors for any non-success response, so you can catch what you actually care about:
 
 ```ts
-import Superset, { APIError, NotFoundError, RateLimitError } from '@velix_sh/sdk';
+import Velix, { APIError, NotFoundError, RateLimitError } from '@velix_sh/sdk';
 
-const client = new Superset();
+const client = new Velix();
 
 try {
   await client.tasks.create({ title: '' });
@@ -139,7 +139,7 @@ try {
     // 404
   } else if (err instanceof APIError) {
     // anything else — err.status, err.headers, err.error (the parsed body)
-    console.error(`Superset returned ${err.status}:`, err.error);
+    console.error(`Velix returned ${err.status}:`, err.error);
   }
 }
 ```
