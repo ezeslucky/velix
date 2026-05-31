@@ -3,7 +3,7 @@ import { createServer, type Server } from "node:http";
 import { CLIError } from "@velix/cli-framework";
 import { env } from "./env";
 
-const CLIENT_ID = "superset-cli";
+const CLIENT_ID = "velix-cli";
 const PASTE_REDIRECT_PATH = "/cli/auth/code";
 const SCOPE = "openid profile email offline_access";
 const LOOPBACK_PORTS = [51789, 51790, 51791, 51792, 51793];
@@ -51,7 +51,7 @@ async function openBrowser(url: string): Promise<void> {
 }
 
 export function getWebUrl(): string {
-	return env.SUPERSET_WEB_URL;
+	return env.VELIX_WEB_URL;
 }
 
 function shouldOpenBrowser(): boolean {
@@ -149,7 +149,7 @@ function waitForCallback({
 			response
 				.writeHead(200, { "Content-Type": "text/html" })
 				.end(
-					"<h1>Signed in to Superset CLI</h1><p>You can close this tab.</p>",
+					"<h1>Signed in to Velix CLI</h1><p>You can close this tab.</p>",
 				);
 			finish(null, code);
 		});
@@ -225,7 +225,7 @@ async function exchangeCodeForToken({
 		const body = await response.text();
 		throw new CLIError(
 			`Token exchange failed: ${response.status}`,
-			body || "Run `superset auth login` again.",
+			body || "Run `velix auth login` again.",
 		);
 	}
 
@@ -247,7 +247,7 @@ async function exchangeCodeForToken({
 export async function refreshAccessToken(
 	refreshToken: string,
 ): Promise<LoginResult> {
-	const apiUrl = env.SUPERSET_API_URL;
+	const apiUrl = env.VELIX_API_URL;
 	const response = await fetch(`${apiUrl}/api/auth/oauth2/token`, {
 		method: "POST",
 		headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -263,7 +263,7 @@ export async function refreshAccessToken(
 		const body = await response.text();
 		throw new CLIError(
 			`Token refresh failed: ${response.status}`,
-			body || "Run `superset auth login` again.",
+			body || "Run `velix auth login` again.",
 		);
 	}
 
@@ -286,7 +286,7 @@ export async function login(
 	signal: AbortSignal,
 	callbacks: LoginCallbacks,
 ): Promise<LoginResult> {
-	const apiUrl = env.SUPERSET_API_URL;
+	const apiUrl = env.VELIX_API_URL;
 	const webUrl = getWebUrl();
 
 	const codeVerifier = generateCodeVerifier();
@@ -379,7 +379,7 @@ export async function login(
 						if (returnedState !== state) {
 							throw new CLIError(
 								"State mismatch",
-								"The pasted code does not match this login attempt. Run `superset auth login` again.",
+								"The pasted code does not match this login attempt. Run `velix auth login` again.",
 							);
 						}
 						settle(() => {

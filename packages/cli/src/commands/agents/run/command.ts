@@ -10,7 +10,7 @@ export default command({
 		agent: string()
 			.required()
 			.desc(
-				"Agent preset id (e.g. `claude`), HostAgentConfig instance UUID, or `superset` for a Superset session",
+				"Agent preset id (e.g. `claude`), HostAgentConfig instance UUID, or `velix` for a Velix session",
 			),
 		prompt: string().required().desc("Prompt sent to the agent"),
 		attachmentId: string()
@@ -25,7 +25,7 @@ export default command({
 	run: async ({ ctx, options }) => {
 		const organizationId = ctx.config.organizationId;
 		if (!organizationId) {
-			throw new CLIError("No active organization", "Run: superset auth login");
+			throw new CLIError("No active organization", "Run: velix auth login");
 		}
 
 		const cloudWorkspace = await ctx.api.v2Workspace.getFromHost.query({

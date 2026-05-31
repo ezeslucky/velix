@@ -1,8 +1,5 @@
-# Superset TypeScript SDK
+# Velix TypeScript SDK
 
-Typed wrapper around the Superset API. Mirrors the [`superset` CLI](https://docs.superset.sh/docs/cli/getting-started) 1:1 — same procedures, same shapes.
-
-Full docs: **<https://docs.superset.sh/docs/sdk/getting-started>**
 
 ## Install
 
@@ -14,11 +11,11 @@ npm install @velix_sh/sdk
 ## Quickstart
 
 ```ts
-import Superset from '@velix_sh/sdk';
+import Velix from '@velix_sh/sdk';
 
-const client = new Superset({
-  apiKey: process.env.SUPERSET_API_KEY,             // sk_live_…
-  organizationId: process.env.SUPERSET_ORGANIZATION_ID, // required for most resources
+const client = new Velix({
+  apiKey: process.env.VELIX_API_KEY,             // sk_live_…
+  organizationId: process.env.VELIX_ORGANIZATION_ID, // required for most resources
 });
 
 // Tasks
@@ -38,18 +35,18 @@ await client.automations.list();
 await client.automations.run('<automation-id>');
 ```
 
-Both `apiKey` and `organizationId` are picked up automatically from `SUPERSET_API_KEY` / `SUPERSET_ORGANIZATION_ID` environment variables — you can omit them in the constructor.
+Both `apiKey` and `organizationId` are picked up automatically from `VELIX_API_KEY` / `VELIX_ORGANIZATION_ID` environment variables — you can omit them in the constructor.
 
-Find your `organizationId` via `superset organization list` in the CLI, or in the URL of any org dashboard.
+Find your `organizationId` via `velix organization list` in the CLI, or in the URL of any org dashboard.
 
 ## Configuration
 
 ```ts
-const client = new Superset({
+const client = new Velix({
   apiKey: 'sk_live_…',
   organizationId: '…',
-  baseURL: 'https://api.superset.sh',     // override for staging / self-hosted
-  relayURL: 'https://relay.superset.sh',  // host-routed ops (workspace create, automation run)
+  baseURL: 'https://api.velix.sh',     // override for staging / self-hosted
+  relayURL: 'https://relay.velix.sh',  // host-routed ops (workspace create, automation run)
   timeout: 60_000,
   maxRetries: 2,
   logLevel: 'warn',                       // 'off' | 'error' | 'warn' | 'info' | 'debug'
@@ -73,7 +70,7 @@ try {
 
 ## Two transport paths
 
-Most methods hit `api.superset.sh` directly. Three methods physically execute on a developer machine and route through the relay tunnel: `workspaces.create`, `workspaces.delete`, and `automations.run`. The SDK transparently exchanges your API key for a short-lived JWT to talk to the relay — no token plumbing required.
+Most methods hit `api.velix.sh` directly. Three methods physically execute on a developer machine and route through the relay tunnel: `workspaces.create`, `workspaces.delete`, and `automations.run`. The SDK transparently exchanges your API key for a short-lived JWT to talk to the relay — no token plumbing required.
 
 For relay-bound calls, the target host has to be online and tunneling, otherwise you'll get a `503 Host not connected`.
 

@@ -13,7 +13,7 @@ export type {
 export {
 	getShellBootstrapEnv,
 	getShellLaunchArgs,
-	getSupersetShellPaths,
+	getVELIXShellPaths,
 	resolveLaunchShell,
 } from "./shell-launch.ts";
 
@@ -119,7 +119,7 @@ export function normalizeUtf8Locale(baseEnv: Record<string, string>): string {
 interface BuildV2TerminalEnvParams {
 	baseEnv: Record<string, string>;
 	shell: string;
-	supersetHomeDir: string;
+	VELIXHomeDir: string;
 	themeType?: "dark" | "light";
 	cwd: string;
 	terminalId: string;
@@ -127,7 +127,7 @@ interface BuildV2TerminalEnvParams {
 	workspacePath: string;
 	rootPath: string;
 	hostServiceVersion: string;
-	supersetEnv: "development" | "production";
+	VELIXEnv: "development" | "production";
 	agentHookPort: string;
 	agentHookVersion: string;
 	/**
@@ -148,7 +148,7 @@ export function buildV2TerminalEnv(
 	const {
 		baseEnv,
 		shell,
-		supersetHomeDir,
+		VELIXHomeDir,
 		themeType,
 		cwd,
 		terminalId,
@@ -156,7 +156,7 @@ export function buildV2TerminalEnv(
 		workspacePath,
 		rootPath,
 		hostServiceVersion,
-		supersetEnv,
+		VELIXEnv,
 		agentHookPort,
 		agentHookVersion,
 		hostAgentHookUrl,
@@ -166,7 +166,7 @@ export function buildV2TerminalEnv(
 	// to guarantee no runtime keys reach PTYs regardless of call site
 	const env = stripTerminalRuntimeEnv(baseEnv);
 
-	Object.assign(env, getShellBootstrapEnv({ shell, baseEnv, supersetHomeDir }));
+	Object.assign(env, getShellBootstrapEnv({ shell, baseEnv, velixHomeDir }));
 
 	env.TERM = "xterm-256color";
 	env.SHELL = shell;
@@ -181,23 +181,23 @@ export function buildV2TerminalEnv(
 	env.LANG = normalizeUtf8Locale(baseEnv);
 	env.PWD = cwd;
 
-	env.SUPERSET_TERMINAL_ID = terminalId;
-	env.SUPERSET_WORKSPACE_ID = workspaceId;
-	env.SUPERSET_WORKSPACE_PATH = workspacePath;
-	env.SUPERSET_ROOT_PATH = rootPath;
-	env.SUPERSET_ENV = supersetEnv;
-	env.SUPERSET_AGENT_HOOK_PORT = agentHookPort;
-	env.SUPERSET_AGENT_HOOK_VERSION = agentHookVersion;
+	env.VELIX_TERMINAL_ID = terminalId;
+	env.VELIX_WORKSPACE_ID = workspaceId;
+	env.VELIX_WORKSPACE_PATH = workspacePath;
+	env.VELIX_ROOT_PATH = rootPath;
+	env.VELIX_ENV = velixEnv;
+	env.VELIX_AGENT_HOOK_PORT = agentHookPort;
+	env.VELIX_AGENT_HOOK_VERSION = agentHookVersion;
 	// v2 — agent posts to host-service so the renderer can play the sound
 	// client-side. No auth token: the endpoint is unauthenticated by design
 	// (it only broadcasts chimes). The notify-hook script falls back to
 	// the electron endpoint when this URL isn't set.
 	if (hostAgentHookUrl) {
-		env.SUPERSET_HOST_AGENT_HOOK_URL = hostAgentHookUrl;
+		env.VELIX_HOST_AGENT_HOOK_URL = hostAgentHookUrl;
 	}
 
-	if (supersetHomeDir) {
-		env.SUPERSET_HOME_DIR = supersetHomeDir;
+	if (velixHomeDir) {
+		env.VELIX_HOME_DIR = velixHomeDir;
 	}
 
 	// Electron child processes can't access macOS Keychain for TLS cert verification,

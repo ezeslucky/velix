@@ -4,7 +4,7 @@ date: 2026-04-20
 image: /changelog/chat-ux.png
 ---
 
-A big update covering the last three weeks. The chat interface got a top-to-bottom UX overhaul with a new rich-text prompt editor, slash-command and file-mention chips, and a redesigned tool-call system. The v2 workspace is now in early access, with panes, a diff viewer, a file editor, a review tab, and a browser pane. The Superset CLI shipped and then grew a self-contained tarball that can run the host-service anywhere. The desktop app got a full brand refresh, and GitHub integration is now free on every plan.
+A big update covering the last three weeks. The chat interface got a top-to-bottom UX overhaul with a new rich-text prompt editor, slash-command and file-mention chips, and a redesigned tool-call system. The v2 workspace is now in early access, with panes, a diff viewer, a file editor, a review tab, and a browser pane. The Velix CLI shipped and then grew a self-contained tarball that can run the host-service anywhere. The desktop app got a full brand refresh, and GitHub integration is now free on every plan.
 
 ## Chat UX overhaul <PRBadge url="https://github.com/ezeslucky/velix/pull/3039" />
 
@@ -30,7 +30,7 @@ The prompt is now a ProseMirror-based rich text editor with inline chips for com
 - Footer overlay with pinned header/footer and scrollable option buttons — no more inline question UI
 - Status chips (Awaiting Response / Answered / Cancelled) with a collapsible answer bubble; cancelled shows immediately when aborted
 - Optimistic dismiss on submit; prompt textarea auto-focuses after answering
-- `ask_user` is now required for all Superset questions — no plain-text fallbacks
+- `ask_user` is now required for all Velix questions — no plain-text fallbacks
 
 ### Workspace status and notifications
 
@@ -83,20 +83,20 @@ Pages stay loaded across tab switches and workspace navigations — no reloads, 
 
 A Changes tab in the right sidebar showing ahead/behind status, commit count, and a filterable file list. Filter by all changes, uncommitted only, a single commit, or a commit range. Searchable base-branch picker and inline rename for unpushed branches.
 
-## Superset CLI <PRBadge url="https://github.com/ezeslucky/velix/pull/3194" />
+## Velix CLI <PRBadge url="https://github.com/ezeslucky/velix/pull/3194" />
 
 {/* TODO: Screenshot of the CLI in action */}
 
-The `superset` CLI lets you manage Superset from your terminal, and ships as a self-contained tarball <PRBadge url="https://github.com/ezeslucky/velix/pull/3298" /> so you can run the host-service on a remote server, CI box, or cloud VM without the desktop app.
+The `velix` CLI lets you manage Velix from your terminal, and ships as a self-contained tarball <PRBadge url="https://github.com/ezeslucky/velix/pull/3298" /> so you can run the host-service on a remote server, CI box, or cloud VM without the desktop app.
 
 ```bash
-tar -xzf superset-darwin-arm64.tar.gz -C ~/superset
-export PATH="$HOME/superset/bin:$PATH"
+tar -xzf velix-darwin-arm64.tar.gz -C ~/velix
+export PATH="$HOME/velix/bin:$PATH"
 
-superset auth login              # OAuth PKCE + loopback
-superset host start --daemon     # connects to relay.superset.sh
-superset tasks list              # full task CRUD
-superset org switch              # manage organizations
+velix auth login              # OAuth PKCE + loopback
+velix host start --daemon     # connects to relay.velix.sh
+velix tasks list              # full task CRUD
+velix org switch              # manage organizations
 ```
 
 Binaries for macOS (arm64, x64) and Linux x64. `--json` output mode for scripting and agent use.
@@ -141,7 +141,7 @@ PR review, issue linking, and push-from-desktop are available on every plan — 
 - **Event-driven tray menu** showing the real org name <PRBadge url="https://github.com/ezeslucky/velix/pull/3458" />
 - **Notification sound volume** dropdown in settings <PRBadge url="https://github.com/ezeslucky/velix/pull/3073" />
 - **Resolve review comments** directly in the review tab <PRBadge url="https://github.com/ezeslucky/velix/pull/3078" />
-- **Public roadmap** at superset.sh/roadmap <PRBadge url="https://github.com/ezeslucky/velix/pull/3074" />
+- **Public roadmap** at velix.sh/roadmap <PRBadge url="https://github.com/ezeslucky/velix/pull/3074" />
 
 ---
 

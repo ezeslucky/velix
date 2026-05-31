@@ -38,13 +38,7 @@ export function __setAccountShellForTesting(
 	accountShellForTesting = shell;
 }
 
-/**
- * Resolve the shell Superset should launch for user terminals.
- *
- * Desktop-launched helper processes can inherit a generic SHELL such as
- * /bin/bash even when the user's configured login shell is fish. Prefer the
- * OS account shell to match normal terminal-app behavior and the old v1 path.
- */
+
 export function resolveConfiguredShell(
 	env: ShellEnvSource,
 	options: ResolveConfiguredShellOptions = {},

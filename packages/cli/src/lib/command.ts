@@ -1,11 +1,11 @@
 import { createCommand } from "@velix/cli-framework";
 import type { ApiClient } from "./api-client";
-import type { SupersetConfig } from "./config";
+import type { VelixConfig } from "./config";
 import type { AuthSource } from "./resolve-auth";
 
 export interface CliContext {
 	api: ApiClient;
-	config: SupersetConfig;
+	config: VelixConfig;
 	bearer: string;
 	authSource: AuthSource;
 }

@@ -1,6 +1,3 @@
-// Manifest for a running pty-daemon instance. Lives under
-// $SUPERSET_HOME_DIR/host/{organizationId}/. Different lifecycle from
-// host-service's own manifest — the daemon outlives host-service restarts.
 
 import {
 	existsSync,
@@ -30,12 +27,12 @@ export interface PtyDaemonManifest {
 	handoffSuccessorPid?: number;
 }
 
-function supersetHomeDir(): string {
-	return process.env.SUPERSET_HOME_DIR || join(homedir(), ".superset");
+function velixHomeDir(): string {
+	return process.env.VELIX_HOME_DIR || join(homedir(), ".velix");
 }
 
 export function ptyDaemonManifestDir(organizationId: string): string {
-	return join(supersetHomeDir(), "host", organizationId);
+	return join(velixHomeDir(), "host", organizationId);
 }
 
 function ptyDaemonManifestPath(organizationId: string): string {
@@ -99,7 +96,7 @@ export function readPtyDaemonManifest(
 }
 
 export function listPtyDaemonManifests(): PtyDaemonManifest[] {
-	const hostDir = join(supersetHomeDir(), "host");
+	const hostDir = join(velixHomeDir(), "host");
 	if (!existsSync(hostDir)) return [];
 	const manifests: PtyDaemonManifest[] = [];
 	try {

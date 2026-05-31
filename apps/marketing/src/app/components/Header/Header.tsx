@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { DesktopNav } from "./components/DesktopNav";
 import { MobileNav } from "./components/MobileNav";
-import { SupersetLogo } from "./components/SupersetLogo";
+import { VelixLogo } from "./components/VelixLogo";
 
 interface HeaderProps {
 	ctaButtons: React.ReactNode;
@@ -26,7 +26,7 @@ export function Header({ ctaButtons, starCounter }: HeaderProps) {
 							href="/"
 							className="flex items-center text-foreground hover:text-foreground/80 transition-colors"
 						>
-							<SupersetLogo />
+							<VelixLogo />
 						</Link>
 					</motion.div>
 

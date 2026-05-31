@@ -1,17 +1,17 @@
 #!/bin/sh
-# Superset CLI installer
+# Velix CLI installer
 #
 # Usage:
-#   curl -fsSL https://superset.sh/cli/install.sh | sh
+#   curl -fsSL https://velix.sh/cli/install.sh | sh
 #
-# Installs the Superset CLI and host-service to ~/superset/.
-# Adds ~/superset/bin to PATH via your shell profile.
+# Installs the Velix CLI and host-service to ~/velix/.
+# Adds ~/velix/bin to PATH via your shell profile.
 
 set -eu
 
 REPO="ezeslucky/velix"
-INSTALL_DIR="${SUPERSET_HOME:-$HOME/superset}"
-TAG="${SUPERSET_VERSION:-latest}"
+INSTALL_DIR="${VELIX_HOME:-$HOME/velix}"
+TAG="${VELIX_VERSION:-latest}"
 
 BOLD='\033[1m'
 GREEN='\033[32m'
@@ -49,7 +49,7 @@ detect_target() {
 
 download_tarball() {
     target="$1"
-    tarball="superset-${target}.tar.gz"
+    tarball="velix-${target}.tar.gz"
 
     if [ "$TAG" = "latest" ]; then
         url="https://github.com/${REPO}/releases/download/cli-latest/${tarball}"
@@ -58,7 +58,7 @@ download_tarball() {
     fi
 
     info "Downloading $url"
-    tmp="$(mktemp -t superset-install.XXXXXX)"
+    tmp="$(mktemp -t velix-install.XXXXXX)"
     if ! curl -fsSL -o "$tmp" "$url"; then
         rm -f "$tmp"
         error "Failed to download $url"
@@ -120,13 +120,13 @@ update_path() {
     info "Adding $bin_dir to PATH in $profile"
     mkdir -p "$(dirname "$profile")"
     {
-        printf "\n# Superset CLI\n"
+        printf "\n# Velix CLI\n"
         printf "%s\n" "$export_line"
     } >> "$profile"
 }
 
 main() {
-    printf "${BOLD}Installing Superset CLI${RESET}\n\n"
+    printf "${BOLD}Installing Velix CLI${RESET}\n\n"
 
     target="$(detect_target)"
     info "Platform: $target"
@@ -136,7 +136,7 @@ main() {
 
     # Verify binaries exist and are executable. Tarball already ships them
     # with +x, so this is a sanity check, not a chmod fallback.
-    for bin in superset superset-host; do
+    for bin in velix velix-host; do
         path="$INSTALL_DIR/bin/$bin"
         if [ ! -f "$path" ] || [ ! -x "$path" ]; then
             error "Expected executable file not found: $path"
@@ -147,7 +147,7 @@ main() {
 
     printf "\n${GREEN}${BOLD}Installed!${RESET}\n"
     printf "Run ${BOLD}exec \$SHELL${RESET} (or open a new terminal) to load the updated PATH.\n"
-    printf "Then run ${BOLD}superset auth login${RESET} to get started.\n"
+    printf "Then run ${BOLD}velix auth login${RESET} to get started.\n"
 }
 
 main "$@"

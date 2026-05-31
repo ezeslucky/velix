@@ -1,1 +1,1 @@
-export const ANALYTICS_CONSENT_KEY = "superset-analytics-consent" as const;
+export const ANALYTICS_CONSENT_KEY = "velix-analytics-consent" as const;

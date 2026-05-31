@@ -40,13 +40,13 @@ export function resolveHostTarget(
 		if (!manifest) {
 			throw new CLIError(
 				"Host service for this machine isn't running",
-				"Run: superset start",
+				"Run: velix start",
 			);
 		}
 		if (!isProcessAlive(manifest.pid)) {
 			throw new CLIError(
 				"Host service manifest is stale (recorded PID is dead)",
-				"Run: superset start",
+				"Run: velix start",
 			);
 		}
 		return {

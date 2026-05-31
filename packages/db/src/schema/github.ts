@@ -12,16 +12,13 @@ import {
 
 import { organizations, users } from "./auth";
 
-/**
- * GitHub App installations linked to Superset organizations.
- * One organization can have one GitHub installation.
- */
+
 export const githubInstallations = pgTable(
 	"github_installations",
 	{
 		id: uuid().primaryKey().defaultRandom(),
 
-		// Link to Superset organization
+		
 		organizationId: uuid("organization_id")
 			.notNull()
 			.references(() => organizations.id, { onDelete: "cascade" }),

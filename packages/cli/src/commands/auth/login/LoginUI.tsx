@@ -93,7 +93,7 @@ export function LoginUI({
 
 	return (
 		<Box flexDirection="column">
-			<Text bold>superset auth login</Text>
+			<Text bold>velix auth login</Text>
 			<Text> </Text>
 			<Box flexDirection="row">
 				<Text>Browser didn't open? Use the url below to sign in </Text>

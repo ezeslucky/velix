@@ -1,20 +1,8 @@
 #!/usr/bin/env bun
-// One-shot notifier for the integration-connections dup-linkage migration.
-// Sends a per-user email summarizing which Linear/Slack workspaces were
-// disconnected from their Superset org because another org won the linkage.
-//
-// Run with NEXT_PUBLIC_MARKETING_URL forced to prod so logos/social icons
-// resolve when the recipient opens the email (local .env points at
-// localhost which is fine for dev preview but useless in a real inbox).
-//
-// Usage:
-//   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --dry-run
-//   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --test=satya@velix.sh
-//   NEXT_PUBLIC_MARKETING_URL=https://superset.sh bun run scripts/notify-disconnected-integrations.ts --send
 
-if (process.env.NEXT_PUBLIC_MARKETING_URL !== "https://superset.sh") {
+if (process.env.NEXT_PUBLIC_MARKETING_URL !== "https://velix.sh") {
 	console.error(
-		"Set NEXT_PUBLIC_MARKETING_URL=https://superset.sh before running so logos/socials in the email resolve.",
+		"Set NEXT_PUBLIC_MARKETING_URL=https://velix.sh before running so logos/socials in the email resolve.",
 	);
 	process.exit(1);
 }
@@ -32,7 +20,7 @@ import {
 import { aliasedTable, and, eq, isNull } from "drizzle-orm";
 import { Resend } from "resend";
 
-const FROM = "Superset <noreply@velix.sh>";
+const FROM = "Velix <noreply@velix.sh>";
 const REPLY_TO = "founders@velix.sh";
 
 function parseArgs() {
@@ -170,7 +158,7 @@ async function main() {
 			from: FROM,
 			to: testEmail,
 			replyTo: REPLY_TO,
-			subject: `[TEST] Your Superset integration was disconnected`,
+			subject: `[TEST] Your Velix integration was disconnected`,
 			react: IntegrationDisconnectedEmail({
 				recipientName: name,
 				connections,
@@ -192,7 +180,7 @@ async function main() {
 				from: FROM,
 				to: email,
 				replyTo: REPLY_TO,
-				subject: "Your Superset integration was disconnected",
+				subject: "Your Velix integration was disconnected",
 				react: IntegrationDisconnectedEmail({
 					recipientName: name,
 					connections,

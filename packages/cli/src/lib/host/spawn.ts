@@ -65,24 +65,18 @@ async function pollHealth(port: number, secret: string): Promise<boolean> {
 	return false;
 }
 
-/**
- * Resolve the sibling `superset-host` wrapper binary.
- *
- * When running as a compiled binary, it's a sibling file in the same bin/
- * directory as the current executable. In dev (`bun run dev`), allow
- * override via SUPERSET_HOST_BIN env var.
- */
+
 function resolveHostBinary(): string {
-	if (process.env.SUPERSET_HOST_BIN) return process.env.SUPERSET_HOST_BIN;
+	if (process.env.VELIX_HOST_BIN) return process.env.VELIX_HOST_BIN;
 	const cliBin = process.execPath;
-	return join(dirname(cliBin), "superset-host");
+	return join(dirname(cliBin), "velix-host");
 }
 
 function resolveMigrationsFolder(): string {
 	if (process.env.HOST_MIGRATIONS_FOLDER) {
 		return process.env.HOST_MIGRATIONS_FOLDER;
 	}
-	// Compiled layout: <bundle>/bin/superset → <bundle>/share/migrations
+	
 	const cliBin = process.execPath;
 	const bundleRoot = dirname(dirname(cliBin));
 	return join(bundleRoot, "share", "migrations");
@@ -94,7 +88,7 @@ export async function spawnHostService(
 	const hostBin = resolveHostBinary();
 	if (!existsSync(hostBin)) {
 		throw new Error(
-			`superset-host binary not found at ${hostBin}. Set SUPERSET_HOST_BIN to override.`,
+			`velix-host binary not found at ${hostBin}. Set VELIX_HOST_BIN to override.`,
 		);
 	}
 
@@ -110,7 +104,7 @@ export async function spawnHostService(
 			...process.env,
 			ORGANIZATION_ID: options.organizationId,
 			AUTH_TOKEN: options.sessionToken,
-			SUPERSET_API_URL: env.SUPERSET_API_URL,
+			VELIX_API_URL: env.VELIX_API_URL,
 			RELAY_URL: relayUrl,
 			PORT: String(port),
 			HOST_SERVICE_PORT: String(port),

@@ -2,10 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const PROJECT_VELIX_DIR_NAME = ".superset";
+const PROJECT_VELIX_DIR_NAME = ".velix";
 const CONFIG_FILE_NAME = "config.json";
 const LOCAL_CONFIG_FILE_NAME = "config.local.json";
-const VELIX_DIR_NAME = ".superset";
+const VELIX_DIR_NAME = ".velix";
 const PROJECTS_DIR_NAME = "projects";
 
 export interface SetupConfig {
@@ -186,9 +186,9 @@ function getLocalOverlayPath(repoPath: string): string {
 /**
  * Resolve setup/teardown/run config for a v2 project.
  *
- *   1. <repoPath>/.superset/config.json    — canonical
- *   2. ~/.superset/projects/<id>/config.json — per-machine override (later wins)
- *   3. <repoPath>/.superset/config.local.json — overlay with before/after/replace
+ *   1. <repoPath>/.velix/config.json    — canonical
+ *   2. ~/.velix/projects/<id>/config.json — per-machine override (later wins)
+ *   3. <repoPath>/.velix/config.local.json — overlay with before/after/replace
  *
  * Returns null when no source defines anything. Worktrees are not consulted —
  * the main repo path is the single source of truth.

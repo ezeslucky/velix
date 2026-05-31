@@ -5,7 +5,7 @@ type MastraExtraTool = {
 	[key: string]: unknown;
 };
 
-export async function getSupersetMcpTools(
+export async function getVelixMcpTools(
 	headers: () => Promise<Record<string, string>>,
 	apiUrl: string,
 ): Promise<Record<string, MastraExtraTool>> {
@@ -14,9 +14,9 @@ export async function getSupersetMcpTools(
 		if (!h.Authorization && !h.authorization) return {};
 
 		const client = new MCPClient({
-			id: `superset-mcp-${Date.now()}`,
+			id: `velix-mcp-${Date.now()}`,
 			servers: {
-				superset: {
+				velix: {
 					url: new URL(`${apiUrl}/api/agent/mcp`),
 					fetch: async (url, init) => {
 						const merged = new Headers(init?.headers);
@@ -35,7 +35,7 @@ export async function getSupersetMcpTools(
 		>;
 	} catch (error) {
 		console.warn(
-			"[superset-mcp] failed to load tools",
+			"[velix-mcp] failed to load tools",
 			error instanceof Error ? error.message : error,
 		);
 		return {};

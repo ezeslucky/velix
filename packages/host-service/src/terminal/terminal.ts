@@ -817,7 +817,7 @@ function isUnknownDaemonSessionError(error: unknown): boolean {
 }
 
 function reachableDaemonSocketPath(): string | null {
-	const explicitSocket = process.env.SUPERSET_PTY_DAEMON_SOCKET;
+	const explicitSocket = process.env.VELIX_PTY_DAEMON_SOCKET;
 	if (explicitSocket) return explicitSocket;
 
 	const organizationId = process.env.ORGANIZATION_ID;
@@ -1112,13 +1112,13 @@ export async function createTerminalSessionInternal({
 
 	// Use the preserved shell snapshot — never live process.env
 	const baseEnv = getTerminalBaseEnv();
-	const supersetHomeDir = process.env.SUPERSET_HOME_DIR || "";
+	const velixHomeDir = process.env.VELIX_HOME_DIR || "";
 	const shell = resolveLaunchShell(baseEnv);
-	const shellArgs = getShellLaunchArgs({ shell, supersetHomeDir });
+	const shellArgs = getShellLaunchArgs({ shell, velixHomeDir });
 	const ptyEnv = buildV2TerminalEnv({
 		baseEnv,
 		shell,
-		supersetHomeDir,
+		velixHomeDir,
 		themeType,
 		cwd,
 		terminalId,
@@ -1126,10 +1126,10 @@ export async function createTerminalSessionInternal({
 		workspacePath: workspace.worktreePath,
 		rootPath,
 		hostServiceVersion: process.env.HOST_SERVICE_VERSION || "unknown",
-		supersetEnv:
+		velixEnv:
 			process.env.NODE_ENV === "development" ? "development" : "production",
-		agentHookPort: process.env.SUPERSET_AGENT_HOOK_PORT || "",
-		agentHookVersion: process.env.SUPERSET_AGENT_HOOK_VERSION || "",
+		agentHookPort: process.env.VELIX_AGENT_HOOK_PORT || "",
+		agentHookVersion: process.env.VELIX_AGENT_HOOK_VERSION || "",
 		hostAgentHookUrl: getHostAgentHookUrl(),
 	});
 

@@ -11,13 +11,7 @@ import {
 import { requireLocalProject } from "../shared/local-project";
 import type { TerminalDescriptor } from "../shared/types";
 
-/**
- * Adopt a worktree that already exists on disk into a Superset workspace
- * row. Currently the only caller is the v1→v2 migration, which passes
- * an explicit `worktreePath`. Branch-name-only callers (the v2 picker,
- * MCP, agent spawn) go through `workspaces.create`, which handles
- * adoption inline via the same shared helper.
- */
+
 export const adopt = protectedProcedure
 	.input(adoptInputSchema)
 	.mutation(async ({ ctx, input }) => {

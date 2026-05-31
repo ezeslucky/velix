@@ -20,7 +20,7 @@ import {
 	subscribeToSessionEvents,
 	syncRuntimeHookSessionId,
 } from "./utils/runtime";
-import { getSupersetMcpTools } from "./utils/runtime/superset-mcp";
+import { getVelixMcpTools } from "./utils/runtime/velix-mcp";
 import {
 	approvalRespondInput,
 	displayStateInput,
@@ -139,7 +139,7 @@ export class ChatRuntimeService {
 
 		const creationPromise = (async () => {
 			try {
-				const extraTools = await getSupersetMcpTools(
+				const extraTools = await getVelixMcpTools(
 					() => Promise.resolve(this.opts.headers()),
 					this.opts.apiUrl,
 				);

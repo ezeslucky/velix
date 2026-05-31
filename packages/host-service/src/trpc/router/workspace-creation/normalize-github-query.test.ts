@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { normalizeGitHubQuery } from "./normalize-github-query";
 
-const repo = { owner: "ezeslucky", name: "superset" };
+const repo = { owner: "ezeslucky", name: "velix" };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared behaviors (same for both kinds)
@@ -305,7 +305,7 @@ describe("normalizeGitHubQuery — PR URLs", () => {
 	describe("cross-repo mismatch", () => {
 		test("different owner", () => {
 			const result = normalizeGitHubQuery(
-				"https://github.com/other-org/superset/pull/100",
+				"https://github.com/other-org/velix/pull/100",
 				repo,
 				"pull",
 			);
@@ -428,7 +428,7 @@ describe("normalizeGitHubQuery — issue URLs", () => {
 	describe("cross-repo mismatch", () => {
 		test("different owner", () => {
 			const result = normalizeGitHubQuery(
-				"https://github.com/other-org/superset/issues/100",
+				"https://github.com/other-org/velix/issues/100",
 				repo,
 				"issue",
 			);

@@ -5,8 +5,8 @@
  */
 
 export const env = {
-	RELAY_URL: process.env.RELAY_URL || "https://relay.superset.sh",
-	SUPERSET_API_URL: process.env.SUPERSET_API_URL || "https://api.superset.sh",
-	SUPERSET_WEB_URL: process.env.SUPERSET_WEB_URL || "https://app.superset.sh",
-	VERSION: process.env.SUPERSET_VERSION || "0.0.0-dev",
+	RELAY_URL: process.env.RELAY_URL || "https://relay.velix.sh",
+	VELIX_API_URL: process.env.VELIX_API_URL || "https://api.velix.sh",
+	VELIX_WEB_URL: process.env.VELIX_WEB_URL || "https://app.velix.sh",
+	VERSION: process.env.VELIX_VERSION || "0.0.0-dev",
 };

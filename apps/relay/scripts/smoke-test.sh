@@ -1,15 +1,5 @@
 #!/usr/bin/env bash
-# Post-deploy smoke test for the relay. Hits /health on the public hostname
-# with `fly-prefer-region` for every region the fleet is supposed to span,
-# then verifies the response 200s with `region` matching the requested
-# region — catches partial-deploy failures, missing regions, and machines
-# that booted but aren't actually serving.
-#
-# Usage: smoke-test.sh <hostname> <region> [<region> ...]
-#   smoke-test.sh superset-relay-staging.fly.dev sjc iad fra
-#
-# Exits non-zero on any failure so callers (deploy.sh, deploy-staging.sh)
-# can halt the pipeline.
+
 set -euo pipefail
 
 if [ $# -lt 2 ]; then

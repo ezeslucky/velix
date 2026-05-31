@@ -17,7 +17,7 @@ export default command({
 	run: async ({ ctx, options }) => {
 		const organizationId = ctx.config.organizationId;
 		if (!organizationId) {
-			throw new CLIError("No active organization", "Run: superset auth login");
+			throw new CLIError("No active organization", "Run: velix auth login");
 		}
 
 		const hostId = requireHostTarget({
@@ -36,10 +36,10 @@ export default command({
 		return [
 			...terminalConfigs,
 			{
-				id: "superset",
-				presetId: "superset",
-				label: "Superset",
-				command: "(superset runtime)",
+				id: "velix",
+				presetId: "velix",
+				label: "Velix",
+				command: "(velix runtime)",
 			},
 		];
 	},

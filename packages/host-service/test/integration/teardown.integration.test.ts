@@ -30,8 +30,8 @@ describe("runTeardown integration", () => {
 		await disposeDaemonClient();
 		resetTerminalBaseEnvForTests();
 		__setAccountShellForTesting(undefined);
-		delete process.env.SUPERSET_PTY_DAEMON_SOCKET;
-		delete process.env.SUPERSET_HOME_DIR;
+		delete process.env.VELIX_PTY_DAEMON_SOCKET;
+		delete process.env.VELIX_HOME_DIR;
 		if (server) {
 			await server.close().catch(() => {});
 			server = null;
@@ -57,8 +57,8 @@ describe("runTeardown integration", () => {
 		});
 		await server.listen();
 
-		process.env.SUPERSET_PTY_DAEMON_SOCKET = socketPath;
-		process.env.SUPERSET_HOME_DIR = tmp;
+		process.env.VELIX_PTY_DAEMON_SOCKET = socketPath;
+		process.env.VELIX_HOME_DIR = tmp;
 		__setAccountShellForTesting("/bin/fish");
 		initTerminalBaseEnv({
 			HOME: process.env.HOME ?? tmp,
@@ -68,7 +68,7 @@ describe("runTeardown integration", () => {
 		});
 
 		scenario = await createBasicScenario();
-		const scriptDir = join(scenario.repo.repoPath, ".superset");
+		const scriptDir = join(scenario.repo.repoPath, ".velix");
 		const markerPath = join(scenario.repo.repoPath, "teardown-marker.txt");
 		mkdirSync(scriptDir, { recursive: true });
 		writeFileSync(

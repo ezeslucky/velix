@@ -52,10 +52,10 @@ describe("agentConfigsRouter", () => {
 			expect(result.map((row) => row.order)).toEqual([0, 1, 2, 3, 4]);
 		});
 
-		it("does not seed Superset", async () => {
+		it("does not seed Velix", async () => {
 			const caller = createCaller();
 			const result = await caller.list();
-			expect(result.find((row) => row.presetId === "superset")).toBeUndefined();
+			expect(result.find((row) => row.presetId === "velix")).toBeUndefined();
 		});
 
 		it("seeds Claude with its most permissive flag", async () => {

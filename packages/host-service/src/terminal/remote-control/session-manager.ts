@@ -37,7 +37,7 @@ const state: RemoteControlState = {
 	expiryTimer: null,
 };
 
-const SECRET_DERIVATION_LABEL = "superset.remote-control.v1";
+const SECRET_DERIVATION_LABEL = "velix.remote-control.v1";
 
 export function initRemoteControlSecret(baseSecret: string): void {
 	if (!baseSecret || baseSecret.length === 0) {

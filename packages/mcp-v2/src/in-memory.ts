@@ -94,7 +94,7 @@ export async function createInMemoryMcpClient({
 	await server.connect(serverTransport);
 
 	const client = new Client({
-		name: "superset-v2-internal",
+		name: "velix-v2-internal",
 		version: "1.0.0",
 	});
 	await client.connect(clientTransport);

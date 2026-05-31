@@ -59,7 +59,7 @@ export async function submitContactInquiry(data: unknown) {
 		}
 
 		const { error } = await resend.emails.send({
-			from: "Superset <noreply@velix.sh>",
+			from: "Velix <noreply@velix.sh>",
 			to: "founders@velix.sh",
 			replyTo: sanitizedEmail,
 			subject: `Contact message from ${sanitizedName}: ${sanitizedTopic}`,

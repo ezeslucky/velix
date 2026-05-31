@@ -13,7 +13,7 @@ export default command({
 	run: async ({ ctx, options, signal }) => {
 		const organization = await ctx.api.user.myOrganization.query();
 		if (!organization)
-			throw new CLIError("No active organization", "Run: superset auth login");
+			throw new CLIError("No active organization", "Run: velix auth login");
 
 		const existing = readManifest(organization.id);
 		if (existing && isProcessAlive(existing.pid)) {
@@ -23,7 +23,7 @@ export default command({
 			};
 		}
 
-		p.intro(`superset start (${organization.name})`);
+		p.intro(`velix start (${organization.name})`);
 		const spinner = p.spinner();
 		spinner.start("Starting host service...");
 

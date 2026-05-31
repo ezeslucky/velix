@@ -39,7 +39,7 @@ interface OrganizationInvitationEmailProps {
 export function OrganizationInvitationEmail({
   organizationName = "Acme Inc",
   inviterName = "John Doe",
-  inviteLink = "https://app.superset.sh/accept-invitation/123",
+  inviteLink = "https://app.velix.sh/accept-invitation/123",
   role = "member",
 }: OrganizationInvitationEmailProps) {
   const roleDisplay = role.charAt(0).toUpperCase() + role.slice(1);
@@ -49,12 +49,12 @@ export function OrganizationInvitationEmail({
       <Heading>You've been invited to join {organizationName}</Heading>
 
       <Text>
-        {inviterName} has invited you to join <strong>{organizationName}</strong> on Superset as a{" "}
+        {inviterName} has invited you to join <strong>{organizationName}</strong> on Velix as a{" "}
         <strong>{roleDisplay}</strong>.
       </Text>
 
       <Text>
-        Superset helps teams automate workflows and boost productivity with AI-powered task management.
+        Velix helps teams automate workflows and boost productivity with AI-powered task management.
       </Text>
 
       <Button href={inviteLink}>Accept Invitation</Button>
@@ -732,7 +732,7 @@ plugins: [
       const inviteLink = `${env.NEXT_PUBLIC_WEB_URL}/accept-invitation/${data.id}`;
 
       await resend.emails.send({
-        from: "Superset <noreply@velix.sh>",
+        from: "Velix <noreply@velix.sh>",
         to: data.email,
         subject: `${data.inviter.user.name} invited you to join ${data.organization.name}`,
         react: OrganizationInvitationEmail({

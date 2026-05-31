@@ -1,1 +1,1 @@
-ALTER TABLE `worktrees` ADD `created_by_superset` integer DEFAULT true NOT NULL;
+ALTER TABLE `worktrees` ADD `created_by_velix` integer DEFAULT true NOT NULL;

@@ -84,9 +84,9 @@ export function getAnthropicEnvConfigPath(
 	options?: AnthropicEnvConfigDiskOptions,
 ): string {
 	if (options?.configPath) return options.configPath;
-	const supersetHome =
-		process.env.SUPERSET_HOME_DIR?.trim() || join(homedir(), ".superset");
-	return join(supersetHome, CONFIG_FILE_NAME);
+	const velixHome =
+		process.env.VELIX_HOME_DIR?.trim() || join(homedir(), ".velix");
+	return join(velixHome, CONFIG_FILE_NAME);
 }
 
 export function parseAnthropicEnvText(envText: string): AnthropicEnvVariables {

@@ -27,7 +27,7 @@ export default command({
 		agent: string()
 			.default("claude")
 			.desc(
-				"Host agent instance id or presetId (claude, codex, ...). Use 'superset' for the built-in chat agent.",
+				"Host agent instance id or presetId (claude, codex, ...). Use 'velix' for the built-in chat agent.",
 			),
 	},
 	run: async ({ ctx, options }) => {
