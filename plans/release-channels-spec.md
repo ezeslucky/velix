@@ -49,8 +49,8 @@ release stream" (what's actually going on). The proper fix is below.
 | --- | --- | --- | --- | --- |
 | Desktop stable | `desktop-v*` | `desktop-latest` (NEW) | Desktop auto-updater (stable build) | no |
 | Desktop canary | rolling `desktop-canary` | n/a (it IS the rolling tag) | Desktop auto-updater (canary build) | yes |
-| CLI stable | `cli-v*` | `cli-latest` | `superset update` | no |
-| CLI canary | TBD (`cli-canary-v*` + rolling `cli-canary`) | `cli-canary` | `superset update --canary` (NEW, optional) | yes |
+| CLI stable | `cli-v*` | `cli-latest` | `velix update` | no |
+| CLI canary | TBD (`cli-canary-v*` + rolling `cli-canary`) | `cli-canary` | `velix update --canary` (NEW, optional) | yes |
 
 ## Source-of-truth URLs per consumer
 
@@ -91,7 +91,7 @@ Mirror the `cli-latest` block in `build-cli.yml:135-153`:
     gh release delete desktop-latest --yes --cleanup-tag || true
     gh release create desktop-latest \
       release-artifacts/* \
-      --title "Latest Superset Desktop" \
+      --title "Latest Velix Desktop" \
       --notes "Rolling pointer to the latest published desktop release. See [${VERSION_TAG}](https://github.com/${{ github.repository }}/releases/tag/${VERSION_TAG}) for changelog." \
       --target "${{ github.sha }}"
 ```
@@ -102,7 +102,7 @@ Bootstrap manually once against the current `desktop-v1.7.2` so existing install
 # Run once after step 1 lands
 gh release download desktop-v1.7.2 --pattern '*' --dir /tmp/desktop-bootstrap
 gh release create desktop-latest /tmp/desktop-bootstrap/* \
-  --title "Latest Superset Desktop" \
+  --title "Latest Velix Desktop" \
   --notes "Rolling pointer to the latest published desktop release." \
   --target $(gh release view desktop-v1.7.2 --json targetCommitish --jq .targetCommitish)
 ```
@@ -151,7 +151,7 @@ After this step: `/releases/latest` will start pointing at whichever stream had 
 Mirror the desktop-canary pattern:
 
 - New job in `build-cli.yml` triggered on a different branch or workflow_dispatch input, building artifacts and publishing as a rolling `cli-canary` release marked `--prerelease`.
-- New flag on `superset update --canary` that reads from `releases/download/cli-canary/` instead of `cli-latest`.
+- New flag on `velix update --canary` that reads from `releases/download/cli-canary/` instead of `cli-latest`.
 - Tag pattern TBD: either a real `cli-canary-v0.1.0-rc.1` semver-prerelease tag per build, or pure rolling-only with no per-build tag (matches `desktop-canary` precedent — desktop canary has no per-build tag either, just the rolling one).
 
 Not v1-blocking. File as a follow-up ticket once stable CLI is shipping.
@@ -167,12 +167,12 @@ Not v1-blocking. File as a follow-up ticket once stable CLI is shipping.
 
 - ✅ Publishing a `cli-v*` release does not change `/releases/latest`.
 - ✅ Publishing a `desktop-v*` release does not change `/releases/latest`.
-- ✅ `superset update` always finds the newest stable CLI even when desktop has published more recently.
+- ✅ `velix update` always finds the newest stable CLI even when desktop has published more recently.
 - ✅ Desktop auto-updater always finds the newest stable desktop even when CLI has published more recently.
 - ✅ `desktop-latest` always points at the SHA of the newest stable desktop release.
 - ✅ `cli-latest` always points at the SHA of the newest stable CLI release.
 - ✅ Existing desktops on pre-migration code still update successfully through the transition (mitigated by step ordering 1 → 2 → 3 → 4 → 5).
-- ✅ Future `cli-canary` channel is independent of `cli-latest`; flipping `superset update --canary` does not affect non-canary users.
+- ✅ Future `cli-canary` channel is independent of `cli-latest`; flipping `velix update --canary` does not affect non-canary users.
 
 ## Risks pinned
 

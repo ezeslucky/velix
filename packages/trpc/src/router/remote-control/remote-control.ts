@@ -437,11 +437,6 @@ export const remoteControlRouter = createTRPCRouter({
 			return { sessionId: input.sessionId, status: "revoked" as const };
 		}),
 
-	// Anonymous-viewer revoke. The bearer token IS the credential; if you
-	// hold it, you have the same authority as whoever you got the link
-	// from. We hash the token in constant time, then revoke the matching
-	// row. `revokedByUserId` is left null because we don't know which (if
-	// any) Superset user is on the other end of this WebSocket.
 	revokeWithToken: publicProcedure
 		.input(getInput)
 		.mutation(async ({ input }) => {

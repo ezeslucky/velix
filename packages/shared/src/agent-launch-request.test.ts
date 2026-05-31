@@ -55,7 +55,7 @@ describe("buildPromptAgentLaunchRequest", () => {
 		const request = buildPromptAgentLaunchRequest({
 			workspaceId: "workspace-1",
 			source: "new-workspace",
-			selectedAgent: "superset",
+			selectedAgent: "velix",
 			prompt: "hello",
 			initialFiles: [
 				{
@@ -70,7 +70,7 @@ describe("buildPromptAgentLaunchRequest", () => {
 
 		expect(request).toMatchObject({
 			kind: "chat",
-			agentType: "superset",
+			agentType: "velix",
 			chat: {
 				initialPrompt: "hello",
 				initialFiles: [
@@ -103,7 +103,7 @@ describe("buildPromptAgentLaunchRequest", () => {
 		if (request?.kind !== "terminal") {
 			throw new Error("Expected terminal launch request");
 		}
-		expect(request.terminal.command).toStartWith("amp <<'SUPERSET_PROMPT_");
+		expect(request.terminal.command).toStartWith("amp <<'VELIX_PROMPT_");
 		expect(request.terminal.command).not.toContain("amp -x");
 	});
 });
@@ -122,14 +122,14 @@ describe("buildTaskAgentLaunchRequest", () => {
 		expect(request).toBeNull();
 	});
 
-	test("uses the chat template configured for superset chat", () => {
+	test("uses the chat template configured for velix chat", () => {
 		const configsById = indexResolvedAgentConfigs(
 			resolveAgentConfigs({
 				overrideEnvelope: {
 					version: 1,
 					presets: [
 						{
-							id: "superset",
+							id: "velix",
 							taskPromptTemplate: "Chat {{title}} / {{slug}}",
 						},
 					],
@@ -139,7 +139,7 @@ describe("buildTaskAgentLaunchRequest", () => {
 		const request = buildTaskAgentLaunchRequest({
 			workspaceId: "workspace-1",
 			source: "open-in-workspace",
-			selectedAgent: "superset",
+			selectedAgent: "velix",
 			task: TASK,
 			autoRun: true,
 			configsById,
@@ -212,7 +212,7 @@ describe("buildTaskAgentLaunchRequest", () => {
 			throw new Error("Expected terminal launch request");
 		}
 		expect(request.terminal.command).toBe(
-			"amp < '.superset/task-demo-task.md'",
+			"amp < '.velix/task-demo-task.md'",
 		);
 	});
 

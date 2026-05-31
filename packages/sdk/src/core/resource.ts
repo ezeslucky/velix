@@ -1,11 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import type { Superset } from "../client";
+import type { Velix } from "../client";
 
 export abstract class APIResource {
-	protected _client: Superset;
+	protected _client: Velix;
 
-	constructor(client: Superset) {
+	constructor(client: Velix) {
 		this._client = client;
 	}
 }

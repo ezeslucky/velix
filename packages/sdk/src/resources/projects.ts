@@ -1,14 +1,10 @@
 import type { APIPromise } from "../core/api-promise";
-import { SupersetError } from "../core/error";
+import { VelixError } from "../core/error";
 import { APIResource } from "../core/resource";
 import type { RequestOptions } from "../internal/request-options";
 
 export class Projects extends APIResource {
-	/**
-	 * List projects in the active organization.
-	 *
-	 * Mirrors `superset projects list`.
-	 */
+	
 	list(options?: RequestOptions): APIPromise<ProjectListResponse> {
 		return this._client.query<ProjectListResponse>(
 			"v2Project.list",
@@ -19,8 +15,8 @@ export class Projects extends APIResource {
 
 	private _requireOrgId(): string {
 		if (!this._client.organizationId) {
-			throw new SupersetError(
-				"organizationId is required. Set SUPERSET_ORGANIZATION_ID, or pass `organizationId` to the Superset constructor.",
+			throw new VelixError(
+				"organizationId is required. Set VELIX_ORGANIZATION_ID, or pass `organizationId` to the Velix constructor.",
 			);
 		}
 		return this._client.organizationId;

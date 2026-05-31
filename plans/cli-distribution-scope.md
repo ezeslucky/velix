@@ -1,6 +1,6 @@
 # CLI Distribution Scope
 
-This document defines the scope for shipping the first distributable Superset
+This document defines the scope for shipping the first distributable Velix
 CLI. The current-state reference in `packages/cli/CLI_SPEC_CURRENT.md` is the
 source-derived inventory of current behavior. The target v1 contract should live
 in `packages/cli/CLI_SPEC_TARGET.md`. This plan defines what we will change
@@ -26,33 +26,33 @@ The v1 CLI should be boring to operate:
 These commands should be implemented, tested, and documented for v1:
 
 ```text
-superset auth login
-superset auth logout
-superset auth status
+Velix auth login
+Velix auth logout
+Velix auth status
 
-superset organization list
-superset organization switch <idOrSlug>
+Velix organization list
+Velix organization switch <idOrSlug>
 
-superset tasks list
-superset tasks get <idOrSlug>
-superset tasks create
-superset tasks update <idOrSlug>
-superset tasks delete <idOrSlug...>
+Velix tasks list
+Velix tasks get <idOrSlug>
+Velix tasks create
+Velix tasks update <idOrSlug>
+Velix tasks delete <idOrSlug...>
 
 // Can we validate that it's ergonomic for an agent to read and update the markdown content for an automation? it'll be a common action probably
-superset automations list
-superset automations get <id>
-superset automations create
-superset automations update <id>
-superset automations delete <id>
-superset automations pause <id>
-superset automations resume <id>
-superset automations run <id>
-superset automations logs <id>
+Velix automations list
+Velix automations get <id>
+Velix automations create
+Velix automations update <id>
+Velix automations delete <id>
+Velix automations pause <id>
+Velix automations resume <id>
+Velix automations run <id>
+Velix automations logs <id>
 
-superset host start
-superset host status
-superset host stop
+Velix host start
+Velix host status
+Velix host stop
 ```
 
 ### Explicitly Out Of Scope For V1
@@ -62,14 +62,14 @@ public docs for v1:
 
 // Devices / workspaces / projects probably should be brought into scope, esp workspaces
 ```text
-superset devices ...
-superset workspaces ...
-superset projects ...
-superset agent ...
-superset ui ...
-superset chat ...
-superset notifications ...
-superset ports ...
+Velix devices ...
+Velix workspaces ...
+Velix projects ...
+Velix agent ...
+Velix ui ...
+Velix chat ...
+Velix notifications ...
+Velix ports ...
 ```
 
 `devices` and `workspaces` currently exist as stubs. For v1, either hide them
@@ -104,7 +104,7 @@ be hiding them until device command routing exists.
 
 ### Automations
 
-- Implement `superset automations logs <id>` using `automation.listRuns`, or
+- Implement `Velix automations logs <id>` using `automation.listRuns`, or
   remove every reference to logs from docs and comments. Recommended: implement
   it, because the API already exists.
 - Fix `automations update` so omitting `--device` does not clear
@@ -119,7 +119,7 @@ be hiding them until device command routing exists.
 
 ### Host Service
 
-- Ensure distribution artifacts include a working `superset-host` sibling
+- Ensure distribution artifacts include a working `Velix-host` sibling
   binary and host migrations folder.
 - Decide whether `host install` ships in v1. If not, hide or remove the stub.
 - Verify `host start --daemon`, `host status`, and `host stop` work from an
@@ -151,21 +151,21 @@ be hiding them until device command routing exists.
 V1 should produce at least:
 
 ```text
-superset-darwin-arm64
-superset-linux-x64
+Velix-darwin-arm64
+Velix-linux-x64
 ```
 
 Before calling the CLI distributable, verify whether we also need:
 
 ```text
-superset-darwin-x64
-superset-linux-arm64
+Velix-darwin-x64
+Velix-linux-arm64
 ```
 
 The distribution archive must include:
 
-- `superset` CLI binary
-- `superset-host` host-service binary
+- `Velix` CLI binary
+- `Velix-host` host-service binary
 - host-service migrations under the path expected by the CLI
 - install script or documented manual install steps
 - version metadata matching the release
@@ -185,13 +185,13 @@ The install flow should support:
 Document exactly where the CLI writes local state:
 
 ```text
-~/superset/config.json
-~/superset/device.json
-~/superset/host/<organizationId>/manifest.json
-~/superset/host/<organizationId>/host.db
+~/Velix/config.json
+~/Velix/device.json
+~/Velix/host/<organizationId>/manifest.json
+~/Velix/host/<organizationId>/host.db
 ```
 
-If we want `~/.superset` instead, change code before shipping. Do not document
+If we want `~/.Velix` instead, change code before shipping. Do not document
 both as valid unless both are intentionally supported.
 
 ## Acceptance Checks
@@ -199,43 +199,43 @@ both as valid unless both are intentionally supported.
 Run these from a clean machine or clean local CLI home directory before release:
 
 ```bash
-superset --help
-superset auth login
-superset auth check
-superset organization list
-superset tasks list --limit 5
-superset tasks create --title "CLI smoke test" --priority low
-superset tasks get <created-slug-or-id>
-superset tasks update <created-slug-or-id> --priority medium
-superset tasks delete <created-slug-or-id>
-superset automations list
-superset automations create --name "CLI smoke automation" --rrule "FREQ=DAILY;BYHOUR=9;BYMINUTE=0" --project <projectId> --prompt "Say hello"
-superset automations get <automation-id>
-superset automations pause <automation-id>
-superset automations resume <automation-id>
-superset automations logs <automation-id>
-superset automations delete <automation-id>
-superset host start --daemon
-superset host status
-superset host stop
+Velix --help
+Velix auth login
+Velix auth check
+Velix organization list
+Velix tasks list --limit 5
+Velix tasks create --title "CLI smoke test" --priority low
+Velix tasks get <created-slug-or-id>
+Velix tasks update <created-slug-or-id> --priority medium
+Velix tasks delete <created-slug-or-id>
+Velix automations list
+Velix automations create --name "CLI smoke automation" --rrule "FREQ=DAILY;BYHOUR=9;BYMINUTE=0" --project <projectId> --prompt "Say hello"
+Velix automations get <automation-id>
+Velix automations pause <automation-id>
+Velix automations resume <automation-id>
+Velix automations logs <automation-id>
+Velix automations delete <automation-id>
+Velix host start --daemon
+Velix host status
+Velix host stop
 ```
 
 Run JSON checks for scriptability:
 
 ```bash
-superset auth check --json
-superset organization list --json
-superset tasks list --json
-superset automations list --json
-superset host status --json
+Velix auth check --json
+Velix organization list --json
+Velix tasks list --json
+Velix automations list --json
+Velix host status --json
 ```
 
 Run quiet checks where IDs are expected:
 
 ```bash
-superset organization list --quiet
-superset tasks list --quiet
-superset automations list --quiet
+Velix organization list --quiet
+Velix tasks list --quiet
+Velix automations list --quiet
 ```
 
 ## Release Gate

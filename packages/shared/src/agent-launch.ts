@@ -137,7 +137,7 @@ function normalizeLegacyLaunchRequest(
 ): AgentLaunchRequest {
 	const chatConfig = legacy.chatLaunchConfig;
 	const shouldLaunchChat =
-		legacy.agentType === "superset" ||
+		legacy.agentType === "velix" ||
 		legacy.openChatPane === true ||
 		chatConfig !== undefined;
 
@@ -146,7 +146,7 @@ function normalizeLegacyLaunchRequest(
 			kind: "chat",
 			workspaceId: legacy.workspaceId,
 			idempotencyKey: legacy.idempotencyKey,
-			agentType: "superset",
+			agentType: "velix",
 			source: legacy.source,
 			chat: {
 				paneId: chatConfig?.paneId ?? legacy.paneId,
@@ -211,11 +211,11 @@ export function buildTaskLaunchRequest({
 	source: AgentLaunchSource;
 	autoExecute?: boolean;
 }): AgentLaunchRequest {
-	if (agentType === "superset") {
+	if (agentType === "velix") {
 		return {
 			kind: "chat",
 			workspaceId,
-			agentType: "superset",
+			agentType: "velix",
 			source,
 			chat: {
 				initialPrompt: renderTaskPromptTemplate(
@@ -241,7 +241,7 @@ export function buildTaskLaunchRequest({
 		source,
 		terminal: {
 			command: buildAgentFileCommand({
-				filePath: `.superset/${taskPromptFileName}`,
+				filePath: `.velix/${taskPromptFileName}`,
 				agent: agentType,
 			}),
 			name: task.slug,

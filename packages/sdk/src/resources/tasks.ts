@@ -17,11 +17,7 @@ type ListRowWire = {
 };
 
 export class TaskStatuses extends APIResource {
-	/**
-	 * List the task statuses configured for the active organization.
-	 *
-	 * Mirrors `superset tasks statuses list`.
-	 */
+	
 	list(options?: RequestOptions): APIPromise<TaskStatusListResponse> {
 		return this._client.query<TaskStatusListResponse>(
 			"task.statuses.list",

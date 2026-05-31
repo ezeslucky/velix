@@ -2,28 +2,28 @@
 export const AUTH_PROVIDERS = ["github", "google"] as const;
 export type AuthProvider = (typeof AUTH_PROVIDERS)[number];
 
-export const ORGANIZATION_HEADER = "x-superset-organization-id";
+export const ORGANIZATION_HEADER = "x-velix-organization-id";
 
 // Deep link protocol schemes (used for desktop OAuth callbacks)
 export const PROTOCOL_SCHEMES = {
-	DEV: "superset-dev",
-	PROD: "superset",
+	DEV: "velix-dev",
+	PROD: "velix",
 } as const;
 
 // Company
 export const COMPANY = {
-	NAME: "Superset",
-	DOMAIN: "superset.sh",
+	NAME: "Velix",
+	DOMAIN: "velix.sh",
 	EMAIL_DOMAIN: "@velix.sh",
 	GITHUB_URL: "https://github.com/ezeslucky/velix",
-	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.superset.sh",
-	MARKETING_URL: process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh",
-	TERMS_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh"}/terms`,
+	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.velix.sh",
+	MARKETING_URL: process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh",
+	TERMS_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh"}/terms`,
 	PRIVACY_URL:
-		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh") +
+		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh") +
 		"/privacy",
 	CHANGELOG_URL:
-		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh") +
+		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh") +
 		"/changelog",
 	X_URL: "https://x.com/ezeslucky",
 	LINKEDIN_URL: "https://www.linkedin.com/company/ezeslucky",
@@ -31,16 +31,16 @@ export const COMPANY = {
 	MAIL_TO: "mailto:founders@velix.sh",
 	REPORT_ISSUE_URL: "https://github.com/ezeslucky/velix/issues/new",
 	DISCORD_URL: "https://discord.gg/cZeD9WYcV7",
-	STATUS_URL: "https://status.superset.sh",
-	TRUST_URL: "https://trust.superset.sh",
-	CAREERS_URL: "https://www.ycombinator.com/companies/superset/jobs",
+	STATUS_URL: "https://status.velix.sh",
+	TRUST_URL: "https://trust.velix.sh",
+	CAREERS_URL: "https://www.ycombinator.com/companies/velix/jobs",
 } as const;
 
 // Theme
-export const THEME_STORAGE_KEY = "superset-theme";
+export const THEME_STORAGE_KEY = "velix-theme";
 
 // Download URLs
-export const DOWNLOAD_URL_MAC_ARM64 = `${COMPANY.GITHUB_URL}/releases/latest/download/Superset-arm64.dmg`;
+export const DOWNLOAD_URL_MAC_ARM64 = `${COMPANY.GITHUB_URL}/releases/latest/download/Velix-arm64.dmg`;
 
 // Auth token configuration
 export const TOKEN_CONFIG = {
@@ -56,13 +56,9 @@ export const TOKEN_CONFIG = {
 export const TEARDOWN_TIMEOUT_MS = 60_000;
 
 // PostHog
-export const POSTHOG_COOKIE_NAME = "superset";
+export const POSTHOG_COOKIE_NAME = "velix";
 
-// Users whose account was created at or after this instant are v2-only:
-// the v1↔v2 surface switch is hidden and v2 cloud is forced on. Pre-cutoff
-// users keep the existing opt-in toggle. Stored as an ISO string so the
-// value is identical on server, desktop renderer, web, and admin.
-// 2026-05-15 14:00 UTC = Fri 07:00 PDT / 10:00 EDT.
+
 export const V2_ONLY_USER_CUTOFF = "2026-05-15T14:00:00.000Z";
 
 export const FEATURE_FLAGS = {
@@ -78,19 +74,9 @@ export const FEATURE_FLAGS = {
 	CLOUD_ACCESS: "cloud-access",
 	/** When enabled, blocks remote agent execution on the desktop (e.g., for enterprise orgs). */
 	DISABLE_REMOTE_AGENT: "disable-remote-agent",
-	/**
-	 * Routes the Slack agent to the v2 MCP server (`@velix/mcp-v2`)
-	 * instead of v1 (`@velix/mcp`). Evaluated against the linking
-	 * user's id (the Superset user behind the Slack mention) so it
-	 * piggybacks on the existing All Access cohort. Off → v1.
-	 */
+	
 	SLACK_MCP_V2: "slack-mcp-v2",
-	/**
-	 * Gates the v2 desktop terminal's "Share remote control" button.
-	 * Evaluated against the sharer's Superset user id — anyone with the
-	 * resulting share link can still open it (the per-session HMAC is
-	 * the credential), so this only controls who can START a session.
-	 */
+	
 	WEB_REMOTE_CONTROL_ACCESS: "web-remote-control-access",
 	/**
 	 * Per-user override for the relay base URL. Payload shape:

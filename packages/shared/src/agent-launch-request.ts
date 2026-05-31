@@ -122,7 +122,7 @@ export function buildPromptAgentLaunchRequest({
 				}
 
 				usedFilenames.add(filename);
-				return `- .superset/attachments/${filename}`;
+				return `- .velix/attachments/${filename}`;
 			})
 			.join("\n");
 		// If prompt exists, prepend it; otherwise just use file list
@@ -199,7 +199,7 @@ export function buildTaskAgentLaunchRequest({
 	);
 	const taskPromptFileName = `task-${task.slug}.md`;
 	const command = buildFileCommandFromAgentConfig({
-		filePath: `.superset/${taskPromptFileName}`,
+		filePath: `.velix/${taskPromptFileName}`,
 		config: terminalConfig,
 	});
 
