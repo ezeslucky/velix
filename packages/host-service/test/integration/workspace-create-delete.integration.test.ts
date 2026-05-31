@@ -43,19 +43,13 @@ describe("workspace.create + workspace.delete integration", () => {
 			.get();
 		expect(persisted?.branch).toBe("feature/new");
 		expect(persisted?.worktreePath).toBeTruthy();
-		// Path scheme is `~/.superset/worktrees/<projectId>/<branch>` —
-		// pin the suffix rather than the absolute path so the test isn't
-		// HOME-dependent.
+		
 		expect(persisted?.worktreePath).toMatch(/feature\/new$/);
 		expect(existsSync(persisted?.worktreePath ?? "")).toBe(true);
 	});
 
 	test("create() adopts an existing worktree at a non-canonical path instead of failing on `git worktree add`", async () => {
-		// Regress: when the user typed a branch that already has a worktree
-		// somewhere outside `~/.superset/worktrees/<projectId>/<branch>`,
-		// `workspaces.create` used to call `git worktree add` and crash with
-		// `fatal: '<branch>' is already used by worktree at ...`. Adopt the
-		// existing path instead.
+		
 		const scenario = await createProjectScenario({
 			hostOptions: { apiOverrides: cloudFlows.workspaceCreateOk() },
 		});
@@ -247,8 +241,7 @@ describe("workspace.create + workspace.delete integration", () => {
 			}),
 		).rejects.toThrow(/cloud-down/);
 
-		// New worktree scheme is `~/.superset/worktrees/<projectId>/<branch>`.
-		// Rollback should leave nothing behind in the workspaces table either.
+		
 		const rows = scenario.host.db.select().from(workspaces).all();
 		expect(rows).toHaveLength(0);
 	});

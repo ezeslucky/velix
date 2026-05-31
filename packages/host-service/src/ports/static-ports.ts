@@ -2,7 +2,7 @@ import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { parseStaticPortsConfig } from "@velix/port-scanner";
 
-const PROJECT_VELIX_DIR_NAME = ".superset";
+const PROJECT_VELIX_DIR_NAME = ".velix";
 const PORTS_FILE_NAME = "ports.json";
 
 interface LabelCacheEntry {
@@ -64,7 +64,7 @@ function safeLoadLabels(worktreePath: string): Map<number, string> | null {
 }
 
 /**
- * Read `<worktree>/.superset/ports.json` and return a `port → label` map.
+ * Read `<worktree>/.velix/ports.json` and return a `port → label` map.
  * Returns null if the file is missing or malformed — this endpoint is a
  * best-effort label hint, not a validator, so parse errors are silent.
  */

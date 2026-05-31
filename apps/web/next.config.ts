@@ -24,12 +24,12 @@ const apiOrigin = process.env.NEXT_PUBLIC_API_URL
 const relayWsOrigin = process.env.RELAY_URL
 	? new URL(process.env.RELAY_URL).origin.replace(/^http/, "ws")
 	: isProduction
-		? "wss://relay.superset.sh"
+		? "wss://relay.velix.sh"
 		: null;
 const relayHttpOrigin = process.env.RELAY_URL
 	? new URL(process.env.RELAY_URL).origin
 	: isProduction
-		? "https://relay.superset.sh"
+		? "https://relay.velix.sh"
 		: null;
 
 const contentSecurityPolicy = [
@@ -40,8 +40,8 @@ const contentSecurityPolicy = [
 		apiOrigin,
 		relayWsOrigin,
 		relayHttpOrigin,
-		"wss://relay-backup.superset.sh",
-		"https://relay-backup.superset.sh",
+		"wss://relay-backup.velix.sh",
+		"https://relay-backup.velix.sh",
 		"https://*.ingest.sentry.io",
 		"https://*.sentry.io",
 		"https://us.i.posthog.com",

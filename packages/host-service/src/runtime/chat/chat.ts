@@ -413,17 +413,13 @@ export class ChatRuntimeManager {
 		});
 	}
 
-	/**
-	 * Ensures ~/.mastracode/AGENTS.md exists with Superset-specific instructions.
-	 * Only writes when the file is absent or was previously written by us (identified
-	 * by the managed-by marker). Skips silently on any filesystem error.
-	 */
+	
 	private ensureGlobalAgentInstructions(): void {
-		const MANAGED_MARKER = "<!-- managed-by: superset -->";
+		const MANAGED_MARKER = "<!-- managed-by: velix -->";
 		const INSTRUCTIONS = `${MANAGED_MARKER}
 ## Question Tool
 
-When you need to ask the user ANY question — including simple yes/no, confirmations, and clarifications — ALWAYS use the \`ask_user\` tool. Never ask questions in plain text. The Superset UI renders \`ask_user\` calls as an interactive overlay with clickable option buttons; plain-text questions will not be surfaced to the user in the same way.
+When you need to ask the user ANY question — including simple yes/no, confirmations, and clarifications — ALWAYS use the \`ask_user\` tool. Never ask questions in plain text. The Velix UI renders \`ask_user\` calls as an interactive overlay with clickable option buttons; plain-text questions will not be surfaced to the user in the same way.
 `;
 		try {
 			const dir = join(homedir(), ".mastracode");

@@ -1,12 +1,12 @@
 import { CLIError } from "@velix/cli-framework";
 import { type ApiClient, createApiClient } from "./api-client";
 import { refreshAccessToken } from "./auth";
-import { readConfig, type SupersetConfig, writeConfig } from "./config";
+import { readConfig, type VelixConfig, writeConfig } from "./config";
 
 export type AuthSource = "override" | "config" | "oauth";
 
 export type ResolvedAuth = {
-	config: SupersetConfig;
+	config: VelixConfig;
 	api: ApiClient;
 	bearer: string;
 	authSource: AuthSource;
@@ -33,7 +33,7 @@ export async function resolveAuth(
 		const auth = config.auth;
 		if (auth.expiresAt - REFRESH_LEEWAY_MS < Date.now()) {
 			if (!auth.refreshToken) {
-				throw new CLIError("Session expired", "Run: superset auth login");
+				throw new CLIError("Session expired", "Run: velix auth login");
 			}
 			try {
 				const refreshed = await refreshAccessToken(auth.refreshToken);
@@ -48,7 +48,7 @@ export async function resolveAuth(
 				writeConfig(config);
 				bearer = refreshed.accessToken;
 			} catch {
-				throw new CLIError("Session expired", "Run: superset auth login");
+				throw new CLIError("Session expired", "Run: velix auth login");
 			}
 		} else {
 			bearer = auth.accessToken;
@@ -57,7 +57,7 @@ export async function resolveAuth(
 	} else {
 		throw new CLIError(
 			"Not logged in",
-			"Run: superset auth login (or set SUPERSET_API_KEY)",
+			"Run: velix auth login (or set VELIX_API_KEY)",
 		);
 	}
 

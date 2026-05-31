@@ -1,6 +1,6 @@
-# Superset CLI v1 Target
+# Velix CLI v1 Target
 
-The shipping contract for v1 of the `superset` CLI. The current behavior we
+The shipping contract for v1 of the `velix` CLI. The current behavior we
 are diffing against lives in `CLI_SPEC_CURRENT.md`. The mechanics of building
 and distributing the binary live in `DISTRIBUTION.md`. This doc only defines
 *what the CLI does* once shipped.
@@ -60,9 +60,9 @@ shipped as stubs.
 | --- | --- | --- |
 | `--json` | | Print the command's data payload as formatted JSON. |
 | `--quiet` | | Print IDs for arrays/objects with an `id` field; JSON fallback otherwise. |
-| `--api-key <key>` | `SUPERSET_API_KEY` | Use API key/session token instead of stored OAuth login. |
+| `--api-key <key>` | `VELIX_API_KEY` | Use API key/session token instead of stored OAuth login. |
 | `--help`, `-h` | | Show help for the current command. |
-| `--version`, `-v` | | Print `superset v<version>`. |
+| `--version`, `-v` | | Print `velix v<version>`. |
 
 `--host` is **not** a global option. It's a per-command flag on
 `workspaces`, `projects`, and `automations create/update`. It identifies
@@ -72,7 +72,7 @@ helper the host service uses to identify itself.
 
 The CLI uses two clients:
 
-1. **Cloud client** (`https://api.superset.sh`) — for cloud-only commands
+1. **Cloud client** (`https://api.velix.sh`) — for cloud-only commands
    (`auth`, `organization`, `tasks`, `automations *`, `hosts list`) and
    for routing workspace/project operations to *remote* hosts via the
    relay.
@@ -97,27 +97,27 @@ if (target === getHashedDeviceId()) {
 `ioreg`/`/etc/machine-id`/Windows MachineGuid), so the comparison works
 without network and without a running host service. The local detection
 result is correct even when the host service is currently stopped — the
-CLI can then give a precise error (`Run: superset start`) instead
+CLI can then give a precise error (`Run: velix start`) instead
 of routing via cloud and getting back a confusing "host offline."
 
 Globals are listed in every command's help, including grouped and leaf help.
 
-There is no `--api-url` flag, no `SUPERSET_API_URL` env var, and no `apiUrl`
-field in `~/.superset/config.json`. The cloud API URL is a build-time
-constant. Self-hosters rebuild the binary with their own `SUPERSET_API_URL`
+There is no `--api-url` flag, no `VELIX_API_URL` env var, and no `apiUrl`
+field in `~/.velix/config.json`. The cloud API URL is a build-time
+constant. Self-hosters rebuild the binary with their own `VELIX_API_URL`
 define.
 
 When any of `CLAUDE_CODE`, `CLAUDECODE`, `CLAUDE_CODE_ENTRYPOINT`,
-`CODEX_CLI`, `GEMINI_CLI`, `SUPERSET_AGENT`, or `CI` is set to a *non-empty*
+`CODEX_CLI`, `GEMINI_CLI`, `VELIX_AGENT`, or `CI` is set to a *non-empty*
 value, output defaults to JSON unless `--quiet` is provided. Empty-string
 env vars do not trigger this.
 
 ## Local State
 
 ```text
-~/.superset/config.json
-~/.superset/host/<organizationId>/manifest.json
-~/.superset/host/<organizationId>/host.db
+~/.velix/config.json
+~/.velix/host/<organizationId>/manifest.json
+~/.velix/host/<organizationId>/host.db
 ```
 
 Manifest format (written by both the desktop app and the CLI's
@@ -128,7 +128,7 @@ Manifest format (written by both the desktop app and the CLI's
   pid: number;
   endpoint: string;     // http://127.0.0.1:<port>
   authToken: string;    // = HOST_SERVICE_SECRET
-  hostId: string;       // = getHashedDeviceId() — for display in `superset status`
+  hostId: string;       // = getHashedDeviceId() — for display in `velix status`
   hostName: string;     // human-readable
   startedAt: number;
   organizationId: string;
@@ -152,7 +152,7 @@ The manifest is written `0o600`; the parent dir is `0o700`. Same-user
 process trust is the intentional model (matches `gh`, `aws`, `docker`,
 `npm`, ssh keys, etc.).
 
-The CLI honours `SUPERSET_HOME_DIR` to relocate the tree, matching the
+The CLI honours `VELIX_HOME_DIR` to relocate the tree, matching the
 desktop app. State written by either client is visible to the other; in
 particular, a host service started by one client is observable and
 controllable by the other through the manifest.
@@ -196,7 +196,7 @@ Help for every command (root, group, leaf) lists:
 - Exit `0` on success, `1` on any error. No other exit codes in v1.
 - Errors print to stderr; data prints to stdout.
 - Specific messages for known classes:
-  - `UNAUTHORIZED` → `Session expired. Run: superset auth login`
+  - `UNAUTHORIZED` → `Session expired. Run: velix auth login`
   - `NOT_FOUND` → `Error: Not found`
   - Network failure → `Could not connect to API`
 - Unknown commands print typo suggestions
@@ -206,20 +206,20 @@ Help for every command (root, group, leaf) lists:
 
 ## Auth
 
-### `superset auth login`
+### `velix auth login`
 
 Authenticate via browser OAuth and store a session token locally.
 
 | Option | Required | Description |
 | --- | --- | --- |
 | `--organization <idOrSlug>` | When stdout is non-TTY and the user belongs to multiple orgs | Selects the active organization without prompting. Optional but supported when stdout is a TTY (skips the picker). |
-| `--api-key <key>` | No | Store a Superset API key (`sk_live_…`) at `~/.superset/config.json` instead of running the OAuth flow. Validates via `user.me` before writing. Mutually exclusive with the OAuth flow — passing this clears any stored `auth` session. |
+| `--api-key <key>` | No | Store a Velix API key (`sk_live_…`) at `~/.velix/config.json` instead of running the OAuth flow. Validates via `user.me` before writing. Mutually exclusive with the OAuth flow — passing this clears any stored `auth` session. |
 
 Flow (OAuth):
 
 1. Loopback callback server on `127.0.0.1:51789` or `51790`.
 2. Opens `${WEB_URL}/cli/authorize?...`. `WEB_URL` is a build-time constant
-   (overridable at runtime via `SUPERSET_WEB_URL` for development).
+   (overridable at runtime via `VELIX_WEB_URL` for development).
 3. Web posts to `/api/cli/create-code`.
 4. CLI receives the code on the loopback callback (5-minute timeout).
 5. CLI exchanges via `/api/cli/exchange`.
@@ -230,7 +230,7 @@ Flow (`--api-key`):
 
 1. CLI validates the supplied key by calling `user.me` with the key in the
    `x-api-key` header.
-2. On success, CLI writes `apiKey` to `~/.superset/config.json` and
+2. On success, CLI writes `apiKey` to `~/.velix/config.json` and
    deletes any stored OAuth `auth`. On failure, CLI exits 1 without
    writing.
 3. CLI continues with the same org-selection rules as the OAuth flow.
@@ -253,14 +253,14 @@ Output:
 }
 ```
 
-Side effects: writes `~/.superset/config.json`. The OAuth flow writes
+Side effects: writes `~/.velix/config.json`. The OAuth flow writes
 `auth` (and clears any stored `apiKey`); the `--api-key` flow writes
 `apiKey` (and clears any stored `auth`). Both write `organizationId`
 when an org is selected. Spinner is guarded by `process.stdout.isTTY`.
 
-### `superset auth logout`
+### `velix auth logout`
 
-Clear `auth` and `apiKey` from `~/.superset/config.json`. Does not call
+Clear `auth` and `apiKey` from `~/.velix/config.json`. Does not call
 the API. Does not clear `organizationId` — the user's preferred org
 persists across re-logins.
 
@@ -270,7 +270,7 @@ Output:
 { loggedOut: true }
 ```
 
-### `superset auth whoami`
+### `velix auth whoami`
 
 Show the current user, active organization, and auth source.
 
@@ -295,7 +295,7 @@ No `apiUrl` field. The CLI does not expose its API URL to the user.
 
 ## Organizations
 
-### `superset organization list`
+### `velix organization list`
 
 List organizations available to the current auth context. Marks the active
 one.
@@ -316,9 +316,9 @@ Array<{
 Quiet: organization IDs (one per line).
 Human: table with columns `NAME, SLUG, ACTIVE`.
 
-### `superset organization switch <idOrSlug>`
+### `velix organization switch <idOrSlug>`
 
-Set the active organization in `~/.superset/config.json`.
+Set the active organization in `~/.velix/config.json`.
 
 tRPC: `user.myOrganizations`.
 
@@ -336,7 +336,7 @@ Project commands target a host using the same routing rule as workspaces:
 local fast path when targeting the local machine, cloud-via-relay
 otherwise. Projects are checked-out repos that live on a specific host.
 
-### `superset projects list`
+### `velix projects list`
 
 List projects on the target host.
 
@@ -371,7 +371,7 @@ via the desktop app and use the CLI to look up project IDs for
 
 ## Hosts
 
-### `superset hosts list`
+### `velix hosts list`
 
 List hosts registered to the active organization.
 
@@ -393,7 +393,7 @@ Quiet: host IDs.
 Human: table with `NAME, ONLINE, LAST SEEN`.
 
 v1 only ships `list` for org-wide host discovery. Host registration happens
-via `superset start` on each machine — there is no separate
+via `velix start` on each machine — there is no separate
 "register a host" command.
 
 ---
@@ -419,16 +419,16 @@ while still supporting "manage workspaces on a remote host."
 There is no error case for "no host" — the local machine always has an
 identity. If the user genuinely has no host service running anywhere and
 tries a workspace command, the local-target path errors with
-`Host service for this machine isn't running. Run: superset start.`
+`Host service for this machine isn't running. Run: velix start.`
 That's the right message: they need to start the service or pick a
-different host with `--host <id>` (use `superset hosts list` to find one).
+different host with `--host <id>` (use `velix hosts list` to find one).
 
 If the resolved host is the local machine but the host service isn't
 responding (no manifest, stale manifest, dead PID), the CLI errors fast
 rather than falling through to cloud — different failure modes shouldn't
 get silently mixed.
 
-### `superset workspaces list`
+### `velix workspaces list`
 
 | Option | Description |
 | --- | --- |
@@ -454,7 +454,7 @@ Array<{
 Quiet: workspace IDs.
 Human: table with `NAME, BRANCH, PROJECT, HOST`.
 
-### `superset workspaces create`
+### `velix workspaces create`
 
 | Option | Required | Description |
 | --- | --- | --- |
@@ -469,7 +469,7 @@ tRPC:
 
 Output: `Workspace` (raw).
 
-### `superset workspaces delete <id...>`
+### `velix workspaces delete <id...>`
 
 Variadic.
 
@@ -491,7 +491,7 @@ Output:
 
 ## Tasks (alias: `t`)
 
-### `superset tasks list`
+### `velix tasks list`
 
 | Option | Description |
 | --- | --- |
@@ -517,7 +517,7 @@ Array<Task>
 Quiet: task IDs.
 Human: table with `SLUG, TITLE, STATUS, PRIORITY, ASSIGNEE`.
 
-### `superset tasks get <idOrSlug>`
+### `velix tasks get <idOrSlug>`
 
 Resolves either UUID or human slug.
 
@@ -525,7 +525,7 @@ tRPC: `task.byIdOrSlug` *(new — see Backend Prerequisites)*.
 
 Output: `Task` (raw).
 
-### `superset tasks create`
+### `velix tasks create`
 
 | Option | Required | Description |
 | --- | --- | --- |
@@ -542,7 +542,7 @@ old all-IDs `task.create` is deleted)*.
 
 Output: `Task` (raw, never null).
 
-### `superset tasks update <idOrSlug>`
+### `velix tasks update <idOrSlug>`
 
 Same fields as create, all optional.
 
@@ -550,7 +550,7 @@ tRPC: `task.byIdOrSlug` then `task.update`.
 
 Output: `Task` (raw).
 
-### `superset tasks delete <idOrSlug...>`
+### `velix tasks delete <idOrSlug...>`
 
 Variadic.
 
@@ -569,7 +569,7 @@ Output:
 Schedules use RFC 5545 RRULE bodies, e.g.
 `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=9;BYMINUTE=0`.
 
-### `superset automations list`
+### `velix automations list`
 
 tRPC: `automation.list`.
 
@@ -582,14 +582,14 @@ Array<Automation>
 Quiet: automation IDs.
 Human: table with `ID, NAME, AGENT, SCHEDULE, ENABLED, NEXT RUN`.
 
-### `superset automations get <id>`
+### `velix automations get <id>`
 
 tRPC: `automation.get`.
 
 Output: `Automation` (with `recentRuns` omitted — use
 `automations logs` to fetch run history).
 
-### `superset automations create`
+### `velix automations create`
 
 | Option | Required | Description |
 | --- | --- | --- |
@@ -602,7 +602,7 @@ Output: `Automation` (with `recentRuns` omitted — use
 | `--workspace <workspaceId>` | one of workspace/project | Reuse an existing workspace; project is derived server-side. |
 | `--project <projectId>` | one of workspace/project | New-workspace-per-run mode. |
 | `--host <hostId>` | no | Target host for runs. Default: owner's online host. |
-| `--agent <agent>` | no | Host agent presetId, `HostAgentConfig` instance UUID, or `superset` for built-in chat. Default: `claude`. |
+| `--agent <agent>` | no | Host agent presetId, `HostAgentConfig` instance UUID, or `velix` for built-in chat. Default: `claude`. |
 
 Exactly one of `--prompt` or `--prompt-file` must be provided. Exactly one
 of `--workspace` or `--project` must be provided. Both constraints are
@@ -612,7 +612,7 @@ tRPC: `automation.create`.
 
 Output: `Automation` (raw, including `id`, `nextRunAt`, `agent`).
 
-### `superset automations update <id>`
+### `velix automations update <id>`
 
 All flags optional. **Omitting a flag preserves the existing field** —
 `undefined` means "no change", not "clear". This requires server-side partial
@@ -627,7 +627,7 @@ update semantics (see Backend Prerequisites).
 | `--timezone <iana>` | |
 | `--dtstart <iso8601>` | |
 | `--host <hostId>` | Preserves the existing host when omitted. |
-| `--agent <agent>` | Host agent presetId, instance UUID, or `superset`. Preserves the existing value when omitted. |
+| `--agent <agent>` | Host agent presetId, instance UUID, or `velix`. Preserves the existing value when omitted. |
 | `--enabled` / `--no-enabled` | Calls `automation.setEnabled` first. |
 
 tRPC:
@@ -639,7 +639,7 @@ automation.update
 
 Output: `Automation` (raw).
 
-### `superset automations delete <id>`
+### `velix automations delete <id>`
 
 tRPC: `automation.delete`.
 
@@ -649,7 +649,7 @@ Output:
 { deleted: string /* id */ }
 ```
 
-### `superset automations pause <id>` / `superset automations resume <id>`
+### `velix automations pause <id>` / `velix automations resume <id>`
 
 `pause` sets `enabled: false`; `resume` sets `enabled: true`. The API
 recomputes `nextRunAt` on resume.
@@ -658,7 +658,7 @@ tRPC: `automation.setEnabled`.
 
 Output: `Automation` (raw).
 
-### `superset automations run <id>`
+### `velix automations run <id>`
 
 Dispatch immediately. Does not wait for completion. Use `automations logs`
 or `automations logs --follow` to track progress.
@@ -675,7 +675,7 @@ Output:
 }
 ```
 
-### `superset automations logs <id>`
+### `velix automations logs <id>`
 
 | Option | Description |
 | --- | --- |
@@ -708,7 +708,7 @@ Human: table with `RUN ID, STATUS, STARTED, DURATION`.
 
 ## Host Service
 
-### `superset start`
+### `velix start`
 
 | Option | Description |
 | --- | --- |
@@ -740,9 +740,9 @@ Side conventions:
   vars; the CLI's own environment is not inherited.
 - Starting the host service while the desktop app is also running returns
   the desktop app's manifest if both are configured for the same
-  organization (shared `~/.superset/host/<orgId>/`).
+  organization (shared `~/.velix/host/<orgId>/`).
 
-### `superset status`
+### `velix status`
 
 Three output shapes, depending on state:
 
@@ -772,7 +772,7 @@ Three output shapes, depending on state:
 
 `healthy` reflects a live `health.check` request (2 second timeout).
 
-### `superset stop`
+### `velix stop`
 
 Sends SIGTERM, waits up to 10 seconds, sends SIGKILL if still alive. **The
 manifest is removed in all cases**, including when the SIGTERM call itself
@@ -813,7 +813,7 @@ These changes must land in the API/server before the v1 CLI ships:
   "no change" for `targetHostId` and `agent`. The CLI will rely on this to
   fix the silent-clobber bug (CLI-CURRENT-010, CLI-CURRENT-028).
 - **`host.list`** on cloud — new tRPC procedure for the
-  `superset hosts list` discovery command. Returns hosts with
+  `velix hosts list` discovery command. Returns hosts with
   `id = machineId` (the consolidated identifier — see below).
 - **`workspace.list/create/delete`** on cloud — new tRPC procedures used
   only when the CLI is targeting a *remote* host. They take a `hostId`
@@ -914,18 +914,18 @@ These changes must land in the API/server before the v1 CLI ships:
 
 These changes are internal to the CLI and framework packages:
 
-- Migrate the home directory from `~/superset/` to `~/.superset/` and
-  honour `SUPERSET_HOME_DIR` (matches desktop; fixes CLI-CURRENT-034).
+- Migrate the home directory from `~/velix/` to `~/.velix/` and
+  honour `VELIX_HOME_DIR` (matches desktop; fixes CLI-CURRENT-034).
 - Rename "device" → "host" throughout the user-facing surface:
   - `--device` flag → `--host` (per-command, not global).
-  - Drop `SUPERSET_DEVICE` env var (no replacement).
+  - Drop `VELIX_DEVICE` env var (no replacement).
   - `devices list` group → `hosts list`.
-  - Drop `~/.superset/device.json` entirely; `hostId`/`hostName` move into
+  - Drop `~/.velix/device.json` entirely; `hostId`/`hostName` move into
     the per-org manifest.
   - Internal: drop `readDeviceConfig` / `deviceId` field on the middleware
     ctx; per-command code reads `hostId` from the manifest as needed.
 - Drop `apiUrl` config field, `auth login --api-url` flag, and
-  `SUPERSET_API_URL` env var. API URL is a build-time constant only.
+  `VELIX_API_URL` env var. API URL is a build-time constant only.
 - Drop `--branch` flag from `tasks create` and `tasks update`.
 - Implement `tasks list` filters end-to-end (no silent ignores).
 - Implement `automations logs <id>`.
@@ -956,11 +956,11 @@ These changes are internal to the CLI and framework packages:
 
 - `host install` — deferred to v1.1, not in help, not in docs. The
   implementation path is pinned so v1.1 doesn't have to relitigate it:
-  - macOS: write `~/Library/LaunchAgents/sh.superset.host.plist`
-    (`RunAtLoad=true`, `KeepAlive=true`, exec'ing `superset-host` directly
+  - macOS: write `~/Library/LaunchAgents/sh.velix.host.plist`
+    (`RunAtLoad=true`, `KeepAlive=true`, exec'ing `velix-host` directly
     with the current login's env), then `launchctl load` it.
-  - Linux: write `~/.config/systemd/user/superset-host.service`, then
-    `systemctl --user enable --now superset-host`. Document
+  - Linux: write `~/.config/systemd/user/velix-host.service`, then
+    `systemctl --user enable --now velix-host`. Document
     `loginctl enable-linger <user>` for always-on headless servers.
   - Uninstall via `host install --uninstall` or a separate
     `host uninstall` command.
@@ -1000,7 +1000,7 @@ this becomes the locked v1 contract:
 6. **"Devices" terminology dropped in favour of "hosts"** throughout the
    user-facing CLI surface — flags (`--host`), the listing group
    (`hosts list`), the manifest field (`hostId`), and the env var (none
-   — the `SUPERSET_DEVICE` env var is dropped, with no replacement). This
+   — the `VELIX_DEVICE` env var is dropped, with no replacement). This
    matches the backend's existing internal naming
    (`automation.targetHostId`, the host service itself).
 7. **Dual client with a fixed routing rule.** Workspace/project commands
@@ -1020,7 +1020,7 @@ this becomes the locked v1 contract:
 9. **Stale-manifest behaviour: fail fast, don't fall through to cloud.**
    If the resolved target is the local machine but the host service
    isn't reachable (no manifest, stale manifest, dead PID), workspace
-   /project commands error with `Run: superset start` rather than
+   /project commands error with `Run: velix start` rather than
    silently retrying via cloud. The two failure modes are different
    (one is "your host service crashed", the other is "your network is
    down") and conflating them under one error makes debugging worse.

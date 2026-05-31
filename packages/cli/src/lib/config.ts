@@ -10,7 +10,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { env } from "./env";
 
-export type SupersetConfig = {
+export type VelixConfig = {
 	auth?: {
 		accessToken: string;
 		refreshToken?: string;
@@ -20,21 +20,21 @@ export type SupersetConfig = {
 	organizationId?: string;
 };
 
-export const SUPERSET_HOME_DIR =
-	process.env.SUPERSET_HOME_DIR ?? join(homedir(), ".superset");
-const CONFIG_PATH = join(SUPERSET_HOME_DIR, "config.json");
+export const VELIX_HOME_DIR =
+	process.env.VELIX_HOME_DIR ?? join(homedir(), ".velix");
+const CONFIG_PATH = join(VELIX_HOME_DIR, "config.json");
 
 function ensureDir() {
-	if (!existsSync(SUPERSET_HOME_DIR)) {
-		mkdirSync(SUPERSET_HOME_DIR, { recursive: true, mode: 0o700 });
+	if (!existsSync(VELIX_HOME_DIR)) {
+		mkdirSync(VELIX_HOME_DIR, { recursive: true, mode: 0o700 });
 	}
 	try {
-		const stat = statSync(SUPERSET_HOME_DIR);
-		if ((stat.mode & 0o077) !== 0) chmodSync(SUPERSET_HOME_DIR, 0o700);
+		const stat = statSync(VELIX_HOME_DIR);
+		if ((stat.mode & 0o077) !== 0) chmodSync(VELIX_HOME_DIR, 0o700);
 	} catch {}
 }
 
-export function readConfig(): SupersetConfig {
+export function readConfig(): VelixConfig {
 	if (!existsSync(CONFIG_PATH)) return {};
 	try {
 		const stat = statSync(CONFIG_PATH);
@@ -43,7 +43,7 @@ export function readConfig(): SupersetConfig {
 	return JSON.parse(readFileSync(CONFIG_PATH, "utf-8"));
 }
 
-export function writeConfig(config: SupersetConfig): void {
+export function writeConfig(config: VelixConfig): void {
 	ensureDir();
 	writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), {
 		mode: 0o600,
@@ -54,5 +54,5 @@ export function writeConfig(config: SupersetConfig): void {
 }
 
 export function getApiUrl(): string {
-	return env.SUPERSET_API_URL;
+	return env.VELIX_API_URL;
 }

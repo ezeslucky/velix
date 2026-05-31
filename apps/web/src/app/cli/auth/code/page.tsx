@@ -21,7 +21,7 @@ export default async function CliAuthCodePage({
 				<a href={env.NEXT_PUBLIC_MARKETING_URL}>
 					<Image
 						src="/title.svg"
-						alt="Superset"
+						alt="Velix"
 						width={140}
 						height={24}
 						priority
@@ -42,7 +42,7 @@ export default async function CliAuthCodePage({
 					<CliAuthCodeDisplay code={code} state={state} />
 				) : (
 					<p className="text-muted-foreground">
-						Missing authorization code. Re-run <code>superset auth login</code>.
+						Missing authorization code. Re-run <code>velix auth login</code>.
 					</p>
 				)}
 			</main>

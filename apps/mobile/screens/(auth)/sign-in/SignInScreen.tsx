@@ -6,8 +6,8 @@ import { signIn } from "@/lib/auth/client";
 import type { SocialProvider } from "./components/SocialButton";
 import { SocialButton } from "./components/SocialButton";
 
-const TERMS_URL = "https://superset.sh/terms";
-const PRIVACY_URL = "https://superset.sh/privacy";
+const TERMS_URL = "https://velix.sh/terms";
+const PRIVACY_URL = "https://velix.sh/privacy";
 
 export function SignInScreen() {
 	const [error, setError] = useState<string | null>(null);
@@ -36,7 +36,7 @@ export function SignInScreen() {
 
 			<View className="items-center gap-2">
 				<Text className="text-2xl font-semibold text-foreground">
-					Welcome to Superset
+					Welcome to Velix
 				</Text>
 				<Text className="text-base text-muted-foreground">
 					Sign in to get started

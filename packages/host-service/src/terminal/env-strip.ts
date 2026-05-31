@@ -15,7 +15,7 @@
  */
 const HOST_SERVICE_RUNTIME_KEYS = new Set([
 	"AUTH_TOKEN",
-	"SUPERSET_API_URL",
+	"VELIX_API_URL",
 	"DESKTOP_VITE_PORT",
 	"HOST_CLIENT_ID",
 	"HOST_NAME",
@@ -35,10 +35,10 @@ const STRIP_PREFIXES = [
 	"HOST_",
 ];
 
-const SUPERSET_KEEP_KEYS = new Set([
-	"SUPERSET_HOME_DIR",
-	"SUPERSET_AGENT_HOOK_PORT",
-	"SUPERSET_AGENT_HOOK_VERSION",
+const VELIX_KEEP_KEYS = new Set([
+	"VELIX_HOME_DIR",
+	"VELIX_AGENT_HOOK_PORT",
+	"VELIX_AGENT_HOOK_VERSION",
 ]);
 
 export function stripTerminalRuntimeEnv(
@@ -50,7 +50,7 @@ export function stripTerminalRuntimeEnv(
 		if (HOST_SERVICE_RUNTIME_KEYS.has(key)) continue;
 		if (NODE_APP_KEYS.has(key)) continue;
 		if (STRIP_PREFIXES.some((prefix) => key.startsWith(prefix))) continue;
-		if (key.startsWith("SUPERSET_") && !SUPERSET_KEEP_KEYS.has(key)) continue;
+		if (key.startsWith("VELIX_") && !VELIX_KEEP_KEYS.has(key)) continue;
 
 		result[key] = value;
 	}

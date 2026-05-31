@@ -4,11 +4,11 @@ date: 2026-05-18
 image: /changelog/automations.png
 ---
 
-Superset is now usable from a lot more places than the desktop app: a fleshed-out CLI and TypeScript SDK, a Slack agent that spins up workspaces on its own, and a mobile app heading into internal review.
+Velix is now usable from a lot more places than the desktop app: a fleshed-out CLI and TypeScript SDK, a Slack agent that spins up workspaces on its own, and a mobile app heading into internal review.
 
 ## Automations
 
-**Automations are cron jobs for agent sessions.** Pick a project, write a prompt, set a schedule — and Superset dispatches an agent run against a fresh workspace every time it fires. The output is a live workspace you can open, review, and continue interactively.
+**Automations are cron jobs for agent sessions.** Pick a project, write a prompt, set a schedule — and Velix dispatches an agent run against a fresh workspace every time it fires. The output is a live workspace you can open, review, and continue interactively.
 
 Typical uses:
 
@@ -29,7 +29,7 @@ Everything you can do in the UI is now scriptable. New in this batch: `prompt ge
 
 ```bash
 # create a recurring run from a prompt file
-superset automations create \
+velix automations create \
   --name "Nightly audit" \
   --rrule "FREQ=DAILY;BYHOUR=3;BYMINUTE=0" \
   --project <projectId> \
@@ -37,46 +37,43 @@ superset automations create \
   --prompt-file prompt.md
 
 # manage the queue
-superset automations list --name "Nightly"
-superset automations pause <id>
-superset automations resume <id>
+velix automations list --name "Nightly"
+velix automations pause <id>
+velix automations resume <id>
 
 # iterate on the prompt (backed by the new version history)
-superset automations prompt get <id> > prompt.md
+velix automations prompt get <id> > prompt.md
 $EDITOR prompt.md
-superset automations prompt set <id> --file prompt.md
+velix automations prompt set <id> --file prompt.md
 
 # fire one off-schedule (also works from the SDK / Slack bot / MCP)
-superset automations run <id>
+velix automations run <id>
 ```
 
-`superset automations run` is also exposed via the **TypeScript SDK** and **MCP**, so you can dispatch runs from a CI job, an internal admin panel, or a Slack slash command. See the [Automations docs](https://docs.superset.sh/docs/automations) for the full surface.
+`velix automations run` is also exposed via the **TypeScript SDK** and **MCP**, so you can dispatch runs from a CI job, an internal admin panel, or a Slack slash command. See the [Automations docs](https://docs.velix.sh/docs/automations) for the full surface.
 
-## Superset CLI
+## Velix CLI
 
-The `superset` CLI grew real project and workspace commands and a cross-device login flow.
+The `velix` CLI grew real project and workspace commands and a cross-device login flow.
 
 **New commands:**
 
-- `superset projects create` <PRBadge url="https://github.com/ezeslucky/velix/pull/4355" /> — scaffold a new Superset project from your shell.
-- `superset projects setup` <PRBadge url="https://github.com/ezeslucky/velix/pull/4356" /> — link an existing local repo to a Superset project.
-- `superset workspaces open` <PRBadge url="https://github.com/ezeslucky/velix/pull/4258" /> — open a workspace directly from the terminal.
-- `superset auth login` <PRBadge url="https://github.com/ezeslucky/velix/pull/3965" /> — now uses OAuth device code + PKCE, so it works on headless servers and across devices.
+- `velix projects create` <PRBadge url="https://github.com/ezeslucky/velix/pull/4355" /> — scaffold a new Velix project from your shell.
+- `velix projects setup` <PRBadge url="https://github.com/ezeslucky/velix/pull/4356" /> — link an existing local repo to a Velix project.
+- `velix workspaces open` <PRBadge url="https://github.com/ezeslucky/velix/pull/4258" /> — open a workspace directly from the terminal.
+- `velix auth login` <PRBadge url="https://github.com/ezeslucky/velix/pull/3965" /> — now uses OAuth device code + PKCE, so it works on headless servers and across devices.
 
 **Setting it up:**
 
 ```bash
 # install
-curl -fsSL https://superset.sh/cli/install.sh | sh
-# or: brew install ezeslucky/tap/superset
-# or: it's already bundled with the desktop app at ~/.superset/bin/superset
+curl -fsSL https://velix.sh/cli/install.sh | sh
 
-# sign in (opens a browser, or prints a code for a second device)
-superset auth login
+velix auth login
 
 # scaffold a project and open a workspace
-superset projects create
-superset workspaces open
+velix projects create
+velix workspaces open
 ```
 
 The accompanying **TypeScript SDK** <PRBadge url="https://github.com/ezeslucky/velix/pull/3937" /> (`@velix_sh/sdk`) mirrors the CLI 1:1 — same procedures, same shapes — so anything you can do from your shell, you can do from a script, a CI job, or an internal tool.
@@ -86,29 +83,29 @@ npm install @velix_sh/sdk
 ```
 
 ```ts
-import Superset from '@velix_sh/sdk';
-const client = new Superset(); // reads SUPERSET_API_KEY / SUPERSET_ORGANIZATION_ID
+import Velix from '@velix_sh/sdk';
+const client = new Velix(); // reads VELIX_API_KEY / VELIX_ORGANIZATION_ID
 await client.automations.run('<automation-id>');
 ```
 
-Linux `superset start` and `superset update` are now fixed <PRBadge url="https://github.com/ezeslucky/velix/pull/4635" />.
+Linux `velix start` and `velix update` are now fixed <PRBadge url="https://github.com/ezeslucky/velix/pull/4635" />.
 
 ## Slack bot
 
-![Superset Slack bot spinning up a workspace and reporting back in-thread](/changelog/slack.png)
+![Velix Slack bot spinning up a workspace and reporting back in-thread](/changelog/slack.png)
 
 `@velix` in Slack is now an actual agent, not a task-filer. Mention it in a channel or DM it from anywhere, and it can:
 
-- **Create, update, search, and triage tasks** from the conversation it's standing in — pulling assignees, statuses, and priorities from your team's Linear/Superset setup.
+- **Create, update, search, and triage tasks** from the conversation it's standing in — pulling assignees, statuses, and priorities from your team's Linear/Velix setup.
 - **Spin up a cloud workspace and launch a coding agent** to actually do the work. For code-change requests (e.g. "@velix bump our Sentry SDK to v9 across all apps"), it now defaults to spawning a workspace and agent rather than just filing a ticket <PRBadge url="https://github.com/ezeslucky/velix/pull/4660" />.
 - **Read the thread or channel history** on its own to gather context — no need to copy-paste the prior messages.
 - **Search the web with citations** when a request needs up-to-date info.
-- **Unfurl Superset task and workspace links** with rich previews when they're shared in a channel.
+- **Unfurl Velix task and workspace links** with rich previews when they're shared in a channel.
 
 **Setting it up:**
 
 1. In the dashboard, go to **Integrations → Slack**.
-2. Click **Connect** to install the Superset Slack app into your workspace (OAuth).
+2. Click **Connect** to install the Velix Slack app into your workspace (OAuth).
 3. Mention `@velix` in any channel, or open a DM with the bot, and describe what you want done.
 
 If Slack was already connected before this release, no action needed — proactive workspace creation is on by default.
@@ -120,7 +117,7 @@ The mobile app is in **internal review**. Core flows — workspaces list, task t
 ## Also in this batch
 
 - **Teams as a first-class primitive** <PRBadge url="https://github.com/ezeslucky/velix/pull/4403" /> — assign members, workspaces, and automations to a team. Powers the Mine/Team automations split above.
-- **Terminal sessions survive app updates** <PRBadge url="https://github.com/ezeslucky/velix/pull/3971" /> — the PTY daemon hands off file descriptors on upgrade, so running shells stay alive when Superset auto-updates.
+- **Terminal sessions survive app updates** <PRBadge url="https://github.com/ezeslucky/velix/pull/3971" /> — the PTY daemon hands off file descriptors on upgrade, so running shells stay alive when Velix auto-updates.
 - **Web terminal presets** <PRBadge url="https://github.com/ezeslucky/velix/pull/4653" /> — run your common commands with a single click in the web terminal, same as desktop.
 
 ## Minor updates

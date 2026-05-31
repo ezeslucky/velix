@@ -1,23 +1,23 @@
 # CLI + Host Service Distribution
 
-How we ship `superset` as a standalone, downloadable bundle.
+How we ship `velix` as a standalone, downloadable bundle.
 
 ## Goals
 
 1. User downloads a single tarball for their platform
-2. `superset auth login` authenticates via browser (works headless too)
-3. `superset start` runs the host service, connects to relay
-4. The host machine is now accessible from any Superset client (web, mobile, desktop)
+2. `velix auth login` authenticates via browser (works headless too)
+3. `velix start` runs the host service, connects to relay
+4. The host machine is now accessible from any Velix client (web, mobile, desktop)
 
 ## Architecture
 
 Two-binary bundle: the CLI is a Bun-compiled binary (pure JS), the host service runs on Node.js with native addons.
 
 ```
-superset-darwin-arm64/
+velix-darwin-arm64/
   bin/
-    superset                # Bun-compiled CLI (single binary, no deps)
-    superset-host           # Shell wrapper → exec node ../lib/host-service.js "$@"
+    velix                # Bun-compiled CLI (single binary, no deps)
+    velix-host           # Shell wrapper → exec node ../lib/host-service.js "$@"
   lib/
     node                    # Standalone Node.js 22 binary (~40MB)
     host-service.js         # esbuild-bundled host service (single file)
@@ -31,23 +31,23 @@ superset-darwin-arm64/
 
 ### Why two runtimes?
 
-- **CLI** (`superset`): Pure JS — tRPC client, OAuth flow, config management. No native deps. Bun's `--compile` produces a single ~50MB binary.
-- **Host service** (`superset-host`): Depends on `better-sqlite3` (C++ SQLite) and `node-pty` (C++ PTY). These are native Node.js addons that don't work in Bun. Must run on Node.
+- **CLI** (`velix`): Pure JS — tRPC client, OAuth flow, config management. No native deps. Bun's `--compile` produces a single ~50MB binary.
+- **Host service** (`velix-host`): Depends on `better-sqlite3` (C++ SQLite) and `node-pty` (C++ PTY). These are native Node.js addons that don't work in Bun. Must run on Node.
 
 ### How `start` works
 
 ```
-superset start
-  └─ reads ~/.superset/config.json (auth token, org ID, API URL)
-  └─ resolves superset-host binary (sibling in bin/)
-  └─ spawns: superset-host (which runs: lib/node lib/host-service.js)
-  └─ passes env: AUTH_TOKEN, SUPERSET_API_URL, HOST_DB_PATH, RELAY_URL, etc.
+velix start
+  └─ reads ~/.velix/config.json (auth token, org ID, API URL)
+  └─ resolves velix-host binary (sibling in bin/)
+  └─ spawns: velix-host (which runs: lib/node lib/host-service.js)
+  └─ passes env: AUTH_TOKEN, VELIX_API_URL, HOST_DB_PATH, RELAY_URL, etc.
   └─ polls GET /trpc/health.check until ready
   └─ host service connects to relay via WebSocket tunnel
   └─ prints "Host service running on port XXXXX"
 
-superset start --daemon
-  └─ same but detached, writes manifest to ~/.superset/host/<orgId>/manifest.json
+velix start --daemon
+  └─ same but detached, writes manifest to ~/.velix/host/<orgId>/manifest.json
   └─ manifest: { pid, port, secret, startedAt }
 ```
 
@@ -57,7 +57,7 @@ superset start --daemon
 
 ```bash
 # 1. Build CLI binary
-bunx cli-framework build --target=bun-darwin-arm64 --outfile=dist/bin/superset
+bunx cli-framework build --target=bun-darwin-arm64 --outfile=dist/bin/velix
 
 # 2. Bundle host service JS (single file, native deps external)
 esbuild packages/host-service/src/serve.ts \
@@ -78,16 +78,16 @@ cp node_modules/better-sqlite3/prebuilds/darwin-arm64/better_sqlite3.node dist/l
 # 5. Copy migrations
 cp -r packages/host-service/drizzle/ dist/share/migrations/
 
-# 6. Write superset-host wrapper
-cat > dist/bin/superset-host << 'EOF'
+# 6. Write velix-host wrapper
+cat > dist/bin/velix-host << 'EOF'
 #!/bin/sh
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 exec "$SCRIPT_DIR/../lib/node" "$SCRIPT_DIR/../lib/host-service.js" "$@"
 EOF
-chmod +x dist/bin/superset-host
+chmod +x dist/bin/velix-host
 
 # 7. Package
-tar -czf superset-darwin-arm64.tar.gz -C dist .
+tar -czf velix-darwin-arm64.tar.gz -C dist .
 ```
 
 ### Native addon availability
@@ -132,8 +132,8 @@ jobs:
       - run: bun run packages/cli/scripts/build-dist.ts --target=${{ matrix.target }}
       - uses: actions/upload-artifact@v4
         with:
-          name: superset-${{ matrix.target }}
-          path: packages/cli/dist/superset-${{ matrix.target }}.tar.gz
+          name: velix-${{ matrix.target }}
+          path: packages/cli/dist/velix-${{ matrix.target }}.tar.gz
 ```
 
 ## Installation
@@ -141,39 +141,39 @@ jobs:
 ### curl | sh (planned)
 
 ```bash
-curl -fsSL https://get.superset.sh | sh
+curl -fsSL https://get.velix.sh | sh
 ```
 
-Detects platform/arch, downloads tarball from GitHub Releases, extracts to `~/.superset/bin/`, prints PATH instructions.
+Detects platform/arch, downloads tarball from GitHub Releases, extracts to `~/.velix/bin/`, prints PATH instructions.
 
 ### Manual
 
 ```bash
 # Download
-curl -LO https://github.com/user/superset/releases/latest/download/superset-darwin-arm64.tar.gz
+curl -LO https://github.com/user/velix/releases/latest/download/velix-darwin-arm64.tar.gz
 
 # Extract
-mkdir -p ~/.superset/bin
-tar -xzf superset-darwin-arm64.tar.gz -C ~/.superset/bin
+mkdir -p ~/.velix/bin
+tar -xzf velix-darwin-arm64.tar.gz -C ~/.velix/bin
 
 # Add to PATH
-export PATH="$HOME/.superset/bin/bin:$PATH"
+export PATH="$HOME/.velix/bin/bin:$PATH"
 
 # Login
-superset auth login
+velix auth login
 
 # Start host service
-superset start --daemon
+velix start --daemon
 ```
 
 ### apt-get (stretch goal)
 
-Publish `.deb` packages to a PPA for `apt-get install superset`.
+Publish `.deb` packages to a PPA for `apt-get install velix`.
 
 ### systemd / launchd (stretch goal)
 
 ```bash
-superset host install   # writes systemd unit or launchd plist
+velix host install   # writes systemd unit or launchd plist
                         # enables + starts the service
                         # host service runs on boot
 ```
@@ -215,7 +215,7 @@ superset host install   # writes systemd unit or launchd plist
 | `packages/cli/src/commands/host/status/command.ts` | Host status command (stub) |
 | `packages/cli/src/commands/host/install/command.ts` | Host install command (stub) |
 | `packages/cli/src/lib/auth.ts` | OAuth device flow |
-| `packages/cli/src/lib/config.ts` | ~/.superset/config.json read/write |
+| `packages/cli/src/lib/config.ts` | ~/.velix/config.json read/write |
 | `packages/cli/package.json` | Build scripts, cross-compile targets |
 | `packages/host-service/src/serve.ts` | Standalone host service entry point |
 | `packages/host-service/src/app.ts` | createApp() — core setup |

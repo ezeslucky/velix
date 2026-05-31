@@ -14,7 +14,7 @@ import {
 let tempBase: string;
 
 beforeEach(() => {
-	tempBase = mkdtempSync(join(tmpdir(), "superset-attachments-test-"));
+	tempBase = mkdtempSync(join(tmpdir(), "velix-attachments-test-"));
 	process.env.HOST_MANIFEST_DIR = tempBase;
 });
 
@@ -206,13 +206,13 @@ describe("attachmentsRouter.delete", () => {
 });
 
 describe("getAttachmentsRoot", () => {
-	it("falls back to ~/.superset/host/standalone when HOST_MANIFEST_DIR is blank", () => {
+	it("falls back to ~/.velix/host/standalone when HOST_MANIFEST_DIR is blank", () => {
 		const original = process.env.HOST_MANIFEST_DIR;
 		process.env.HOST_MANIFEST_DIR = "";
 		try {
 			const root = getAttachmentsRoot();
 			expect(root).toBe(
-				join(homedir(), ".superset", "host", "standalone", "attachments"),
+				join(homedir(), ".velix", "host", "standalone", "attachments"),
 			);
 		} finally {
 			if (original === undefined) delete process.env.HOST_MANIFEST_DIR;
@@ -226,7 +226,7 @@ describe("getAttachmentsRoot", () => {
 		try {
 			const root = getAttachmentsRoot();
 			expect(root).toBe(
-				join(homedir(), ".superset", "host", "standalone", "attachments"),
+				join(homedir(), ".velix", "host", "standalone", "attachments"),
 			);
 		} finally {
 			if (original === undefined) delete process.env.HOST_MANIFEST_DIR;

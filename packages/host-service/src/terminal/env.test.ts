@@ -90,14 +90,14 @@ describe("stripTerminalRuntimeEnv", () => {
 		HOST_MIGRATIONS_PATH: "/tmp/migrations",
 		HOST_SERVICE_VERSION: "1.2.3",
 		KEEP_ALIVE_AFTER_PARENT: "1",
-		SUPERSET_API_URL: "https://api.example.com",
+		VELIX_API_URL: "https://api.example.com",
 		DESKTOP_VITE_PORT: "5173",
 		// Node/app keys
 		NODE_ENV: "development",
 		NODE_OPTIONS: "--max-old-space-size=4096",
 		NODE_PATH: "/some/path",
 		// Dev-runner and Electron runtime vars
-		npm_package_name: "superset",
+		npm_package_name: "velix",
 		npm_config_registry: "https://registry.npmjs.org",
 		npm_lifecycle_event: "dev",
 		ELECTRON_ENABLE_LOGGING: "1",
@@ -105,20 +105,20 @@ describe("stripTerminalRuntimeEnv", () => {
 		VITE_API_URL: "http://localhost:3000",
 		NEXT_PUBLIC_KEY: "pk_123",
 		TURBO_TEAM: "my-team",
-		// Legacy SUPERSET_* vars that should be stripped
-		SUPERSET_PANE_ID: "pane-1",
-		SUPERSET_TAB_ID: "tab-1",
-		SUPERSET_PORT: "51741",
-		SUPERSET_HOOK_VERSION: "2",
-		SUPERSET_WORKSPACE_NAME: "my-ws",
+		// Legacy VELIX_* vars that should be stripped
+		VELIX_PANE_ID: "pane-1",
+		VELIX_TAB_ID: "tab-1",
+		VELIX_PORT: "51741",
+		VELIX_HOOK_VERSION: "2",
+		VELIX_WORKSPACE_NAME: "my-ws",
 		// Keys that SHOULD survive
 		HOME: "/Users/test",
 		PATH: "/usr/bin:/usr/local/bin",
 		SHELL: "/bin/zsh",
 		EDITOR: "vim",
-		SUPERSET_HOME_DIR: "/Users/test/.superset",
-		SUPERSET_AGENT_HOOK_PORT: "51741",
-		SUPERSET_AGENT_HOOK_VERSION: "2",
+		VELIX_HOME_DIR: "/Users/test/.velix",
+		VELIX_AGENT_HOOK_PORT: "51741",
+		VELIX_AGENT_HOOK_VERSION: "2",
 	};
 
 	test("app/runtime secrets do not reach PTY env", () => {
@@ -129,7 +129,7 @@ describe("stripTerminalRuntimeEnv", () => {
 		expect(result.HOST_CLIENT_ID).toBeUndefined();
 		expect(result.ELECTRON_RUN_AS_NODE).toBeUndefined();
 		expect(result.HOST_DB_PATH).toBeUndefined();
-		expect(result.SUPERSET_API_URL).toBeUndefined();
+		expect(result.VELIX_API_URL).toBeUndefined();
 		expect(result.DESKTOP_VITE_PORT).toBeUndefined();
 	});
 
@@ -194,11 +194,11 @@ describe("stripTerminalRuntimeEnv", () => {
 
 	test("removed legacy vars do not reach PTY env", () => {
 		const result = stripTerminalRuntimeEnv(secretsEnv);
-		expect(result.SUPERSET_PANE_ID).toBeUndefined();
-		expect(result.SUPERSET_TAB_ID).toBeUndefined();
-		expect(result.SUPERSET_PORT).toBeUndefined();
-		expect(result.SUPERSET_HOOK_VERSION).toBeUndefined();
-		expect(result.SUPERSET_WORKSPACE_NAME).toBeUndefined();
+		expect(result.VELIX_PANE_ID).toBeUndefined();
+		expect(result.VELIX_TAB_ID).toBeUndefined();
+		expect(result.VELIX_PORT).toBeUndefined();
+		expect(result.VELIX_HOOK_VERSION).toBeUndefined();
+		expect(result.VELIX_WORKSPACE_NAME).toBeUndefined();
 	});
 
 	test("user shell env vars survive stripping", () => {
@@ -209,11 +209,11 @@ describe("stripTerminalRuntimeEnv", () => {
 		expect(result.EDITOR).toBe("vim");
 	});
 
-	test("explicit Superset support keys are kept", () => {
+	test("explicit Velix support keys are kept", () => {
 		const result = stripTerminalRuntimeEnv(secretsEnv);
-		expect(result.SUPERSET_HOME_DIR).toBe("/Users/test/.superset");
-		expect(result.SUPERSET_AGENT_HOOK_PORT).toBe("51741");
-		expect(result.SUPERSET_AGENT_HOOK_VERSION).toBe("2");
+		expect(result.VELIX_HOME_DIR).toBe("/Users/test/.velix");
+		expect(result.VELIX_AGENT_HOOK_PORT).toBe("51741");
+		expect(result.VELIX_AGENT_HOOK_VERSION).toBe("2");
 	});
 
 	test("shell-derived env preserves user tooling vars", () => {
@@ -237,45 +237,45 @@ describe("stripTerminalRuntimeEnv", () => {
 // ── Shell launch behavior ────────────────────────────────────────────
 
 describe("getShellLaunchArgs", () => {
-	const supersetHomeDir = "/tmp/test-superset";
+	const velixHomeDir = "/tmp/test-velix";
 
 	test("zsh launches as login shell", () => {
-		expect(getShellLaunchArgs({ shell: "/bin/zsh", supersetHomeDir })).toEqual([
+		expect(getShellLaunchArgs({ shell: "/bin/zsh", velixHomeDir })).toEqual([
 			"-l",
 		]);
 	});
 
 	test("bash falls back to login shell when rcfile missing", () => {
-		const args = getShellLaunchArgs({ shell: "/bin/bash", supersetHomeDir });
+		const args = getShellLaunchArgs({ shell: "/bin/bash", velixHomeDir });
 		expect(args).toEqual(["-l"]);
 	});
 
 	test("fish uses init-command", () => {
 		const args = getShellLaunchArgs({
 			shell: "/usr/bin/fish",
-			supersetHomeDir,
+			velixHomeDir,
 		});
 		expect(args[0]).toBe("-l");
 		expect(args[1]).toBe("--init-command");
-		expect(args[2]).toContain("_superset_bin");
+		expect(args[2]).toContain("_velix_bin");
 		expect(args[2]).toContain("133;A");
 	});
 
 	test("sh launches as login shell", () => {
-		expect(getShellLaunchArgs({ shell: "/bin/sh", supersetHomeDir })).toEqual([
+		expect(getShellLaunchArgs({ shell: "/bin/sh", velixHomeDir })).toEqual([
 			"-l",
 		]);
 	});
 
 	test("ksh launches as login shell", () => {
 		expect(
-			getShellLaunchArgs({ shell: "/usr/bin/ksh", supersetHomeDir }),
+			getShellLaunchArgs({ shell: "/usr/bin/ksh", velixHomeDir }),
 		).toEqual(["-l"]);
 	});
 
 	test("unsupported shells launch natively without bootstrap", () => {
 		expect(
-			getShellLaunchArgs({ shell: "/usr/bin/pwsh", supersetHomeDir }),
+			getShellLaunchArgs({ shell: "/usr/bin/pwsh", velixHomeDir }),
 		).toEqual([]);
 	});
 });
@@ -285,7 +285,7 @@ describe("getShellBootstrapEnv", () => {
 		const result = getShellBootstrapEnv({
 			shell: "/bin/zsh",
 			baseEnv: { HOME: "/Users/test" },
-			supersetHomeDir: "/tmp/nonexistent-superset-dir",
+			velixHomeDir: "/tmp/nonexistent-velix-dir",
 		});
 		expect(result).toEqual({});
 	});
@@ -294,7 +294,7 @@ describe("getShellBootstrapEnv", () => {
 		const result = getShellBootstrapEnv({
 			shell: "/bin/bash",
 			baseEnv: {},
-			supersetHomeDir: "/tmp/test",
+			velixHomeDir: "/tmp/test",
 		});
 		expect(result).toEqual({});
 	});
@@ -303,7 +303,7 @@ describe("getShellBootstrapEnv", () => {
 		const result = getShellBootstrapEnv({
 			shell: "/usr/bin/fish",
 			baseEnv: {},
-			supersetHomeDir: "/tmp/test",
+			velixHomeDir: "/tmp/test",
 		});
 		expect(result).toEqual({});
 	});
@@ -312,7 +312,7 @@ describe("getShellBootstrapEnv", () => {
 		const result = getShellBootstrapEnv({
 			shell: "/usr/bin/pwsh",
 			baseEnv: {},
-			supersetHomeDir: "/tmp/test",
+			velixHomeDir: "/tmp/test",
 		});
 		expect(result).toEqual({});
 	});
@@ -390,17 +390,17 @@ describe("buildV2TerminalEnv", () => {
 			HOME: "/Users/test",
 			PATH: "/usr/bin",
 			SHELL: "/bin/zsh",
-			SUPERSET_HOME_DIR: "/Users/test/.superset",
+			VELIX_HOME_DIR: "/Users/test/.velix",
 		},
 		shell: "/bin/zsh",
-		supersetHomeDir: "/Users/test/.superset",
+		velixHomeDir: "/Users/test/.velix",
 		cwd: "/tmp/workspace",
 		terminalId: "term-1",
 		workspaceId: "ws-1",
 		workspacePath: "/tmp/workspace",
 		rootPath: "/tmp/repo",
 		hostServiceVersion: "2.0.0",
-		supersetEnv: "production" as const,
+		velixEnv: "production" as const,
 		agentHookPort: "51741",
 		agentHookVersion: "2",
 	};
@@ -413,13 +413,13 @@ describe("buildV2TerminalEnv", () => {
 			TERM_PROGRAM_VERSION: "2.0.0",
 			COLORTERM: "truecolor",
 			PWD: "/tmp/workspace",
-			SUPERSET_TERMINAL_ID: "term-1",
-			SUPERSET_WORKSPACE_ID: "ws-1",
-			SUPERSET_WORKSPACE_PATH: "/tmp/workspace",
-			SUPERSET_ROOT_PATH: "/tmp/repo",
-			SUPERSET_ENV: "production",
-			SUPERSET_AGENT_HOOK_PORT: "51741",
-			SUPERSET_AGENT_HOOK_VERSION: "2",
+			VELIX_TERMINAL_ID: "term-1",
+			VELIX_WORKSPACE_ID: "ws-1",
+			VELIX_WORKSPACE_PATH: "/tmp/workspace",
+			VELIX_ROOT_PATH: "/tmp/repo",
+			VELIX_ENV: "production",
+			VELIX_AGENT_HOOK_PORT: "51741",
+			VELIX_AGENT_HOOK_VERSION: "2",
 		});
 		expect(env.TERM_PROGRAM).toBe("kitty");
 		expect(env.SHELL).toBe("/bin/zsh");
@@ -435,17 +435,17 @@ describe("buildV2TerminalEnv", () => {
 		expect(env.SHELL).toBe("/opt/homebrew/bin/fish");
 	});
 
-	test("allows empty root path and alternate Superset env without breaking the contract", () => {
+	test("allows empty root path and alternate Velix env without breaking the contract", () => {
 		const env = buildV2TerminalEnv({ ...baseParams, rootPath: "" });
-		expect(env.SUPERSET_ROOT_PATH).toBe("");
+		expect(env.VELIX_ROOT_PATH).toBe("");
 
 		const devEnv = buildV2TerminalEnv({
 			...baseParams,
 			rootPath: "",
-			supersetEnv: "development",
+			velixEnv: "development",
 		});
-		expect(devEnv.SUPERSET_ENV).toBe("development");
-		expect(devEnv.SUPERSET_ROOT_PATH).toBe("");
+		expect(devEnv.VELIX_ENV).toBe("development");
+		expect(devEnv.VELIX_ROOT_PATH).toBe("");
 	});
 
 	test("defaults COLORFGBG to dark mode", () => {
@@ -466,20 +466,20 @@ describe("buildV2TerminalEnv", () => {
 			...baseParams,
 			baseEnv: {
 				...baseParams.baseEnv,
-				SUPERSET_PANE_ID: "pane-1",
-				SUPERSET_TAB_ID: "tab-1",
-				SUPERSET_PORT: "51741",
-				SUPERSET_HOOK_VERSION: "2",
-				SUPERSET_WORKSPACE_NAME: "my-workspace",
+				VELIX_PANE_ID: "pane-1",
+				VELIX_TAB_ID: "tab-1",
+				VELIX_PORT: "51741",
+				VELIX_HOOK_VERSION: "2",
+				VELIX_WORKSPACE_NAME: "my-workspace",
 				NVM_DIR: "/Users/test/.nvm",
 				SSH_AUTH_SOCK: "/tmp/ssh.sock",
 			},
 		});
-		expect(env.SUPERSET_PANE_ID).toBeUndefined();
-		expect(env.SUPERSET_TAB_ID).toBeUndefined();
-		expect(env.SUPERSET_PORT).toBeUndefined();
-		expect(env.SUPERSET_HOOK_VERSION).toBeUndefined();
-		expect(env.SUPERSET_WORKSPACE_NAME).toBeUndefined();
+		expect(env.VELIX_PANE_ID).toBeUndefined();
+		expect(env.VELIX_TAB_ID).toBeUndefined();
+		expect(env.VELIX_PORT).toBeUndefined();
+		expect(env.VELIX_HOOK_VERSION).toBeUndefined();
+		expect(env.VELIX_WORKSPACE_NAME).toBeUndefined();
 		expect(env.NVM_DIR).toBe("/Users/test/.nvm");
 		expect(env.SSH_AUTH_SOCK).toBe("/tmp/ssh.sock");
 	});
@@ -501,18 +501,18 @@ describe("v2 env contract boundary", () => {
 				ORGANIZATION_ID: "org-abc",
 				NODE_ENV: "production",
 				VITE_SECRET: "vite-key",
-				npm_package_name: "superset",
+				npm_package_name: "velix",
 				ELECTRON_IS_DEV: "1",
 			},
 			shell: "/bin/zsh",
-			supersetHomeDir: "/Users/test/.superset",
+			velixHomeDir: "/Users/test/.velix",
 			cwd: "/tmp/ws",
 			terminalId: "t-1",
 			workspaceId: "w-1",
 			workspacePath: "/tmp/ws",
 			rootPath: "",
 			hostServiceVersion: "2.0.0",
-			supersetEnv: "production",
+			velixEnv: "production",
 			agentHookPort: "51741",
 			agentHookVersion: "2",
 		});

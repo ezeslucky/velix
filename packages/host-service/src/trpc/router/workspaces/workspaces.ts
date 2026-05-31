@@ -313,9 +313,6 @@ async function planBranchSource(
 	return { branch, startPoint, usedExistingBranch: false };
 }
 
-// Adopt any worktree git knows about, no matter where it lives —
-// tools other than Superset can also `git worktree add`, and their
-// worktrees are valid adoption targets.
 function isBranchInUseByWorktreeError(err: unknown): boolean {
 	const message = err instanceof Error ? err.message : String(err ?? "");
 	const lower = message.toLowerCase();
@@ -647,7 +644,7 @@ export const workspacesRouter = router({
 								: `Inspect with \`git log ${resolvedBranch}\`, then \`git branch -D ${resolvedBranch}\` if safe.`;
 							throw new TRPCError({
 								code: "CONFLICT",
-								message: `Local branch "${resolvedBranch}" exists outside Superset and points at a different commit than PR #${input.pr} (local ${localOid.slice(0, 7)}, PR ${prMetadata.headRefOid.slice(0, 7)}). ${cleanupHint}`,
+								message: `Local branch "${resolvedBranch}" exists outside Velix and points at a different commit than PR #${input.pr} (local ${localOid.slice(0, 7)}, PR ${prMetadata.headRefOid.slice(0, 7)}). ${cleanupHint}`,
 							});
 						}
 

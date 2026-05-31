@@ -250,18 +250,6 @@ app.get("/hosts/:hostId/_whoowns", async (c) => {
 	return c.body(null, 200, replay.header);
 });
 
-// ── Host proxy (auth required) ──────────────────────────────────────
-//
-// Remote-control viewer WebSockets (`/hosts/:hostId/remote-control/*`)
-// authenticate via a per-session HMAC `remoteControlToken` query param
-// that is verified by the host-service, not by us. Skip the user-JWT
-// gate for those paths only — the HMAC is the credential the cloud
-// hands to viewers, who may not have a Superset user JWT in the URL.
-//
-// We must still run the tunnel-presence + maybeReplay logic that
-// `authMiddleware` does, otherwise viewer links break in multi-region
-// Fly deployments whenever the load balancer lands a request on a
-// relay instance that doesn't own the destination tunnel.
 
 app.use("/hosts/:hostId/*", async (c, next) => {
 	const path = new URL(c.req.url).pathname;

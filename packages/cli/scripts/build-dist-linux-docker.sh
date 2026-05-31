@@ -7,7 +7,7 @@
 # Usage:
 #   packages/cli/scripts/build-dist-linux-docker.sh [linux-x64|linux-arm64]
 #
-# Outputs the tarball at packages/cli/dist/superset-<target>.tar.gz inside
+# Outputs the tarball at packages/cli/dist/velix-<target>.tar.gz inside
 # the container's copy of the repo and runs the same require() smoke test
 # the CI workflow runs.
 set -euo pipefail
@@ -34,9 +34,9 @@ docker run --rm --platform "$PLATFORM" \
   -e TARGET="$TARGET" \
   -e NODE_ARCH="$NODE_ARCH" \
   -e NODE_VERSION="$NODE_VERSION" \
-  -e RELAY_URL="${RELAY_URL:-https://relay.superset.sh}" \
-  -e SUPERSET_API_URL="${SUPERSET_API_URL:-https://api.superset.sh}" \
-  -e SUPERSET_WEB_URL="${SUPERSET_WEB_URL:-https://app.superset.sh}" \
+  -e RELAY_URL="${RELAY_URL:-https://relay.velix.sh}" \
+  -e VELIX_API_URL="${VELIX_API_URL:-https://api.velix.sh}" \
+  -e VELIX_WEB_URL="${VELIX_WEB_URL:-https://app.velix.sh}" \
   "oven/bun:${BUN_VERSION}" bash -euxc '
     apt-get update -qq
     apt-get install -y --no-install-recommends \
@@ -62,7 +62,7 @@ docker run --rm --platform "$PLATFORM" \
     cd packages/cli
     bun run build:dist --target="$TARGET"
 
-    DIST="$(pwd)/dist/superset-${TARGET}"
+    DIST="$(pwd)/dist/velix-${TARGET}"
     bash scripts/smoke-test.sh "$DIST" "$TARGET"
     echo "[docker-build] tarball: $(ls -la "$DIST.tar.gz")"
   '

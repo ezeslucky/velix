@@ -23,7 +23,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 			<Section className="pb-4">
 				<Img
 					src={`${env.NEXT_PUBLIC_MARKETING_URL}/assets/emails/logo-full.png`}
-					alt="Superset"
+					alt="Velix"
 					width="160"
 				/>
 			</Section>
@@ -40,18 +40,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 							className="block"
 						/>
 					</Link>
-					<Link
-						href="https://instagram.com/superset"
-						className="inline-block mr-4"
-					>
-						<Img
-							src={socialIcons.instagram}
-							alt="Instagram"
-							width="24"
-							height="24"
-							className="block"
-						/>
-					</Link>
+					
 					<Link
 						href="https://www.linkedin.com/company/ezeslucky"
 						className="inline-block"
@@ -98,7 +87,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 
 			{/* Company Info */}
 			<Text className="text-muted text-xs leading-none m-0">
-				© {currentYear} Superset. All rights reserved.
+				© {currentYear} Velix. All rights reserved.
 			</Text>
 		</Section>
 	);

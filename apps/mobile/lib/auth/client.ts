@@ -12,8 +12,8 @@ export const authClient = createAuthClient({
 	baseURL: env.EXPO_PUBLIC_API_URL,
 	plugins: [
 		expoClient({
-			scheme: "superset",
-			storagePrefix: "superset",
+			scheme: "velix",
+			storagePrefix: "velix",
 			storage: SecureStore,
 		}),
 		organizationClient({

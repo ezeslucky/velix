@@ -83,7 +83,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "9",
 		content:
-			"hasn't been a day i haven't used superset since onboarding\n\ncomplete paradigm shift on how i use ai to code",
+			"hasn't been a day i haven't used velix since onboarding\n\ncomplete paradigm shift on how i use ai to code",
 		author: "Leo",
 		handle: "@LeosReal",
 		role: "Co-founder & CTO at Outlit",
@@ -93,9 +93,9 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "10",
 		content:
-			"Tested various GUI tools for git worktree and agents - Conductor, Vibe Kanban, Agentastic, Crystal, FleetCode, Emdash, Sculptor - but Superset suits my taste the best",
+			"Tested various GUI tools for git worktree and agents - Conductor, Vibe Kanban, Agentastic, Crystal, FleetCode, Emdash, Sculptor - but Velix suits my taste the best",
 		originalContent:
-			"试了各种 GUI 的 git worktree + agent 工具，Conductor、Vibe Kanban、Agentastic、Crystal、FleetCode、Emdash、Sculptor，还是 Superset 最合我的胃口",
+			"试了各种 GUI 的 git worktree + agent 工具，Conductor、Vibe Kanban、Agentastic、Crystal、FleetCode、Emdash、Sculptor，还是 Velix 最合我的胃口",
 		author: "Iven",
 		handle: "@ivenvd",
 		role: "Engineer at Paraflow",
@@ -105,7 +105,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "11",
 		content:
-			"superset became my default tools now so keep the great work folks",
+			"velix became my default tools now so keep the great work folks",
 		author: "Vlad Arbatov",
 		handle: "@vladzima",
 		role: "Founding Engineer at Loyal",

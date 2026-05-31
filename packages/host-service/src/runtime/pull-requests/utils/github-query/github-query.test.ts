@@ -37,7 +37,7 @@ describe("GitHub pull request REST queries", () => {
 						ref: "fix/sidebar",
 						sha: "abc123",
 						repo: {
-							name: "superset",
+							name: "velix",
 							owner: { login: "ezeslucky" },
 						},
 					},
@@ -52,8 +52,8 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestByHeadFromGh(
 			execGh,
-			{ owner: "ezeslucky", name: "superset" },
-			{ owner: "ezeslucky", repo: "superset", branch: "fix/sidebar" },
+			{ owner: "ezeslucky", name: "velix" },
+			{ owner: "ezeslucky", repo: "velix", branch: "fix/sidebar" },
 		);
 
 		expect(result).toEqual({
@@ -66,7 +66,7 @@ describe("GitHub pull request REST queries", () => {
 			headRefOid: "abc123",
 			isCrossRepository: false,
 			headRepositoryOwner: { login: "ezeslucky" },
-			headRepository: { name: "superset" },
+			headRepository: { name: "velix" },
 			updatedAt: "2026-05-08T12:00:00Z",
 		});
 		expect(calls).toEqual([
@@ -143,7 +143,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestByHeadFromGh(
 			execGh,
-			{ owner: "ezeslucky", name: "superset" },
+			{ owner: "ezeslucky", name: "velix" },
 			{ owner: "fork-owner", repo: "fork-repo", branch: "fix/sidebar" },
 		);
 
@@ -170,7 +170,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestReviewDecisionFromGh(
 			execGh,
-			{ owner: "ezeslucky", name: "superset" },
+			{ owner: "ezeslucky", name: "velix" },
 			42,
 			"OPEN",
 		);
@@ -195,7 +195,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestReviewDecisionFromGh(
 			execGh,
-			{ owner: "ezeslucky", name: "superset" },
+			{ owner: "ezeslucky", name: "velix" },
 			42,
 			"OPEN",
 		);
@@ -229,7 +229,7 @@ describe("GitHub pull request REST queries", () => {
 
 		const result = await fetchPullRequestChecksFromGh(
 			execGh,
-			{ owner: "ezeslucky", name: "superset" },
+			{ owner: "ezeslucky", name: "velix" },
 			"abc123",
 		);
 

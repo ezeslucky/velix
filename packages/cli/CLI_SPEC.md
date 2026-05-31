@@ -1,4 +1,4 @@
-# Superset CLI Specs
+# Velix CLI Specs
 
 This file is intentionally only an index.
 

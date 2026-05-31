@@ -7,12 +7,12 @@ import { useEffect } from "react";
 
 /**
  * Deep link passthrough page for tasks.
- * Attempts to open the Superset desktop app, falls back to dashboard.
+ * Attempts to open the Velix desktop app, falls back to dashboard.
  */
 export default function TaskDeepLinkPage() {
 	const params = useParams<{ slug: string }>();
 	const slug = params.slug;
-	const deepLink = `superset://tasks/${slug}`;
+	const deepLink = `velix://tasks/${slug}`;
 
 	useEffect(() => {
 		window.location.href = deepLink;
@@ -23,7 +23,7 @@ export default function TaskDeepLinkPage() {
 			<div className="flex flex-col items-center gap-6">
 				<Image
 					src="/title.svg"
-					alt="Superset"
+					alt="Velix"
 					width={280}
 					height={86}
 					priority

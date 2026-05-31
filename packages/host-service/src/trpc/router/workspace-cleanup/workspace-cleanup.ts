@@ -124,38 +124,7 @@ export const workspaceCleanupRouter = router({
 			}
 		}),
 
-	/**
-	 * Destroy a workspace in three phases:
-	 *
-	 *   0. Preflight     — dirty-worktree check (skip if force)
-	 *   1. Teardown      — run .superset/teardown.sh (skip if force)
-	 *   2. Cloud delete  ← COMMIT POINT — throws if it fails
-	 *   3. Local cleanup — PTYs, worktree, branch, host sqlite (best-effort)
-	 *
-	 * Any failure in phases 0–2 leaves the workspace fully intact. Failures
-	 * in phase 3 become warnings — local orphans are cheap, and the user
-	 * has a toast telling them what was left behind.
-	 *
-	 * Force semantics:
-	 *   - skips preflight (step 0)
-	 *   - skips teardown  (step 1)
-	 *   - step 3b always uses `--force` (we're past the commit point)
-	 *   - step 3c always uses `-D` regardless: the `deleteBranch`
-	 *     checkbox is the user's consent, so refusing unmerged branches
-	 *     would just silently drop the opt-in.
-	 *
-	 * Typed errors for the renderer:
-	 *   - CONFLICT             → dirty worktree; prompt force-retry.
-	 *                            CONFLICT with `data.deleteInProgress` is a
-	 *                            different beast — another destroy is in
-	 *                            flight for the same workspace; surface as
-	 *                            a toast and do NOT force-retry.
-	 *   - INTERNAL_SERVER_ERROR with `data.teardownFailure` → teardown
-	 *                            script failed; prompt force-retry
-	 *   - BAD_REQUEST          → main workspace; cannot be deleted
-	 *   - PRECONDITION_FAILED  → no cloud API configured
-	 *   - pass-through         → cloud auth / network failure
-	 */
+	
 	destroy: protectedProcedure
 		.input(
 			z.object({

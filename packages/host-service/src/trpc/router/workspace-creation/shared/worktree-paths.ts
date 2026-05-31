@@ -4,12 +4,12 @@ import { TRPCError } from "@trpc/server";
 
 // Kept outside the primary checkout so editors, file watchers, and
 // ignore rules treat worktrees as separate trees, not nested ones.
-function supersetWorktreesRoot(): string {
-	return join(homedir(), ".superset", "worktrees");
+function velixWorktreesRoot(): string {
+	return join(homedir(), ".velix", "worktrees");
 }
 
 export function projectWorktreesRoot(projectId: string): string {
-	return resolve(supersetWorktreesRoot(), projectId);
+	return resolve(velixWorktreesRoot(), projectId);
 }
 
 export function safeResolveWorktreePath(

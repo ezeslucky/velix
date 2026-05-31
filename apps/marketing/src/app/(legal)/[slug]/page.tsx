@@ -66,7 +66,7 @@ export async function generateMetadata({
 	}
 
 	return {
-		title: `${page.title} - Superset`,
+		title: `${page.title} - Velix`,
 		description: page.description,
 	};
 }
