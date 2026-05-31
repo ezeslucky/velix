@@ -121,10 +121,10 @@ export const supportRouter = createTRPCRouter({
 
 			try {
 				await resend.emails.send({
-					from: "Superset <noreply@velix.sh>",
+					from: "Velix <noreply@velix.sh>",
 					to: SUPPORT_EMAIL,
 					replyTo: user.email,
-					subject: "Superset V1 to V2 migration issue",
+					subject: "Velix V1 to V2 migration issue",
 					text: [
 						`User: ${userLabel}`,
 						`User ID: ${user.id}`,

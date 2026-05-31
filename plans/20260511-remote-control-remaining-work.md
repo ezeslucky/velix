@@ -138,7 +138,7 @@ git diff --check
 
 If the WebSocket auth flow changes substantially, also manually verify:
 
-- Anonymous viewer opens a copied share link without a Superset session.
+- Anonymous viewer opens a copied share link without a Velix session.
 - Invalid token never attaches to a terminal.
 - Revoked and expired sessions do not receive `wsUrl` from cloud and cannot attach to host.
 - First WebSocket request URL contains no `remoteControlToken` or raw bearer token.

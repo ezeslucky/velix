@@ -11,25 +11,6 @@ export interface HostAgentPreset {
 	env: Record<string, string>;
 }
 
-/**
- * Hardcoded terminal agent presets. Used as the seed list when a host's
- * agent table is empty, and as the install catalog the desktop picker
- * renders. Lives here (not on the host service) because it's static
- * configuration that ships with the binary, not data the API owns.
- *
- * Launch resolution:
- *   prompt
- *     ? [command, ...args, ...promptArgs, ...(promptTransport === "argv" ? [prompt] : [])]
- *     : [command, ...args]
- *
- * `promptArgs` is only included when launching with a prompt — codex's
- * trailing `--`, opencode's `--prompt`, and copilot's `-i` therefore do
- * not appear in promptless launches. Stdin transport pipes the prompt to
- * the spawned process's stdin instead of pushing it to argv.
- *
- * Superset is intentionally excluded — its model/provider config
- * lives in chat settings, not in terminal-agent configs.
- */
 export const HOST_AGENT_PRESETS = [
 	{
 		presetId: "claude",

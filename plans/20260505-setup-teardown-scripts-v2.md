@@ -5,9 +5,9 @@ Status: plan. v2-only — v1 code paths must not change.
 ## Goal
 
 Build the v2 equivalent of the v1 project-settings UI for editing
-`.superset/config.json` setup and teardown scripts, and make v2 workspace
+`.velix/config.json` setup and teardown scripts, and make v2 workspace
 creation honor the configured `setup` array (today it only checks for a
-literal `<worktreePath>/.superset/setup.sh`).
+literal `<worktreePath>/.velix/setup.sh`).
 
 ## Scope rule
 
@@ -22,8 +22,8 @@ sunset, prefer v2-first fixes.
 |---|---|---|
 | v2 project settings → Scripts editor | missing | mounted, talks to host-service |
 | v2 sidebar → Setup-scripts CTA | missing | new card, dismissable per-project |
-| v2 workspace creation → setup terminal | reads `<worktree>/.superset/setup.sh` only | resolves config.json + override + overlay, falls back to `<repo>/.superset/setup.sh` |
-| `<worktree>/.superset/` copy from main | required (`copySupersetConfigToWorktree`) | not needed; main repo is single source of truth |
+| v2 workspace creation → setup terminal | reads `<worktree>/.velix/setup.sh` only | resolves config.json + override + overlay, falls back to `<repo>/.velix/setup.sh` |
+| `<worktree>/.velix/` copy from main | required (`copyVelixConfigToWorktree`) | not needed; main repo is single source of truth |
 
 ## Architecture
 
@@ -36,9 +36,9 @@ renderer (v2 only)
                             │
                   ┌─────────┴─────────┐
                   ▼                   ▼
-          .superset/config.json   ~/.superset/projects/<id>/config.json
+          .velix/config.json   ~/.velix/projects/<id>/config.json
                   │
-                  └──── + .superset/config.local.json (overlay)
+                  └──── + .velix/config.local.json (overlay)
 ```
 
 The host-service is the authoritative path for v2 — it owns the v2 project's
@@ -59,17 +59,17 @@ actually runs on workspace creation — no second source of truth.
 
 Resolution order (later wins for keys it explicitly defines):
 
-1. `<repoPath>/.superset/config.json` — canonical, written by the editor.
-2. `~/.superset/projects/<projectId>/config.json` — per-machine user override.
+1. `<repoPath>/.velix/config.json` — canonical, written by the editor.
+2. `~/.velix/projects/<projectId>/config.json` — per-machine user override.
 
-Then `<repoPath>/.superset/config.local.json` applies as an overlay with
+Then `<repoPath>/.velix/config.local.json` applies as an overlay with
 before/after/replace semantics per key.
 
 Validates element types up-front (rejects `[123, "ok"]`). Returns `null` if no
 source exists. Generic `readJson<T>()` handles read+parse+log; shape validators
 sit on top.
 
-Does **not** read `<worktreePath>/.superset/config.json` (v1 did) — the
+Does **not** read `<worktreePath>/.velix/config.json` (v1 did) — the
 worktree no longer holds a separate copy, so the main repo is the single
 source of truth across all worktrees.
 
@@ -79,7 +79,7 @@ source of truth across all worktrees.
 exposing three procedures, all keyed on a v2 `projectId`:
 
 - `getConfigContent({ projectId })` → `{ content: string | null, exists }` — reads
-  `<repoPath>/.superset/config.json` raw.
+  `<repoPath>/.velix/config.json` raw.
 - `updateConfig({ projectId, setup, teardown })` → writes the file, preserving
   any existing top-level keys (including `run`) via spread.
 - `shouldShowSetupCard({ projectId })` → `boolean` — uses `loadSetupConfig` so
@@ -96,13 +96,13 @@ Rewrite `startSetupTerminalIfPresent` to resolve an `initialCommand`:
 
 1. If the resolved `setup` array is non-empty, run the commands joined with
    `&&` so a failure short-circuits.
-2. Else fall back to `bash <repoPath>/.superset/setup.sh` (resolved against the
+2. Else fall back to `bash <repoPath>/.velix/setup.sh` (resolved against the
    main repo, **not** the worktree).
 3. Else no-op.
 
-Terminal `cwd` stays the worktree; `$SUPERSET_ROOT_PATH` (already injected by
+Terminal `cwd` stays the worktree; `$Velix_ROOT_PATH` (already injected by
 the v2 terminal env builder) exposes the main repo path so scripts can reach
-the canonical `.superset/` dir without it being copied into worktrees.
+the canonical `.velix/` dir without it being copied into worktrees.
 
 Drop the unused `worktreePath` arg on the public function and replace the two
 sequential `select` calls with a single `workspaces ⨝ projects` join.
@@ -179,9 +179,9 @@ settings/help footer. Active project computed from
 
 ## Things deliberately NOT done
 
-- **No `copySupersetConfigToWorktree` equivalent.** Worktrees stay clean; main
+- **No `copyVelixConfigToWorktree` equivalent.** Worktrees stay clean; main
   repo is the canonical source. Scripts that need to reach repo-tracked
-  `.superset/` files use `$SUPERSET_ROOT_PATH`. Edits in the settings UI take
+  `.velix/` files use `$VELIX_ROOT_PATH`. Edits in the settings UI take
   effect on the next workspace creation immediately, instead of being frozen
   at each worktree's creation time.
 
@@ -199,7 +199,7 @@ settings/help footer. Active project computed from
 
 - [ ] Open a v2 project's settings → "Scripts" section appears between
   Appearance and Delete; edits to Setup/Teardown persist to
-  `<repoPath>/.superset/config.json`.
+  `<repoPath>/.velix/config.json`.
 - [ ] Open a v1 project's settings → editor still works exactly as before;
   v1 codepath untouched.
 - [ ] Type into a textarea, press Enter to add a newline at the end → blur the
@@ -213,8 +213,8 @@ settings/help footer. Active project computed from
   run value is preserved on subsequent saves of setup/teardown.
 - [ ] Configure setup commands via the editor → create a new v2 workspace →
   setup terminal opens and runs the commands joined with `&&`.
-- [ ] Project has no `config.json` but has `<repoPath>/.superset/setup.sh` →
-  new v2 workspace runs `bash <repoPath>/.superset/setup.sh` with the worktree
+- [ ] Project has no `config.json` but has `<repoPath>/.velix/setup.sh` →
+  new v2 workspace runs `bash <repoPath>/.velix/setup.sh` with the worktree
   as cwd.
 - [ ] Project has no scripts of any kind → no setup terminal opens.
 - [ ] Edit setup commands while a v2 workspace is mid-creation → only future
@@ -223,6 +223,6 @@ settings/help footer. Active project computed from
   sidebar; clicking "Configure" lands on the v2 project settings page.
 - [ ] Dismiss the card → it stays dismissed across reloads for that project,
   shows again on a different project.
-- [ ] Add a `.superset/config.local.json` with `setup.before` → the prepended
+- [ ] Add a `.velix/config.local.json` with `setup.before` → the prepended
   commands run first; the canonical setup runs after; the card is hidden
   because configured scripts now exist via the overlay.

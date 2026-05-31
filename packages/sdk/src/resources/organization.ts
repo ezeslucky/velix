@@ -3,11 +3,7 @@ import { APIResource } from "../core/resource";
 import type { RequestOptions } from "../internal/request-options";
 
 export class Members extends APIResource {
-	/**
-	 * List members of the active organization.
-	 *
-	 * Mirrors `superset organization members list`.
-	 */
+	
 	list(
 		query?: MemberListParams | null,
 		options?: RequestOptions,

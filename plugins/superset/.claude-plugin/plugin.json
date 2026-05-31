@@ -1,19 +1,19 @@
 {
-	"name": "superset",
+	"name": "velix",
 	"version": "0.1.0",
-	"description": "Use Superset to spawn agents, create workspaces, manage tasks, and schedule automations from Claude Code.",
+	"description": "Use Velix to spawn agents, create workspaces, manage tasks, and schedule automations from Claude Code.",
 	"author": {
-		"name": "Superset",
-		"url": "https://superset.sh"
+		"name": "Velix",
+		"url": "https://velix.sh"
 	},
-	"homepage": "https://docs.superset.sh",
+	"homepage": "https://docs.velix.sh",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ezeslucky/velix"
 	},
 	"license": "MIT",
 	"keywords": [
-		"superset",
+		"velix",
 		"agents",
 		"workspaces",
 		"automations",
