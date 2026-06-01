@@ -30,8 +30,8 @@
 		}
 	},
 	"scripts": {
-		"typecheck": "tsc --noEmit --emitDeclarationOnly false",
-		"test": "bun test --pass-with-no-tests"
+		"test": "bun test --pass-with-no-tests",
+		"typecheck": "tsc --noEmit --emitDeclarationOnly false"
 	},
 	"dependencies": {
 		"@ai-sdk/anthropic": "3.0.64",
@@ -39,27 +39,27 @@
 		"@mastra/core": "1.33.1",
 		"@mastra/mcp": "1.7.0",
 		"@mastra/memory": "1.18.0",
-		"@velix/trpc": "workspace:*",
-		"@velix/workspace-fs": "workspace:*",
 		"@trpc/client": "11.16.0",
 		"@trpc/server": "11.16.0",
+		"@velix/trpc": "workspace:*",
+		"@velix/workspace-fs": "workspace:*",
 		"ai": "6.0.141",
 		"hono": "4.12.18",
 		"mastracode": "0.18.1",
 		"superjson": "2.2.6",
 		"zod": "4.3.6"
 	},
+	"devDependencies": {
+		"@types/bun": "1.3.11",
+		"@types/node": "24.12.0",
+		"@types/react": "19.2.14",
+		"@velix/typescript": "workspace:*",
+		"typescript": "5.9.3"
+	},
 	"peerDependencies": {
 		"@tanstack/react-query": "5.100.9",
 		"@trpc/client": "11.16.0",
 		"@trpc/react-query": "11.16.0",
 		"react": "19.2.0"
-	},
-	"devDependencies": {
-		"@velix/typescript": "workspace:*",
-		"@types/bun": "1.3.11",
-		"@types/node": "24.12.0",
-		"@types/react": "19.2.14",
-		"typescript": "5.9.3"
 	}
 }

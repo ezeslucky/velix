@@ -4,21 +4,21 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "dotenv -e ../../.env -o -- sh -c 'exec env VELIX_API_URL=$NEXT_PUBLIC_API_URL cli-framework dev \"$@\"' --",
 		"build": "cli-framework build",
-		"build:darwin-arm64": "cli-framework build --target=bun-darwin-arm64 --outfile=./dist/velix-darwin-arm64",
-		"build:linux-x64": "cli-framework build --target=bun-linux-x64 --outfile=./dist/velix-linux-x64",
 		"build:all": "bun run build:darwin-arm64 && bun run build:linux-x64",
+		"build:darwin-arm64": "cli-framework build --target=bun-darwin-arm64 --outfile=./dist/velix-darwin-arm64",
 		"build:dist": "bun run scripts/build-dist.ts",
+		"build:linux-x64": "cli-framework build --target=bun-linux-x64 --outfile=./dist/velix-linux-x64",
+		"dev": "dotenv -e ../../.env -o -- sh -c 'exec env VELIX_API_URL=$NEXT_PUBLIC_API_URL cli-framework dev \"$@\"' --",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@clack/prompts": "0.10.1",
+		"@trpc/client": "11.16.0",
 		"@velix/cli-framework": "workspace:*",
 		"@velix/host-service": "workspace:*",
 		"@velix/shared": "workspace:*",
 		"@velix/trpc": "workspace:*",
-		"@trpc/client": "11.16.0",
 		"date-fns": "4.1.0",
 		"ink": "7.0.1",
 		"mime-types": "3.0.2",
@@ -26,9 +26,9 @@
 		"superjson": "2.2.6"
 	},
 	"devDependencies": {
-		"@velix/typescript": "workspace:*",
 		"@types/mime-types": "3.0.1",
 		"@types/react": "19.2.14",
+		"@velix/typescript": "workspace:*",
 		"bun-types": "1.3.11",
 		"typescript": "5.9.3"
 	}
