@@ -1,117 +1,156 @@
+# Velix — Orchestrate AI Coding Agents in Parallel
 
+Run Claude Code, Codex, Gemini CLI, Cursor Agent, and more across isolated git worktrees — with built-in review, terminal, and editor workflows.
 
-# Code 10x Faster With No Switching Cost
+> Ship faster with parallel AI development.
 
-Velix orchestrates CLI-based coding agents across isolated git worktrees, with built-in terminal, review, and open-in-editor workflows.
+![Velix Dashboard](./docs/images/dashboard.png)
 
-- **Run multiple agents simultaneously** without context switching overhead
-- **Isolate each task** in its own git worktree so agents don't interfere with each other
-- **Monitor all your agents** from one place and get notified when they need attention
-- **Review and edit changes quickly** with the built-in diff viewer and editor
-- **Open any workspace where you need it** with one-click handoff to your editor or terminal
+---
 
-Wait less, ship more.
+## Why Velix?
+
+Most AI coding tools are designed around a single-agent workflow.
+
+Velix is built for developers who want to run multiple AI coding agents simultaneously without losing control of their repository.
+
+With Velix you can:
+
+* Run many coding agents in parallel
+* Isolate every task using git worktrees
+* Compare outputs safely
+* Review changes quickly
+* Switch context instantly
+* Keep your main repository clean
+
+---
 
 ## Features
 
-| Feature | Description |
-|:--------|:------------|
-| **Parallel Execution** | Run 10+ coding agents simultaneously on your machine |
-| **Worktree Isolation** | Each task gets its own branch and working directory |
-| **Agent Monitoring** | Track agent status and get notified when changes are ready |
-| **Built-in Diff Viewer** | Inspect and edit agent changes without leaving the app |
-| **Workspace Presets** | Automate env setup, dependency installation, and more |
-| **Universal Compatibility** | Works with any CLI agent that runs in a terminal |
-| **Quick Context Switching** | Jump between tasks as they need your attention |
-| **IDE Integration** | Open any workspace in your favorite editor with one click |
+| Feature                      | Description                                             |
+| :--------------------------- | :------------------------------------------------------ |
+| **Parallel Agent Execution** | Run 10+ coding agents simultaneously                    |
+| **Git Worktree Isolation**   | Every task gets its own isolated branch and workspace   |
+| **Built-in Diff Viewer**     | Review and edit AI-generated changes quickly            |
+| **Agent Monitoring**         | Track task progress in real time                        |
+| **Workspace Presets**        | Automate setup, installs, and environment configuration |
+| **IDE Integration**          | Open any workspace instantly in your editor             |
+| **Universal Compatibility**  | Works with any CLI-based coding agent                   |
+| **Quick Context Switching**  | Move between tasks without losing focus                 |
+
+---
+
+## Demo
+
+https://youtube.com/demo-link
+
+---
 
 ## Supported Agents
 
-Velix works with any CLI-based coding agent, including:
+Velix works with any CLI-based coding agent.
 
-| Agent | Status |
-|:------|:-------|
-| [Amp Code](https://ampcode.com/) | Fully supported |
-| [Claude Code](https://github.com/anthropics/claude-code) | Fully supported |
-| [OpenAI Codex CLI](https://github.com/openai/codex) | Fully supported |
-| [Cursor Agent](https://docs.cursor.com/agent) | Fully supported |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Fully supported |
-| [GitHub Copilot](https://github.com/features/copilot) | Fully supported |
-| [OpenCode](https://github.com/opencode-ai/opencode) | Fully supported |
-| [Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) | Fully supported |
-| Any CLI agent | Will work |
+| Agent            | Status                |
+| :--------------- | :-------------------- |
+| Claude Code      | ✅ Fully Supported     |
+| OpenAI Codex CLI | ✅ Fully Supported     |
+| Gemini CLI       | ✅ Fully Supported     |
+| Cursor Agent     | ✅ Fully Supported     |
+| GitHub Copilot   | ✅ Fully Supported     |
+| Amp Code         | ✅ Fully Supported     |
+| OpenCode         | ✅ Fully Supported     |
+| Pi               | ✅ Fully Supported     |
+| Any CLI Agent    | ✅ Works Automatically |
 
-If it runs in a terminal, it runs on Velix
+> If it runs in a terminal, it runs on Velix.
 
-## Requirements
+---
 
-| Requirement | Details |
-|:------------|:--------|
-| **OS** | macOS (Windows/Linux untested) |
-| **Runtime** | [Bun](https://bun.sh/) v1.0+ |
-| **Version Control** | Git 2.20+ |
-| **GitHub CLI** | [gh](https://cli.github.com/) |
-| **Caddy** | [caddy](https://caddyserver.com/docs/install) (for dev server) |
+## Quick Start
 
-## Getting Started
-
-### Quick Start (Pre-built)
-
-**[Download Velix for macOS](https://github.com/ezeslucky/velix/releases/latest)**
-
-### Build from Source
-
-<details>
-<summary>Click to expand build instructions</summary>
-
-**1. Clone the repository**
+### Clone the Repository
 
 ```bash
 git clone https://github.com/ezeslucky/velix.git
 cd velix
 ```
 
-**2. Set up environment variables** (choose one):
-
-Option A: Full setup
-```bash
-cp .env.example .env
-# Edit .env and fill in the values
-```
-
-Option B: Skip env validation (for quick local testing)
-```bash
-cp .env.example .env
-echo 'SKIP_ENV_VALIDATION=1' >> .env
-```
-
-**3. Set up Caddy** (reverse proxy for Electric SQL streams):
-
-```bash
-# Install caddy: brew install caddy (macOS) or see https://caddyserver.com/docs/install
-cp Caddyfile.example Caddyfile
-
-# Without this, Chromium rejects https://localhost:* with ERR_CERT_AUTHORITY_INVALID.
-# Prompts for sudo once.
-caddy trust
-```
-
-**4. Install dependencies and run**
+### Install Dependencies
 
 ```bash
 bun install
+```
+
+### Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+Optional quick local setup:
+
+```bash
+echo 'SKIP_ENV_VALIDATION=1' >> .env
+```
+
+### Run Development Server
+
+```bash
 bun run dev
 ```
 
-**5. Build the desktop app**
+### Build Desktop App
 
 ```bash
 bun run build
 open apps/desktop/release
 ```
 
-</details>
+---
 
+## Requirements
+
+| Requirement   | Details                            |
+| :------------ | :--------------------------------- |
+| OS            | macOS (Windows/Linux experimental) |
+| Runtime       | Bun v1.0+                          |
+| Git           | Git 2.20+                          |
+| GitHub CLI    | gh                                 |
+| Reverse Proxy | Caddy                              |
+
+---
+
+## Caddy Setup
+
+Velix uses Caddy for secure local streaming support.
+
+### Install Caddy
+
+```bash
+brew install caddy
+```
+
+### Configure
+
+```bash
+cp Caddyfile.example Caddyfile
+```
+
+### Trust Local Certificates
+
+```bash
+caddy trust
+```
+
+Without this, Chromium may reject secure localhost connections.
+
+---
+
+## Workspace Automation
+
+Velix supports automatic workspace setup and teardown workflows.
+
+Example configuration:
 
 ```json
 {
@@ -120,16 +159,10 @@ open apps/desktop/release
 }
 ```
 
-| Option | Type | Description |
-|:-------|:-----|:------------|
-| `setup` | `string[]` | Commands to run when creating a workspace |
-| `teardown` | `string[]` | Commands to run when deleting a workspace |
-
-### Example setup script
+### Example Setup Script
 
 ```bash
 #!/bin/bash
-# .velix/setup.sh
 
 # Copy environment variables
 cp ../.env .env
@@ -137,61 +170,133 @@ cp ../.env .env
 # Install dependencies
 bun install
 
-# Run any other setup tasks
 echo "Workspace ready!"
 ```
 
-Scripts have access to environment variables:
-- `VELIX_WORKSPACE_NAME` — Name of the workspace
-- `VELIX_ROOT_PATH` — Path to the main repository
+Available environment variables:
 
-## Mastra Dependencies
+* `VELIX_WORKSPACE_NAME`
+* `VELIX_ROOT_PATH`
 
-This repo uses the published upstream `mastracode` and `@mastra/*` packages directly. Avoid adding custom tarball overrides unless there is a repo-specific blocker.
+---
+
+## Use Cases
+
+* Run feature development in parallel
+* Compare Claude vs Codex outputs
+* Generate tests while building features
+* Refactor safely in isolated environments
+* Review AI-generated diffs before merging
+* Run experimental changes without affecting main code
+
+---
+
+## Architecture
+
+```text
+User
+  ↓
+Velix
+  ↓
+Git Worktree
+  ↓
+AI Coding Agent
+  ↓
+Diff Review + Merge
+```
+
+---
+
+## Project Structure
+
+```text
+apps/
+  desktop/
+  web/
+
+packages/
+  ui/
+  core/
+  shared/
+```
+
+---
 
 ## Tech Stack
 
-<p>
-  <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Electron-191970?logo=Electron&logoColor=white" alt="Electron" /></a>
-  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB" alt="React" /></a>
-  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwindcss-%2338B2AC.svg?logo=tailwind-css&logoColor=white" alt="TailwindCSS" /></a>
-  <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white" alt="Bun" /></a>
-  <a href="https://turbo.build/"><img src="https://img.shields.io/badge/Turborepo-EF4444?logo=turborepo&logoColor=white" alt="Turborepo" /></a>
-  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-%23646CFF.svg?logo=vite&logoColor=white" alt="Vite" /></a>
-  <a href="https://biomejs.dev/"><img src="https://img.shields.io/badge/Biome-339AF0?logo=biome&logoColor=white" alt="Biome" /></a>
-  <a href="https://orm.drizzle.team/"><img src="https://img.shields.io/badge/Drizzle%20ORM-FFE873?logo=drizzle&logoColor=black" alt="Drizzle ORM" /></a>
-  <a href="https://neon.tech/"><img src="https://img.shields.io/badge/Neon-00E9CA?logo=neon&logoColor=white" alt="Neon" /></a>
-  <a href="https://trpc.io/"><img src="https://img.shields.io/badge/tRPC-2596BE?logo=trpc&logoColor=white" alt="tRPC" /></a>
-</p>
+* Electron
+* React
+* TailwindCSS
+* Bun
+* Turborepo
+* Vite
+* Biome
+* Drizzle ORM
+* Neon
+* tRPC
+
+---
+
+## Mastra Dependencies
+
+This repository uses the upstream `mastracode` and `@mastra/*` packages directly.
+
+Avoid custom tarball overrides unless there is a repository-specific blocker.
+
+---
+
+## Roadmap
+
+* [ ] Windows support
+* [ ] Linux support
+* [ ] Team collaboration
+* [ ] Cloud sync
+* [ ] Multi-repository orchestration
+* [ ] Agent templates
+* [ ] Built-in terminal multiplexing
+* [ ] Remote workspace execution
+
+---
 
 ## Private by Default
 
-- **Source Available** — Full source is available on GitHub under Elastic License 2.0 (ELv2).
-- **Explicit Connections** — You choose which agents, providers, and integrations to connect.
+* Full source available under Elastic License 2.0 (ELv2)
+* Explicit integrations only
+* Local-first workflow
+* Your repositories stay under your control
+
+---
 
 ## Contributing
 
-We welcome contributions! If you have a suggestion that would make Velix better:
+Contributions are welcome.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Development Workflow
 
-You can also [open issues](https://github.com/ezeslucky/velix/issues) for bugs or feature requests.
+```bash
+git checkout -b feature/amazing-feature
+git commit -m "Add amazing feature"
+git push origin feature/amazing-feature
+```
+
+Then open a Pull Request.
+
+You can also open GitHub Issues for bugs, ideas, or feature requests.
+
+---
 
 ## Community
 
-Join the Velix community to get help, share feedback, and connect with other users:
+* Twitter — Follow for updates and announcements
+* GitHub Discussions — Ask questions and share ideas
+* GitHub Issues — Report bugs and request features
 
-
-- **[Twitter](https://x.com/ezeslucky)** — Follow for updates and announcements
-- **[GitHub Issues](https://github.com/ezeslucky/velix/issues)** — Report bugs and request features
-- **[GitHub Discussions](https://github.com/ezeslucky/velix/discussions)** — Ask questions and share ideas
-
-
+---
 
 ## License
 
-Distributed under the Elastic License 2.0 (ELv2). See [LICENSE.md](LICENSE.md) for more information.
+Velix is source-available under the Elastic License 2.0 (ELv2).
+
+You may use, modify, and self-host Velix, but you may not offer it as a competing hosted service.
+
+See `LICENSE.md` for more information.
