@@ -1,8 +1,45 @@
 {
 	"name": "@velix/repo",
 	"version": "0.0.0",
+	"private": true,
+	"description": "velix Monorepo",
 	"repository": {
 		"type": "git"
+	},
+	"license": "Elastic-2.0",
+	"type": "module",
+	"workspaces": [
+		"packages/*",
+		"apps/*",
+		"tooling/*"
+	],
+	"scripts": {
+		"build": "turbo build --filter=@velix/desktop",
+		"check:desktop-git-env": "./scripts/check-desktop-git-env.sh",
+		"clean": "git clean -xdf node_modules",
+		"clean:workspaces": "turbo clean",
+		"db:generate:desktop": "bun run --cwd packages/local-db generate",
+		"db:migrate": "bun run --cwd packages/db migrate",
+		"db:push": "bun run --cwd packages/db push",
+		"dev": "turbo run dev dev:caddy --filter=@velix/api --filter=@velix/web --filter=@velix/desktop --filter=electric-proxy --filter=//",
+		"dev:all": "turbo dev",
+		"dev:caddy": "dotenv -- caddy run --config Caddyfile",
+		"dev:desktop": "turbo run dev dev:caddy --filter=@velix/api --filter=@velix/desktop --filter=electric-proxy --filter=//",
+		"dev:docs": "turbo dev --filter=@velix/docs",
+		"dev:marketing": "turbo dev --filter=@velix/marketing --filter=@velix/docs",
+		"format": "bunx @biomejs/biome@2.4.2 format --write .",
+		"format:check": "bunx @biomejs/biome@2.4.2 format .",
+		"postinstall": " ./scripts/postinstall.sh",
+		"lint": "./scripts/lint.sh",
+		"lint:fix": "bunx @biomejs/biome@2.4.2 migrate --write && bunx @biomejs/biome@2.4.2 check --write --unsafe .",
+		"release:canary": "./scripts/release-canary.sh",
+		"release:desktop": "./apps/desktop/create-release.sh",
+		"test": "turbo test --concurrency=2",
+		"typecheck": "turbo typecheck",
+		"ui-add": "turbo run ui-add"
+	},
+	"overrides": {
+		"axios": "1.14.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.2",
@@ -10,45 +47,7 @@
 		"sherif": "1.11.0",
 		"turbo": "2.9.14"
 	},
-	"description": "velix Monorepo",
-	
-	"license": "Elastic-2.0",
 	"packageManager": "bun@1.3.11",
-	"private": true,
-	"scripts": {
-		"dev": "turbo run dev dev:caddy --filter=@velix/api --filter=@velix/web --filter=@velix/desktop --filter=electric-proxy --filter=//",
-		"dev:all": "turbo dev",
-		"dev:desktop": "turbo run dev dev:caddy --filter=@velix/api --filter=@velix/desktop --filter=electric-proxy --filter=//",
-		"dev:caddy": "dotenv -- caddy run --config Caddyfile",
-		"dev:docs": "turbo dev --filter=@velix/docs",
-		"dev:marketing": "turbo dev --filter=@velix/marketing --filter=@velix/docs",
-		"build": "turbo build --filter=@velix/desktop",
-		"test": "turbo test --concurrency=2",
-		"lint": "./scripts/lint.sh",
-		"check:desktop-git-env": "./scripts/check-desktop-git-env.sh",
-		"lint:fix": "bunx @biomejs/biome@2.4.2 migrate --write && bunx @biomejs/biome@2.4.2 check --write --unsafe .",
-		"format": "bunx @biomejs/biome@2.4.2 format --write .",
-		"format:check": "bunx @biomejs/biome@2.4.2 format .",
-		"typecheck": "turbo typecheck",
-		"ui-add": "turbo run ui-add",
-		"postinstall": " ./scripts/postinstall.sh",
-		"clean": "git clean -xdf node_modules",
-		"clean:workspaces": "turbo clean",
-		"release:desktop": "./apps/desktop/create-release.sh",
-		"release:canary": "./scripts/release-canary.sh",
-		"db:push": "bun run --cwd packages/db push",
-		"db:migrate": "bun run --cwd packages/db migrate",
-		"db:generate:desktop": "bun run --cwd packages/local-db generate"
-	},
-	"type": "module",
-	"workspaces": [
-		"packages/*",
-		"apps/*",
-		"tooling/*"
-	],
-	"overrides": {
-		"axios": "1.14.0"
-	},
 	"trustedDependencies": [
 		"better-sqlite3",
 		"bufferutil",

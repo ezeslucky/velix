@@ -43,16 +43,16 @@
 		"./package.json": "./package.json"
 	},
 	"scripts": {
+		"bench": "bun test test/integration/pull-requests-scaling.bench.ts",
+		"build:host": "bun run build.ts",
 		"clean": "git clean -xdf .cache .turbo dist node_modules",
 		"dev": "bun run src/serve.ts",
-		"build:host": "bun run build.ts",
 		"generate": "drizzle-kit generate",
+		"profile:git-status": "bun run scripts/git-status-large-repo-profile.ts",
 		"test": "bun test --pass-with-no-tests",
+		"test:e2e": "bun run scripts/test-e2e.ts",
 		"test:integration": "bun test --pass-with-no-tests test/integration",
 		"test:integration:daemon": "node --experimental-strip-types --test src/terminal/DaemonClient/DaemonClient.node-test.ts src/daemon/DaemonSupervisor.node-test.ts",
-		"test:e2e": "bun run scripts/test-e2e.ts",
-		"bench": "bun test test/integration/pull-requests-scaling.bench.ts",
-		"profile:git-status": "bun run scripts/git-status-large-repo-profile.ts",
 		"typecheck": "tsc --noEmit --emitDeclarationOnly false"
 	},
 	"dependencies": {
@@ -62,15 +62,15 @@
 		"@mastra/core": "1.33.1",
 		"@mastra/memory": "1.18.0",
 		"@octokit/rest": "22.0.1",
+		"@t3-oss/env-core": "0.13.11",
+		"@trpc/client": "11.16.0",
+		"@trpc/server": "11.16.0",
 		"@velix/chat": "workspace:*",
 		"@velix/port-scanner": "workspace:*",
 		"@velix/pty-daemon": "workspace:*",
 		"@velix/shared": "workspace:*",
 		"@velix/trpc": "workspace:*",
 		"@velix/workspace-fs": "workspace:*",
-		"@t3-oss/env-core": "0.13.11",
-		"@trpc/client": "11.16.0",
-		"@trpc/server": "11.16.0",
 		"@xterm/headless": "6.1.0-beta.219",
 		"better-sqlite3": "12.6.2",
 		"drizzle-orm": "0.45.2",
@@ -85,11 +85,11 @@
 		"zod": "4.3.6"
 	},
 	"devDependencies": {
-		"@velix/typescript": "workspace:*",
 		"@types/better-sqlite3": "7.6.13",
 		"@types/mime-types": "3.0.1",
 		"@types/node": "24.12.0",
 		"@types/semver": "7.7.1",
+		"@velix/typescript": "workspace:*",
 		"bun-types": "1.3.11",
 		"drizzle-kit": "0.31.8",
 		"typescript": "5.9.3"

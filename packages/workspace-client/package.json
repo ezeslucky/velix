@@ -14,17 +14,17 @@
 		"typecheck": "tsc --noEmit --emitDeclarationOnly false"
 	},
 	"dependencies": {
-		"@velix/host-service": "workspace:*",
-		"@velix/shared": "workspace:*",
-		"@velix/workspace-fs": "workspace:*",
 		"@tanstack/react-query": "5.100.9",
 		"@trpc/client": "11.16.0",
 		"@trpc/react-query": "11.16.0",
+		"@velix/host-service": "workspace:*",
+		"@velix/shared": "workspace:*",
+		"@velix/workspace-fs": "workspace:*",
 		"superjson": "2.2.6"
 	},
 	"devDependencies": {
-		"@velix/typescript": "workspace:*",
 		"@types/react": "19.2.14",
+		"@velix/typescript": "workspace:*",
 		"react": "19.2.0",
 		"typescript": "5.9.3"
 	},
