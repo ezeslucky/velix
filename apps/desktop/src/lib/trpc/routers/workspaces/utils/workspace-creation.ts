@@ -1,5 +1,5 @@
-import type { SelectWorktree } from "@Velix/local-db";
-import { projects, workspaces, worktrees } from "@Velix/local-db";
+import type { SelectWorktree } from "@velix/local-db";
+import { projects, workspaces, worktrees } from "@velix/local-db";
 import { and, eq, isNull } from "drizzle-orm";
 import { track } from "main/lib/analytics";
 import { localDb } from "main/lib/local-db";

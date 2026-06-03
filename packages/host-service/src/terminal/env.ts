@@ -13,7 +13,7 @@ export type {
 export {
 	getShellBootstrapEnv,
 	getShellLaunchArgs,
-	getVELIXShellPaths,
+	getVelixShellPaths,
 	resolveLaunchShell,
 } from "./shell-launch.ts";
 
@@ -166,6 +166,7 @@ export function buildV2TerminalEnv(
 	// to guarantee no runtime keys reach PTYs regardless of call site
 	const env = stripTerminalRuntimeEnv(baseEnv);
 
+	//@ts-check
 	Object.assign(env, getShellBootstrapEnv({ shell, baseEnv, velixHomeDir }));
 
 	env.TERM = "xterm-256color";
