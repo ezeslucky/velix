@@ -1,18 +1,6 @@
-/**
- * Prepare native modules for electron-builder.
- *
- * With Bun 1.3+ isolated installs, node_modules contains symlinks to packages
- * stored in node_modules/.bun/. electron-builder cannot follow these symlinks
- * when creating asar archives.
- *
- * This script:
- * 1. Detects if native modules are symlinks
- * 2. Replaces symlinks with actual file copies
- * 3. electron-builder can then properly package and unpack them
- *
- * This is safe because bun install will recreate the symlinks on next install.
- */
 
+
+/// <reference types="node" />
 import { execSync } from "node:child_process";
 import {
 	cpSync,
@@ -98,10 +86,19 @@ function copyModuleIfSymlink(
 		console.log(`    Real path: ${realPath}`);
 
 		// Remove the symlink
-		rmSync(modulePath);
-
+		//rmSync(modulePath);
+rmSync(modulePath, {
+  recursive: true,
+  force: true,
+});
 		// Copy the actual files
-		cpSync(realPath, modulePath, { recursive: true });
+		// cpSync(realPath, modulePath, { recursive: true });
+
+		cpSync(realPath, modulePath, {
+  recursive: true,
+  force: true,
+  dereference: true,
+});
 
 		console.log(`    Copied to: ${modulePath}`);
 	} else {

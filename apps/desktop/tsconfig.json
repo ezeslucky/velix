@@ -2,6 +2,7 @@
 	"extends": "@velix/typescript/electron.json",
 	"compilerOptions": {
 		"jsx": "react",
+		"ignoreDeprecations": "6.0",
 		"types": ["bun"],
 		"baseUrl": ".",
 		"paths": {
