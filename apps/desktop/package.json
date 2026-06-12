@@ -137,7 +137,6 @@
 		"@velix/db": "workspace:*",
 		"@velix/host-service": "workspace:*",
 		"@velix/local-db": "workspace:*",
-		"@velix/macos-process-metrics": "workspace:*",
 		"@velix/panes": "workspace:*",
 		"@velix/port-scanner": "workspace:*",
 		"@velix/pty-daemon": "workspace:*",
@@ -272,5 +271,8 @@
 		"vite-tsconfig-paths": "5.1.4"
 	},
 	"productName": "Velix",
-	"resources": "src/resources"
+	"resources": "src/resources",
+	"optionalDependencies": {
+    "@velix/macos-process-metrics": "workspace:*"
+  }
 }

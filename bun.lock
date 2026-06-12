@@ -216,7 +216,6 @@
         "@velix/db": "workspace:*",
         "@velix/host-service": "workspace:*",
         "@velix/local-db": "workspace:*",
-        "@velix/macos-process-metrics": "workspace:*",
         "@velix/panes": "workspace:*",
         "@velix/port-scanner": "workspace:*",
         "@velix/pty-daemon": "workspace:*",
@@ -349,6 +348,9 @@
         "typescript": "5.9.3",
         "vite": "7.3.2",
         "vite-tsconfig-paths": "5.1.4",
+      },
+      "optionalDependencies": {
+        "@velix/macos-process-metrics": "workspace:*",
       },
     },
     "apps/docs": {
