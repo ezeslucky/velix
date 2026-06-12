@@ -32,7 +32,7 @@
 		"@velix/auth": "workspace:*",
 		"@velix/db": "workspace:*",
 		"@velix/shared": "workspace:*",
-		"@vercel/blob": "2.3.2",
+		"@vercel/blob": "2.4.0",
 		"@vercel/kv": "3.0.0",
 		"drizzle-orm": "0.45.2",
 		"posthog-node": "5.28.8",
