@@ -4,7 +4,6 @@ Run Claude Code, Codex, Gemini CLI, Cursor Agent, and more across isolated git w
 
 > Ship faster with parallel AI development.
 
-![Velix Dashboard](./docs/images/dashboard.png)
 
 ---
 
