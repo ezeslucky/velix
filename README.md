@@ -39,12 +39,6 @@ With Velix you can:
 
 ---
 
-## Demo
-
-https://youtube.com/demo-link
-
----
-
 ## Supported Agents
 
 Velix works with any CLI-based coding agent.
