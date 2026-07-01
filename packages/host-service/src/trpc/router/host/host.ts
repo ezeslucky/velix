@@ -1,9 +1,9 @@
 import os from "node:os";
+import { TRPCError } from "@trpc/server";
 import hostServicePackageJson from "@velix/host-service/package.json" with {
 	type: "json",
 };
 import { getHostId, getHostName } from "@velix/shared/host-info";
-import { TRPCError } from "@trpc/server";
 import type { ApiClient } from "../../../types";
 import { protectedProcedure, router } from "../../index";
 

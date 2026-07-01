@@ -1,4 +1,3 @@
-import type { ExternalApp } from "@velix/local-db";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import {
@@ -6,6 +5,7 @@ import {
 	useMatchRoute,
 	useNavigate,
 } from "@tanstack/react-router";
+import type { ExternalApp } from "@velix/local-db";
 import {
 	createContext,
 	type ReactNode,

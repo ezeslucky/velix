@@ -1,6 +1,6 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { chatServiceTrpc } from "@velix/chat/client";
 import { Spinner } from "@velix/ui/spinner";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
 import { LuKeyRound, LuSettings } from "react-icons/lu";
 import { STEP_ROUTES, useOnboardingStore } from "renderer/stores/onboarding";

@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import { cn } from "@velix/ui/utils";
-import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { LuFolderOpen, LuPlus, LuX } from "react-icons/lu";
 import { useOpenProject } from "renderer/react-query/projects";

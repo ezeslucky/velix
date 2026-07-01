@@ -1,4 +1,3 @@
-
 export function normalizeWorkspaceName(name?: string): string | undefined {
 	if (!name || name === "velix") return undefined;
 	return name
@@ -6,7 +5,6 @@ export function normalizeWorkspaceName(name?: string): string | undefined {
 		.replace(/[^a-z0-9-]/g, "-")
 		.slice(0, 32);
 }
-
 
 export function deriveWorkspaceNameFromWorktreeSegments(
 	segments: string[],

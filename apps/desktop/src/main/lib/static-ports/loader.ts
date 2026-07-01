@@ -11,11 +11,7 @@ import type { StaticPortsResult } from "shared/types";
  * @returns StaticPortsResult with exists flag, ports array, and any error message
  */
 export function loadStaticPorts(worktreePath: string): StaticPortsResult {
-	const portsPath = join(
-		worktreePath,
-		PROJECT_VELIX_DIR_NAME,
-		PORTS_FILE_NAME,
-	);
+	const portsPath = join(worktreePath, PROJECT_VELIX_DIR_NAME, PORTS_FILE_NAME);
 
 	if (!existsSync(portsPath)) {
 		return { exists: false, ports: null, error: null };
@@ -48,10 +44,6 @@ export function loadStaticPorts(worktreePath: string): StaticPortsResult {
  * @returns true if .velix/ports.json exists
  */
 export function hasStaticPortsConfig(worktreePath: string): boolean {
-	const portsPath = join(
-		worktreePath,
-		PROJECT_VELIX_DIR_NAME,
-		PORTS_FILE_NAME,
-	);
+	const portsPath = join(worktreePath, PROJECT_VELIX_DIR_NAME, PORTS_FILE_NAME);
 	return existsSync(portsPath);
 }

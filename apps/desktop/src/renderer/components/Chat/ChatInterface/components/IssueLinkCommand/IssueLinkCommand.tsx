@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { Checkbox } from "@velix/ui/checkbox";
 import {
 	Command,
@@ -9,7 +10,6 @@ import {
 } from "@velix/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useLiveQuery } from "@tanstack/react-db";
 import Fuse from "fuse.js";
 import type { ReactNode } from "react";
 import { useId, useMemo, useState } from "react";

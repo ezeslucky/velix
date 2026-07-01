@@ -1,5 +1,5 @@
-import type { AppRouter } from "@velix/host-service";
 import { createTRPCClient, httpLink } from "@trpc/client";
+import type { AppRouter } from "@velix/host-service";
 import superjson from "superjson";
 import { getHostServiceHeaders } from "./host-service-auth";
 

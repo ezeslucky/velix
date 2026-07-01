@@ -14,9 +14,6 @@ export const docs = defineDocs({
 		schema: frontmatterSchema.extend({
 			pro: z.boolean().optional(),
 		}),
-		postprocess: {
-			includeProcessedMarkdown: true,
-		},
 	},
 	meta: {
 		schema: metaSchema,

@@ -43,13 +43,12 @@ describe("workspace.create + workspace.delete integration", () => {
 			.get();
 		expect(persisted?.branch).toBe("feature/new");
 		expect(persisted?.worktreePath).toBeTruthy();
-		
+
 		expect(persisted?.worktreePath).toMatch(/feature\/new$/);
 		expect(existsSync(persisted?.worktreePath ?? "")).toBe(true);
 	});
 
 	test("create() adopts an existing worktree at a non-canonical path instead of failing on `git worktree add`", async () => {
-		
 		const scenario = await createProjectScenario({
 			hostOptions: { apiOverrides: cloudFlows.workspaceCreateOk() },
 		});
@@ -241,7 +240,6 @@ describe("workspace.create + workspace.delete integration", () => {
 			}),
 		).rejects.toThrow(/cloud-down/);
 
-		
 		const rows = scenario.host.db.select().from(workspaces).all();
 		expect(rows).toHaveLength(0);
 	});

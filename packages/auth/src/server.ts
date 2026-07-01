@@ -2,6 +2,7 @@ import { apiKey } from "@better-auth/api-key";
 import { expo } from "@better-auth/expo";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { stripe } from "@better-auth/stripe";
+import { Client } from "@upstash/qstash";
 import { db } from "@velix/db/client";
 import { members, subscriptions } from "@velix/db/schema";
 import type { sessions } from "@velix/db/schema/auth";
@@ -17,7 +18,6 @@ import { SubscriptionCancelledEmail } from "@velix/email/emails/subscription-can
 import { SubscriptionStartedEmail } from "@velix/email/emails/subscription-started";
 import { canInvite, type OrganizationRole } from "@velix/shared/auth";
 import { getTrustedVercelPreviewOrigins } from "@velix/shared/vercel-preview-origins";
-import { Client } from "@upstash/qstash";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { bearer, customSession, organization } from "better-auth/plugins";

@@ -8,9 +8,7 @@ export const PLATFORM = {
 };
 
 const workspace = getWorkspaceName();
-export const VELIX_DIR_NAME = workspace
-	? `.velix-${workspace}`
-	: ".velix";
+export const VELIX_DIR_NAME = workspace ? `.velix-${workspace}` : ".velix";
 export const PROTOCOL_SCHEME = workspace
 	? `velix-${workspace}`
 	: PROTOCOL_SCHEMES.PROD;

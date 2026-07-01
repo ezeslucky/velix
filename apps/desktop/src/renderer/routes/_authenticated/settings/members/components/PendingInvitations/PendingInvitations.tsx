@@ -1,3 +1,5 @@
+import { and, eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import type { OrganizationRole } from "@velix/shared/auth";
 import { Badge } from "@velix/ui/badge";
 import { Skeleton } from "@velix/ui/skeleton";
@@ -9,8 +11,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@velix/ui/table";
-import { and, eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import {
 	isItemVisible,

@@ -1,5 +1,5 @@
-import { ChatServiceProvider } from "@velix/chat/client";
 import { createFileRoute } from "@tanstack/react-router";
+import { ChatServiceProvider } from "@velix/chat/client";
 import { useMemo } from "react";
 import { createChatServiceIpcClient } from "renderer/components/Chat/utils/chat-service-client";
 import { electronQueryClient } from "renderer/providers/ElectronTRPCProvider";

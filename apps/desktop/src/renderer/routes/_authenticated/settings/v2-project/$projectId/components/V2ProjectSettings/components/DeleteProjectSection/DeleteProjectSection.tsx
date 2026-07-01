@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -11,7 +12,6 @@ import {
 } from "@velix/ui/alert-dialog";
 import { Button } from "@velix/ui/button";
 import { toast } from "@velix/ui/sonner";
-import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import { showHostServiceUnavailableToast } from "renderer/lib/host-service-unavailable";

@@ -1,7 +1,7 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { HostAgentConfig } from "@velix/host-service/settings";
 import type { CreatePaneInput, WorkspaceStore } from "@velix/panes";
 import { toast } from "@velix/ui/sonner";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useMemo } from "react";
 import { useV2AgentConfigs } from "renderer/hooks/useV2AgentConfigs";
 import { buildAgentLaunchCommand } from "renderer/lib/agent-launch-command";

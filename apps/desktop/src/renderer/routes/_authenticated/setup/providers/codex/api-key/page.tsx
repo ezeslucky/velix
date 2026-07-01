@@ -1,5 +1,5 @@
-import { chatServiceTrpc } from "@velix/chat/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { chatServiceTrpc } from "@velix/chat/client";
 import { useEffect } from "react";
 import { track } from "renderer/lib/analytics";
 import { useOnboardingStore } from "renderer/stores/onboarding";

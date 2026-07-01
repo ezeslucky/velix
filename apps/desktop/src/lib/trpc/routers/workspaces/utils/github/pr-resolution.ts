@@ -1,4 +1,3 @@
-
 import type { CheckItem, GitHubStatus } from "@velix/local-db";
 import { execGitWithShellPath } from "../git-client";
 import { execWithShellEnv } from "../shell-env";

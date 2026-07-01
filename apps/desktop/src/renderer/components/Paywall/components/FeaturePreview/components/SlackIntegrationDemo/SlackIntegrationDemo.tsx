@@ -1,4 +1,3 @@
-import React from "react";
 import { FaSlack } from "react-icons/fa";
 import { HiCheck } from "react-icons/hi2";
 

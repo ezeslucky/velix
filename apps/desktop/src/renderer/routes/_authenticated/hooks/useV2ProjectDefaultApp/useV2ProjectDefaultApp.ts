@@ -1,6 +1,6 @@
-import type { ExternalApp } from "@velix/local-db";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import type { ExternalApp } from "@velix/local-db";
 import { useCallback } from "react";
 import { useDashboardSidebarState } from "renderer/routes/_authenticated/hooks/useDashboardSidebarState";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

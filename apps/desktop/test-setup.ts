@@ -164,8 +164,6 @@ mock.module("main/lib/analytics", () => ({
 	setUserId: mock(() => {}),
 }));
 
-
-
 const mockTable = (name: string) => ({ id: `${name}_id` });
 
 const agentPresetOverrideSchema = z.object({

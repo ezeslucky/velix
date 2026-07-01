@@ -1,7 +1,4 @@
-import {
-	type GitChangedPayload,
-	workspaceTrpc,
-} from "@velix/workspace-client";
+import { type GitChangedPayload, workspaceTrpc } from "@velix/workspace-client";
 import { useCallback } from "react";
 import { useWorkspaceEvent } from "../useWorkspaceEvent";
 

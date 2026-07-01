@@ -1,6 +1,6 @@
+import type { inferRouterInputs } from "@trpc/server";
 import type { AppRouter } from "@velix/host-service";
 import type { WorkspaceState } from "@velix/panes";
-import type { inferRouterInputs } from "@trpc/server";
 import { z } from "zod";
 
 const persistedDateSchema = z

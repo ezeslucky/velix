@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -12,7 +13,6 @@ import {
 import { Button } from "@velix/ui/button";
 import { Label } from "@velix/ui/label";
 import { Switch } from "@velix/ui/switch";
-import { useNavigate } from "@tanstack/react-router";
 import {
 	useIsV2CloudEnabled,
 	useIsV2OnlyUser,

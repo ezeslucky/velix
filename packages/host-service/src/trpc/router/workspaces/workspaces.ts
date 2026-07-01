@@ -1,7 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
-import { generateFriendlyBranchName } from "@velix/shared/workspace-launch";
 import { TRPCError } from "@trpc/server";
+import { generateFriendlyBranchName } from "@velix/shared/workspace-launch";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { workspaces } from "../../../db/schema";

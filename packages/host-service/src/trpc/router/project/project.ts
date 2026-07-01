@@ -1,9 +1,9 @@
 import { basename, resolve as resolvePath } from "node:path";
+import { TRPCError } from "@trpc/server";
 import {
 	type ParsedGitHubRemote,
 	parseGitHubRemote,
 } from "@velix/shared/github-remote";
-import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { projects, workspaces } from "../../../db/schema";

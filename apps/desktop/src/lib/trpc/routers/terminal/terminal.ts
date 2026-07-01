@@ -1,6 +1,6 @@
-import { workspaces, worktrees } from "@velix/local-db";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
+import { workspaces, worktrees } from "@velix/local-db";
 import { eq } from "drizzle-orm";
 import { appState } from "main/lib/app-state";
 import { localDb } from "main/lib/local-db";
@@ -31,7 +31,6 @@ const SAFE_ID = z
 			!value.includes("/") && !value.includes("\\") && !value.includes(".."),
 		{ message: "Invalid id" },
 	);
-
 
 export const createTerminalRouter = () => {
 	const registry = getWorkspaceRuntimeRegistry();

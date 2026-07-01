@@ -4,8 +4,6 @@ import { readFileSync } from "node:fs";
 // biome-ignore lint/style/noRestrictedImports: test file needs fs/path for source verification
 import { join } from "node:path";
 
-
-
 const TASKS_VIEW_DIR = __dirname;
 
 function readComponent(relativePath: string): string {

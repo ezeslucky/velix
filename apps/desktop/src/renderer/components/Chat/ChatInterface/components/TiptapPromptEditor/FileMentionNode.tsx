@@ -1,10 +1,10 @@
-import { cn } from "@velix/ui/utils";
 import { mergeAttributes, Node } from "@tiptap/core";
 import {
 	type NodeViewProps,
 	NodeViewWrapper,
 	ReactNodeViewRenderer,
 } from "@tiptap/react";
+import { cn } from "@velix/ui/utils";
 
 function FileMentionChip({ node, selected }: NodeViewProps) {
 	const path = (node.attrs.path as string | null | undefined) ?? "";

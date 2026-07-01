@@ -1,5 +1,5 @@
-import { appRouter } from "@velix/trpc";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { appRouter } from "@velix/trpc";
 import { createContext } from "@/trpc/context";
 
 export const maxDuration = 60;

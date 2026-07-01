@@ -7,7 +7,6 @@ import {
 	writeFileIfChanged,
 } from "./agent-wrappers-common";
 
-
 export function createAmpWrapper(): void {
 	const script = buildWrapperScript("amp", `exec "$REAL_BIN" "$@"`, {
 		agentId: "amp",
@@ -33,7 +32,6 @@ const AMP_PLUGIN_TEMPLATE_PATH = path.join(
 export function getAmpGlobalPluginPath(): string {
 	return path.join(os.homedir(), ".config", "amp", "plugins", AMP_PLUGIN_FILE);
 }
-
 
 export function getAmpPluginContent(): string {
 	const template = fs.readFileSync(AMP_PLUGIN_TEMPLATE_PATH, "utf-8");

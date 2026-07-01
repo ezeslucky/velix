@@ -1,8 +1,8 @@
+import { TRPCError } from "@trpc/server";
 import {
 	findOrgMembership,
 	findOrgMembershipWithSubscription,
 } from "@velix/db/utils";
-import { TRPCError } from "@trpc/server";
 
 export async function verifyOrgMembership(
 	userId: string,

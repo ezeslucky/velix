@@ -44,8 +44,7 @@ describe("bundled CLI", () => {
 	});
 
 	it("builds a POSIX shim that execs the bundled binary safely", () => {
-		const cliPath =
-			"/Applications/Velix Test.app/Contents/Resources/bin/velix";
+		const cliPath = "/Applications/Velix Test.app/Contents/Resources/bin/velix";
 		const shim = buildBundledCliShim(cliPath, "darwin");
 
 		expect(shim).toContain(BUNDLED_CLI_SHIM_MARKER);

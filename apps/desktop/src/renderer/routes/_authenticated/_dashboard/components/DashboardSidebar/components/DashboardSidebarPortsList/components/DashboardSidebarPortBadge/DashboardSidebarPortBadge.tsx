@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { cn } from "@velix/ui/utils";
-import { useNavigate } from "@tanstack/react-router";
 import type { MouseEvent } from "react";
 import { LuExternalLink, LuLoaderCircle, LuX } from "react-icons/lu";
 import { electronTrpc } from "renderer/lib/electron-trpc";

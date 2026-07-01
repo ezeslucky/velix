@@ -56,21 +56,15 @@ describe("getBaseName", () => {
 
 	describe("windows paths", () => {
 		it("returns the final segment of a backslash path", () => {
-			expect(getBaseName("C:\\Users\\alice\\projects\\velix")).toBe(
-				"velix",
-			);
+			expect(getBaseName("C:\\Users\\alice\\projects\\velix")).toBe("velix");
 		});
 
 		it("handles a trailing backslash", () => {
-			expect(getBaseName("C:\\Users\\alice\\projects\\velix\\")).toBe(
-				"velix",
-			);
+			expect(getBaseName("C:\\Users\\alice\\projects\\velix\\")).toBe("velix");
 		});
 
 		it("handles mixed forward and back slashes", () => {
-			expect(getBaseName("C:\\Users\\alice/projects\\velix")).toBe(
-				"velix",
-			);
+			expect(getBaseName("C:\\Users\\alice/projects\\velix")).toBe("velix");
 		});
 
 		it("handles UNC-style paths", () => {

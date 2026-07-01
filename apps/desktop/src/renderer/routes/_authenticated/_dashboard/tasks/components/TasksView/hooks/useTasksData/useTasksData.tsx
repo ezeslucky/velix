@@ -1,10 +1,10 @@
+import { eq, isNull } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import type {
 	SelectTask,
 	SelectTaskStatus,
 	SelectUser,
 } from "@velix/db/schema";
-import { eq, isNull } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useMemo } from "react";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import type { TabValue } from "../../components/TasksTopBar";

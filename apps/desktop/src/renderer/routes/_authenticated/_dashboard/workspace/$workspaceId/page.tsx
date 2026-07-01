@@ -1,5 +1,5 @@
-import type { ExternalApp } from "@velix/local-db";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import type { ExternalApp } from "@velix/local-db";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
 import { useFileOpenMode } from "renderer/hooks/useFileOpenMode";

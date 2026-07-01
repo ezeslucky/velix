@@ -492,9 +492,9 @@ export function ProjectSettings({
 														{importableExternalWorktrees.length === 1
 															? ""
 															: "s"}{" "}
-														into Velix as workspaces. Each worktree on disk
-														will be tracked and appear in your sidebar. No files
-														will be modified.
+														into Velix as workspaces. Each worktree on disk will
+														be tracked and appear in your sidebar. No files will
+														be modified.
 													</AlertDialogDescription>
 												</AlertDialogHeader>
 												<AlertDialogFooter>

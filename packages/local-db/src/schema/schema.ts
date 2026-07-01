@@ -82,7 +82,7 @@ export const worktrees = sqliteTable(
 			.$defaultFn(() => Date.now()),
 		gitStatus: text("git_status", { mode: "json" }).$type<GitStatus>(),
 		githubStatus: text("github_status", { mode: "json" }).$type<GitHubStatus>(),
-		
+
 		createdByVelix: integer("created_by_velix", { mode: "boolean" })
 			.notNull()
 			.default(true),

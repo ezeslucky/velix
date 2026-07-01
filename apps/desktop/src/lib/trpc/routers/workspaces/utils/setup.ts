@@ -10,7 +10,6 @@ import {
 } from "shared/constants";
 import type { LocalSetupConfig, SetupConfig } from "shared/types";
 
-
 export function copyVelixConfigToWorktree(
 	mainRepoPath: string,
 	worktreePath: string,
@@ -132,7 +131,6 @@ function mergeBaseConfigs(
 	};
 }
 
-
 export function mergeConfigs(
 	base: SetupConfig,
 	local: LocalSetupConfig,
@@ -154,7 +152,6 @@ export function mergeConfigs(
 
 	return result;
 }
-
 
 export function loadSetupConfig({
 	mainRepoPath,

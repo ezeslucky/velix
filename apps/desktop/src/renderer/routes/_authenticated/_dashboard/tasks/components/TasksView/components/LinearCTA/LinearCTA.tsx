@@ -1,5 +1,5 @@
-import { Button } from "@velix/ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
 import { SiLinear } from "react-icons/si";
 
 export function LinearCTA() {

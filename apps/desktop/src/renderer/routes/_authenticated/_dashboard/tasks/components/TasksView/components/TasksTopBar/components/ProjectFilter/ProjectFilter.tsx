@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { Button } from "@velix/ui/button";
 import {
 	Command,
@@ -8,7 +9,6 @@ import {
 	CommandList,
 } from "@velix/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useMemo, useState } from "react";
 import { HiCheck, HiChevronDown, HiOutlineFolder } from "react-icons/hi2";
 import { ProjectThumbnail } from "renderer/routes/_authenticated/components/ProjectThumbnail";

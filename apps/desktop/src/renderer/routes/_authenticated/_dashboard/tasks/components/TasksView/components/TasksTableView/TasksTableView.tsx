@@ -1,10 +1,10 @@
-import { cn } from "@velix/ui/utils";
 import { flexRender, type Table } from "@tanstack/react-table";
 import {
 	defaultRangeExtractor,
 	type Range,
 	useVirtualizer,
 } from "@tanstack/react-virtual";
+import { cn } from "@velix/ui/utils";
 import { Fragment, useCallback, useMemo, useRef } from "react";
 import type { TaskWithStatus } from "../../hooks/useTasksTable";
 import { TaskContextMenu } from "./components/TaskContextMenu";

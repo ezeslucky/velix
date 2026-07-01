@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -6,7 +7,6 @@ import {
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
 import { cn } from "@velix/ui/utils";
-import { useNavigate } from "@tanstack/react-router";
 import { memo, useCallback } from "react";
 import {
 	HiChevronDown,

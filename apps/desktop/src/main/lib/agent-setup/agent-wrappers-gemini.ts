@@ -109,10 +109,7 @@ export function getGeminiSettingsJsonContent(hookScriptPath: string): string {
 					definition.hooks?.some(
 						(hook) =>
 							hook.command?.includes(hookScriptPath) ||
-							isVelixManagedHookCommand(
-								hook.command,
-								GEMINI_HOOK_SCRIPT_NAME,
-							),
+							isVelixManagedHookCommand(hook.command, GEMINI_HOOK_SCRIPT_NAME),
 					),
 				),
 			isEquivalent: (

@@ -8,8 +8,7 @@ import { ChangelogEntry } from "./components/ChangelogEntry";
 
 export const metadata: Metadata = {
 	title: "Changelog",
-	description:
-		"The latest updates, improvements, and new features in Velix.",
+	description: "The latest updates, improvements, and new features in Velix.",
 	alternates: {
 		canonical: "/changelog",
 		types: {
@@ -18,16 +17,14 @@ export const metadata: Metadata = {
 	},
 	openGraph: {
 		title: "Changelog | Velix",
-		description:
-			"The latest updates, improvements, and new features in Velix.",
+		description: "The latest updates, improvements, and new features in Velix.",
 		url: "/changelog",
 		images: ["/opengraph-image"],
 	},
 	twitter: {
 		card: "summary_large_image",
 		title: "Changelog | Velix",
-		description:
-			"The latest updates, improvements, and new features in Velix.",
+		description: "The latest updates, improvements, and new features in Velix.",
 		images: ["/opengraph-image"],
 	},
 };
@@ -60,8 +57,8 @@ export default async function ChangelogPage() {
 						What's New
 					</h1>
 					<p className="text-muted-foreground mt-3 max-w-lg">
-						The latest updates, improvements, and new features in Velix.
-						Updated weekly. For detailed release notes, see{" "}
+						The latest updates, improvements, and new features in Velix. Updated
+						weekly. For detailed release notes, see{" "}
 						<a
 							href="https://github.com/ezeslucky/velix/releases"
 							target="_blank"

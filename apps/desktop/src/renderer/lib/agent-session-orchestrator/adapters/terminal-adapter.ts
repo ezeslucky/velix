@@ -27,10 +27,7 @@ async function writeTaskPromptFile(
 		throw new Error(`Workspace path not found: ${workspaceId}`);
 	}
 
-	const velixDirectory = joinAbsolutePath(
-		workspace.worktreePath,
-		".velix",
-	);
+	const velixDirectory = joinAbsolutePath(workspace.worktreePath, ".velix");
 	await electronTrpcClient.filesystem.createDirectory.mutate({
 		workspaceId,
 		absolutePath: velixDirectory,

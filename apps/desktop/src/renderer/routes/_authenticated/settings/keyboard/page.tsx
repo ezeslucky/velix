@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import {
 	AlertDialog,
 	AlertDialogContent,
@@ -13,7 +14,6 @@ import { Label } from "@velix/ui/label";
 import { toast } from "@velix/ui/sonner";
 import { Switch } from "@velix/ui/switch";
 import { cn } from "@velix/ui/utils";
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import {

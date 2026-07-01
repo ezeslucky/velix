@@ -1,3 +1,5 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -9,8 +11,6 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "@velix/ui/context-menu";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import {
 	LuArrowRightLeft,
 	LuArrowUp,

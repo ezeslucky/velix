@@ -1,5 +1,3 @@
-
-
 /// <reference types="node" />
 import { execSync } from "node:child_process";
 import {
@@ -87,18 +85,18 @@ function copyModuleIfSymlink(
 
 		// Remove the symlink
 		//rmSync(modulePath);
-rmSync(modulePath, {
-  recursive: true,
-  force: true,
-});
+		rmSync(modulePath, {
+			recursive: true,
+			force: true,
+		});
 		// Copy the actual files
 		// cpSync(realPath, modulePath, { recursive: true });
 
 		cpSync(realPath, modulePath, {
-  recursive: true,
-  force: true,
-  dereference: true,
-});
+			recursive: true,
+			force: true,
+			dereference: true,
+		});
 
 		console.log(`    Copied to: ${modulePath}`);
 	} else {

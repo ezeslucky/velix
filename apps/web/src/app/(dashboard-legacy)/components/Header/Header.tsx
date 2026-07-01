@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@velix/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
 import {
@@ -13,7 +14,6 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

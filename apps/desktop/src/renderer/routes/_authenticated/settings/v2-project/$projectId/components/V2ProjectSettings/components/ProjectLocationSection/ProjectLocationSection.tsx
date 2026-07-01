@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -11,7 +12,6 @@ import {
 import { Button } from "@velix/ui/button";
 import { toast } from "@velix/ui/sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { LuFolderOpen } from "react-icons/lu";
 import { RemotePathPicker } from "renderer/components/RemotePathPicker";

@@ -1,9 +1,6 @@
-import {
-	getEventBus,
-	type PortChangedPayload,
-} from "@velix/workspace-client";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { getEventBus, type PortChangedPayload } from "@velix/workspace-client";
 import { useEffect, useMemo } from "react";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
 import { getHostServiceWsToken } from "renderer/lib/host-service-auth";

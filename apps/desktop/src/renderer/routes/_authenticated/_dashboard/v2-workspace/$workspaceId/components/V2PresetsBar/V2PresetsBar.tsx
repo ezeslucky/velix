@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
@@ -8,7 +9,6 @@ import {
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Settings } from "lucide-react";
 import {
 	type ReactNode,

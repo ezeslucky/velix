@@ -12,11 +12,5 @@
 		"url": "https://github.com/ezeslucky/velix"
 	},
 	"license": "MIT",
-	"keywords": [
-		"velix",
-		"agents",
-		"workspaces",
-		"automations",
-		"orchestration"
-	]
+	"keywords": ["velix", "agents", "workspaces", "automations", "orchestration"]
 }

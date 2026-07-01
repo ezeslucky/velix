@@ -3,8 +3,8 @@ import { ClipboardListIcon } from "lucide-react";
 import type { ToolPart } from "../../../../utils/tool-helpers";
 import { getResult } from "../../../../utils/tool-helpers";
 import { formatTaskDate, toStringArray } from "../../utils/taskToolCallHelpers";
-import { VelixToolCall } from "../VelixToolCall";
 import { TaskItemDisplay } from "../TaskItemDisplay";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface ListTasksToolCallProps {
 	part: ToolPart;

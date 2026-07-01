@@ -1,7 +1,7 @@
-import { auth } from "@velix/auth/server";
 import { tavily } from "@tavily/core";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { auth } from "@velix/auth/server";
 import { env } from "@/env";
 
 const ratelimit = new Ratelimit({

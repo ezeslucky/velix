@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import {
 	type AgentCustomDefinition,
 	type AgentPresetOverrideEnvelope,
@@ -32,7 +33,6 @@ import {
 	resolveAgentConfigs,
 	upsertCustomAgentDefinition,
 } from "@velix/shared/agent-settings";
-import { TRPCError } from "@trpc/server";
 import { app } from "electron";
 import { env } from "main/env.main";
 import { exitImmediately } from "main/index";

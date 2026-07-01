@@ -1,10 +1,10 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { TerminalPreset } from "@velix/local-db";
 import {
 	AGENT_LABELS,
 	AGENT_TYPES,
 	type AgentType,
 } from "@velix/shared/agent-command";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useMemo, useState } from "react";
 import { LuTerminal } from "react-icons/lu";
 import { useV2AgentConfigs } from "renderer/hooks/useV2AgentConfigs";

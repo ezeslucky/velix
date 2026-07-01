@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@velix/host-service";
 import {
 	PromptInputAttachment,
@@ -6,8 +8,6 @@ import {
 	useProviderAttachments,
 } from "@velix/ui/ai-elements/prompt-input";
 import { workspaceTrpc } from "@velix/workspace-client";
-import { useQuery } from "@tanstack/react-query";
-import type { inferRouterOutputs } from "@trpc/server";
 import type { ChatStatus } from "ai";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

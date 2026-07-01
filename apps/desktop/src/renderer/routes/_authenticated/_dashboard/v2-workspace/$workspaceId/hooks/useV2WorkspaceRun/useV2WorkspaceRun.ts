@@ -1,8 +1,8 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import type { CreatePaneInput, WorkspaceStore } from "@velix/panes";
 import { toast } from "@velix/ui/sonner";
 import { workspaceTrpc } from "@velix/workspace-client";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useWorkspaceEvent } from "renderer/hooks/host-service/useWorkspaceEvent";
 import { buildTerminalCommand } from "renderer/lib/terminal/launch-command";

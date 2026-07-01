@@ -20,7 +20,6 @@ interface StartSetupTerminalResult {
 	warning: string | null;
 }
 
-
 export async function startSetupTerminalIfPresent(
 	args: StartSetupTerminalArgs,
 ): Promise<StartSetupTerminalResult> {

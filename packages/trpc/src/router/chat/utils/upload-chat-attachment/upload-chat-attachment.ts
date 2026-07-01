@@ -1,6 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { db } from "@velix/db/client";
 import { chatAttachments } from "@velix/db/schema";
-import { TRPCError } from "@trpc/server";
 import { del, put } from "@vercel/blob";
 
 const ALLOWED_MEDIA_TYPES = new Set([

@@ -1,3 +1,5 @@
+import { useLiveQuery } from "@tanstack/react-db";
+import { useNavigate } from "@tanstack/react-router";
 import type { WorkspaceState } from "@velix/panes";
 import { Button } from "@velix/ui/button";
 import {
@@ -10,8 +12,6 @@ import {
 import { cn } from "@velix/ui/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
 	HiOutlineArrowPath,
@@ -476,8 +476,8 @@ function ResourceConsumptionContent({
 								</div>
 							</TooltipTrigger>
 							<TooltipContent side="bottom" sideOffset={6} showArrow={false}>
-								Velix uses {formatPercent(trackedMemorySharePercent)} of
-								system RAM
+								Velix uses {formatPercent(trackedMemorySharePercent)} of system
+								RAM
 							</TooltipContent>
 						</Tooltip>
 					</>

@@ -1,7 +1,4 @@
-import {
-	MessageAction,
-	MessageActions,
-} from "@velix/ui/ai-elements/message";
+import { MessageAction, MessageActions } from "@velix/ui/ai-elements/message";
 import {
 	CheckIcon,
 	CopyIcon,

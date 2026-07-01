@@ -1,5 +1,5 @@
-import { Button } from "@velix/ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
 import { AlertCircle, GitBranch } from "lucide-react";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import type { FailedWorkspaceCreateRow } from "renderer/routes/_authenticated/providers/CollectionsProvider/dashboardSidebarLocal";

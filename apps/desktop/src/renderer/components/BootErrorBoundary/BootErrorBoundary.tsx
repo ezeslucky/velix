@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import React from "react";
 import { Component } from "react";
 
 export interface BootErrorBoundaryProps {

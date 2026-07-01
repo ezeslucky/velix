@@ -227,7 +227,6 @@ export function TerminalRemoteControlButton({
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem
 					onClick={() => {
-						
 						if (active?.webUrl) window.open(active.webUrl, "_blank");
 					}}
 					disabled={!canCopy}

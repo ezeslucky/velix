@@ -127,7 +127,6 @@ export interface LaunchContext {
 	};
 }
 
-
 export interface AgentLaunchSpec {
 	agentId: AgentDefinitionId;
 	system: ContentPart[];

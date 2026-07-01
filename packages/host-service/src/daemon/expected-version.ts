@@ -1,4 +1,3 @@
-
 import ptyDaemonPackageJson from "@velix/pty-daemon/package.json" with {
 	type: "json",
 };

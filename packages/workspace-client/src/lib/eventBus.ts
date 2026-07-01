@@ -31,7 +31,7 @@ export interface GitChangedPayload {
 export interface AgentLifecyclePayload {
 	eventType: AgentLifecycleEventType;
 	terminalId: string;
-	
+
 	agent?: AgentIdentity;
 	occurredAt: number;
 }

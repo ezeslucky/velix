@@ -1,3 +1,5 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import {
 	canRemoveMember,
 	getRoleSortPriority,
@@ -18,8 +20,6 @@ import {
 	TableRow,
 } from "@velix/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useState } from "react";
 import {
 	HiOutlineClipboardDocument,

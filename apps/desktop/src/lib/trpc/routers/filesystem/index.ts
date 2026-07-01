@@ -1,5 +1,5 @@
-import { toErrorMessage } from "@velix/workspace-fs/host";
 import { observable } from "@trpc/server/observable";
+import { toErrorMessage } from "@velix/workspace-fs/host";
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getServiceForWorkspace } from "../workspace-fs-service";

@@ -1,5 +1,5 @@
-import type { HostAgentConfig } from "@velix/host-service/settings";
 import { useQuery } from "@tanstack/react-query";
+import type { HostAgentConfig } from "@velix/host-service/settings";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 
 export const V2_AGENT_CONFIGS_QUERY_KEY = ["host-agent-configs"] as const;

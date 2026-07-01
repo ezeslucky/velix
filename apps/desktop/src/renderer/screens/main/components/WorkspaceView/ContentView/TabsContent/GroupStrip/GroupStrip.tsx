@@ -1,7 +1,7 @@
-import type { TerminalPreset } from "@velix/local-db";
 import { eq, or } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import type { TerminalPreset } from "@velix/local-db";
 import {
 	useCallback,
 	useEffect,

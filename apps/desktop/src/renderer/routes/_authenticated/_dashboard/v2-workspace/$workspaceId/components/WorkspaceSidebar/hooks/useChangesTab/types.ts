@@ -1,5 +1,5 @@
-import type { AppRouter } from "@velix/host-service";
 import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@velix/host-service";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 

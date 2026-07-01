@@ -163,7 +163,6 @@ export const createRingtoneRouter = (getWindow: () => BrowserWindow | null) => {
 			return getCustomRingtoneInfo();
 		}),
 
-		
 		importCustom: publicProcedure.mutation(async () => {
 			const window = getWindow();
 			const openDialogOptions: OpenDialogOptions = {

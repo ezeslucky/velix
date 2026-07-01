@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
+import { observable } from "@trpc/server/observable";
 import { AUTH_PROVIDERS } from "@velix/shared/constants";
 import { getHostId, getHostName } from "@velix/shared/host-info";
-import { observable } from "@trpc/server/observable";
 import { shell } from "electron";
 import { env } from "main/env.main";
 import { getHostServiceCoordinator } from "main/lib/host-service-coordinator";

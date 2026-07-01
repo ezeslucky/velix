@@ -1,3 +1,5 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import { Button } from "@velix/ui/button";
 import {
 	Command,
@@ -9,8 +11,6 @@ import {
 } from "@velix/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { toast } from "@velix/ui/sonner";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { ChevronDownIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { HiCheck, HiMiniPlay } from "react-icons/hi2";

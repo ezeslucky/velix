@@ -1,5 +1,5 @@
-import type { AppRouter } from "@velix/trpc";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@velix/trpc";
 import superjson from "superjson";
 import { authClient } from "../auth/client";
 import { env } from "../env";

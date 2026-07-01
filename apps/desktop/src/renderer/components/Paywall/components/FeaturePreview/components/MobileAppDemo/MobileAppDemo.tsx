@@ -1,5 +1,3 @@
-import React from "react";
-
 function VelixIcon({ className }: { className?: string }) {
 	return (
 		<svg

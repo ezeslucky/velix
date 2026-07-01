@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { HostAgentConfig } from "@velix/host-service/settings";
 import type { ExecutionMode, TerminalPreset } from "@velix/local-db";
 import { Alert, AlertDescription } from "@velix/ui/alert";
@@ -19,7 +20,6 @@ import {
 	SelectValue,
 } from "@velix/ui/select";
 import { Switch } from "@velix/ui/switch";
-import { Link } from "@tanstack/react-router";
 import { ExternalLink, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { HiExclamationTriangle, HiOutlineFolderOpen } from "react-icons/hi2";

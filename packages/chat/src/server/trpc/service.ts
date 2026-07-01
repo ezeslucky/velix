@@ -1,7 +1,7 @@
 import { Memory } from "@mastra/memory";
-import type { AppRouter } from "@velix/trpc";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
+import type { AppRouter } from "@velix/trpc";
 import { createMastraCode } from "mastracode";
 import superjson from "superjson";
 import { searchFiles } from "./utils/file-search";

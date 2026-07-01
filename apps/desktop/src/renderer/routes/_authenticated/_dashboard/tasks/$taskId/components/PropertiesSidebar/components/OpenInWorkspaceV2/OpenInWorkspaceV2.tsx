@@ -1,3 +1,6 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import {
 	DropdownMenu,
@@ -6,9 +9,6 @@ import {
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
 import { toast } from "@velix/ui/sonner";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { HiArrowRight, HiChevronDown } from "react-icons/hi2";
 import { AgentSelect } from "renderer/components/AgentSelect";

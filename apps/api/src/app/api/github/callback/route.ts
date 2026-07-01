@@ -1,6 +1,6 @@
+import { Client } from "@upstash/qstash";
 import { db } from "@velix/db/client";
 import { githubInstallations, members } from "@velix/db/schema";
-import { Client } from "@upstash/qstash";
 import { and, eq, ne } from "drizzle-orm";
 
 import { env } from "@/env";

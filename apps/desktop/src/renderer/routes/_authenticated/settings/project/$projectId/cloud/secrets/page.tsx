@@ -1,5 +1,5 @@
-import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { createFileRoute, Navigate, notFound } from "@tanstack/react-router";
+import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { NotFound } from "renderer/routes/not-found";

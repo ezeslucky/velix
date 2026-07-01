@@ -1,3 +1,4 @@
+import type { TRPCRouterRecord } from "@trpc/server";
 import { db, dbWs } from "@velix/db/client";
 import {
 	integrationConnections,
@@ -6,7 +7,6 @@ import {
 	tasks,
 } from "@velix/db/schema";
 import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
-import type { TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../../trpc";

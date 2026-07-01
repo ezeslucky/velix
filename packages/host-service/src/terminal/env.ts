@@ -119,7 +119,7 @@ export function normalizeUtf8Locale(baseEnv: Record<string, string>): string {
 interface BuildV2TerminalEnvParams {
 	baseEnv: Record<string, string>;
 	shell: string;
-	VELIXHomeDir: string;
+	velixHomeDir: string;
 	themeType?: "dark" | "light";
 	cwd: string;
 	terminalId: string;
@@ -127,7 +127,7 @@ interface BuildV2TerminalEnvParams {
 	workspacePath: string;
 	rootPath: string;
 	hostServiceVersion: string;
-	VELIXEnv: "development" | "production";
+	velixEnv: "development" | "production";
 	agentHookPort: string;
 	agentHookVersion: string;
 	/**
@@ -148,7 +148,7 @@ export function buildV2TerminalEnv(
 	const {
 		baseEnv,
 		shell,
-		VELIXHomeDir,
+		velixHomeDir,
 		themeType,
 		cwd,
 		terminalId,
@@ -156,7 +156,7 @@ export function buildV2TerminalEnv(
 		workspacePath,
 		rootPath,
 		hostServiceVersion,
-		VELIXEnv,
+		velixEnv,
 		agentHookPort,
 		agentHookVersion,
 		hostAgentHookUrl,

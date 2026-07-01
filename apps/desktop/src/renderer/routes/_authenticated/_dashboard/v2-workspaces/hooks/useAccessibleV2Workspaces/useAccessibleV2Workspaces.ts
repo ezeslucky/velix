@@ -1,6 +1,6 @@
-import type { CheckItem } from "@velix/local-db";
 import { and, eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import type { CheckItem } from "@velix/local-db";
 import { useMemo } from "react";
 import { env } from "renderer/env.renderer";
 import { authClient } from "renderer/lib/auth-client";

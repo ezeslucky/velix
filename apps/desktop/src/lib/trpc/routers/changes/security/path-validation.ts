@@ -3,7 +3,6 @@ import { projects, worktrees } from "@velix/local-db";
 import { eq } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 
-
 export type PathValidationErrorCode =
 	| "ABSOLUTE_PATH"
 	| "PATH_TRAVERSAL"

@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { COMPANY } from "@velix/shared/constants";
 import { alert } from "@velix/ui/atoms/Alert";
 import { Button } from "@velix/ui/button";
@@ -13,7 +14,6 @@ import { Input } from "@velix/ui/input";
 import { Label } from "@velix/ui/label";
 import { Skeleton } from "@velix/ui/skeleton";
 import { toast } from "@velix/ui/sonner";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useState } from "react";
 import {
 	HiArrowTopRightOnSquare,

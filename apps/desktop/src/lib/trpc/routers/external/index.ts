@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import nodePath from "node:path";
+import { TRPCError } from "@trpc/server";
 import {
 	EXTERNAL_APPS,
 	NON_EDITOR_APPS,
 	projects,
 	settings,
 } from "@velix/local-db";
-import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { clipboard, shell } from "electron";
 import { localDb } from "main/lib/local-db";

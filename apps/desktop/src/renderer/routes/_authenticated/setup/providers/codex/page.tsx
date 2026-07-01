@@ -1,16 +1,12 @@
-import { chatServiceTrpc } from "@velix/chat/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { chatServiceTrpc } from "@velix/chat/client";
 import { useEffect } from "react";
 import { OpenAIOAuthDialog } from "renderer/components/Chat/ChatInterface/components/ModelPicker/components/OpenAIOAuthDialog";
 import { useOpenAIOAuth } from "renderer/components/Chat/ChatInterface/components/ModelPicker/hooks/useOpenAIOAuth";
 import { track } from "renderer/lib/analytics";
 import { useOnboardingStore } from "renderer/stores/onboarding";
 import { SetupButton } from "../../components/SetupButton";
-import {
-	StepHeader,
-	StepShell,
-	VelixPill,
-} from "../../components/StepShell";
+import { StepHeader, StepShell, VelixPill } from "../../components/StepShell";
 import { CodexBrandIcon } from "../components/CodexBrandIcon";
 import { VelixIcon } from "../components/VelixIcon";
 

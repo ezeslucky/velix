@@ -1,3 +1,6 @@
+import { useLiveQuery } from "@tanstack/react-db";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type {
 	SelectAutomation,
 	SelectUser,
@@ -34,9 +37,6 @@ import {
 import { toast } from "@velix/ui/sonner";
 import { Tabs, TabsList, TabsTrigger } from "@velix/ui/tabs";
 import { cn } from "@velix/ui/utils";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { HiOutlineComputerDesktop } from "react-icons/hi2";
 import {
@@ -299,8 +299,8 @@ function AutomationsPage() {
 								CLI
 							</p>
 							<p className="text-sm leading-relaxed text-muted-foreground">
-								It&apos;s available in every Velix terminal. Tell the agent
-								to use it to spin up workspaces, run tasks, or manage other
+								It&apos;s available in every Velix terminal. Tell the agent to
+								use it to spin up workspaces, run tasks, or manage other
 								automations.{" "}
 								<a
 									href={`${COMPANY.DOCS_URL}/cli/getting-started`}

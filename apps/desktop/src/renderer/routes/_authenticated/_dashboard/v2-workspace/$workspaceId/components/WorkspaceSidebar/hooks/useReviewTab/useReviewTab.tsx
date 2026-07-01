@@ -1,6 +1,6 @@
+import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@velix/host-service";
 import { workspaceTrpc } from "@velix/workspace-client";
-import type { inferRouterOutputs } from "@trpc/server";
 import { useMemo } from "react";
 import { LuMessageSquare } from "react-icons/lu";
 import type { CommentPaneData } from "../../../../types";

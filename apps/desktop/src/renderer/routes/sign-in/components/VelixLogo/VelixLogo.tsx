@@ -6,10 +6,7 @@ interface VelixLogoProps {
 	gradient?: boolean;
 }
 
-export function VelixLogo({
-	className,
-	gradient = false,
-}: VelixLogoProps) {
+export function VelixLogo({ className, gradient = false }: VelixLogoProps) {
 	const reactId = useId();
 	const gradientId = `velix-logo-gradient-${reactId}`;
 

@@ -1,8 +1,8 @@
+import { initTRPC, TRPCError } from "@trpc/server";
 import type { auth, Session } from "@velix/auth/server";
 import { db } from "@velix/db/client";
 import { members } from "@velix/db/schema";
 import { COMPANY, ORGANIZATION_HEADER } from "@velix/shared/constants";
-import { initTRPC, TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";

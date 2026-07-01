@@ -1,8 +1,8 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { Avatar } from "@velix/ui/atoms/Avatar";
 import { Button } from "@velix/ui/button";
 import { Input } from "@velix/ui/input";
 import { toast } from "@velix/ui/sonner";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useState } from "react";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { authClient } from "renderer/lib/auth-client";

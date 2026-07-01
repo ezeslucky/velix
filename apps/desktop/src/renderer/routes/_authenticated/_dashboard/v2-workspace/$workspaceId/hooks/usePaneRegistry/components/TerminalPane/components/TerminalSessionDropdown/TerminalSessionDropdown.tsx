@@ -1,3 +1,5 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import type { RendererContext } from "@velix/panes";
 import {
 	DropdownMenu,
@@ -9,8 +11,6 @@ import {
 } from "@velix/ui/dropdown-menu";
 import { toast } from "@velix/ui/sonner";
 import { workspaceTrpc } from "@velix/workspace-client";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { Check, ChevronDown, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { useRenderStressInstrumentation } from "renderer/lib/performance/stress-instrumentation";

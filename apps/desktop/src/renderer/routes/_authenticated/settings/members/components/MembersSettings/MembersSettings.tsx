@@ -1,3 +1,5 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
 import {
 	canRemoveMember,
 	getRoleSortPriority,
@@ -14,8 +16,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@velix/ui/table";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
 import { authClient } from "renderer/lib/auth-client";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import {

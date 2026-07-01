@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { TRPCError } from "@trpc/server";
 import { mintUserJwt } from "@velix/auth/server";
 import { dbWs } from "@velix/db/client";
 import {
@@ -19,7 +20,6 @@ import {
 	REMOTE_CONTROL_MIN_TTL_SEC,
 	REMOTE_CONTROL_TOKEN_PARAM,
 } from "@velix/shared/remote-control-protocol";
-import { TRPCError } from "@trpc/server";
 import { and, desc, eq, lt } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../env";

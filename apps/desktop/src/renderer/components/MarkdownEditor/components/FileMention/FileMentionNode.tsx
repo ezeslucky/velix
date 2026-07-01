@@ -1,11 +1,11 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { cn } from "@velix/ui/utils";
 import { mergeAttributes, Node } from "@tiptap/core";
 import {
 	type NodeViewProps,
 	NodeViewWrapper,
 	ReactNodeViewRenderer,
 } from "@tiptap/react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
+import { cn } from "@velix/ui/utils";
 import { LuX } from "react-icons/lu";
 import { FileIcon } from "renderer/lib/fileIcons";
 

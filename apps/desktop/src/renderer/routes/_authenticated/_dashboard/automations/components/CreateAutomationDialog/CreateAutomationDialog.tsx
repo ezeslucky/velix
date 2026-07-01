@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@velix/ui/button";
 import {
 	Dialog,
@@ -8,7 +9,6 @@ import {
 	DialogTitle,
 } from "@velix/ui/dialog";
 import { toast } from "@velix/ui/sonner";
-import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LuX } from "react-icons/lu";
 import { EmojiTextInput } from "renderer/components/EmojiTextInput";

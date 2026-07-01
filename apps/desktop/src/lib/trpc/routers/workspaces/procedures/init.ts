@@ -1,6 +1,6 @@
+import { observable } from "@trpc/server/observable";
 import { workspaces, worktrees } from "@velix/local-db";
 import { deduplicateBranchName } from "@velix/shared/workspace-launch";
-import { observable } from "@trpc/server/observable";
 import { eq } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 import { workspaceInitManager } from "main/lib/workspace-init-manager";

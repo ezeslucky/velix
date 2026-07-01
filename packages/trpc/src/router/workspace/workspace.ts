@@ -1,3 +1,5 @@
+import type { TRPCRouterRecord } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import { dbWs } from "@velix/db/client";
 import {
 	projects,
@@ -6,8 +8,6 @@ import {
 	workspaceTypeEnum,
 } from "@velix/db/schema";
 import { getCurrentTxid } from "@velix/db/utils";
-import type { TRPCRouterRecord } from "@trpc/server";
-import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";

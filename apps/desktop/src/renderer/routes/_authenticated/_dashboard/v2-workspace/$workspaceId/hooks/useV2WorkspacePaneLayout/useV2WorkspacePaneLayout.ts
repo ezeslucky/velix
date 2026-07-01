@@ -1,6 +1,6 @@
-import { createWorkspaceStore, type WorkspaceState } from "@velix/panes";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { createWorkspaceStore, type WorkspaceState } from "@velix/panes";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWorkspace } from "renderer/routes/_authenticated/_dashboard/v2-workspace/providers/WorkspaceProvider";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

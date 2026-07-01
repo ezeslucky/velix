@@ -1,3 +1,4 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { stripeClient } from "@velix/auth/stripe";
 import { db } from "@velix/db/client";
 import { members, organizations } from "@velix/db/schema";
@@ -9,7 +10,6 @@ import {
 import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
 import { findOrgMembership } from "@velix/db/utils";
 import { canRemoveMember, type OrganizationRole } from "@velix/shared/auth";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 import { generateImagePathname, uploadImage } from "../../lib/upload";

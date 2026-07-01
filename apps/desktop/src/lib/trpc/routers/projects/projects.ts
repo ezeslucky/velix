@@ -1,6 +1,7 @@
 import { existsSync, statSync } from "node:fs";
 import { access, mkdir, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
+import { TRPCError } from "@trpc/server";
 import {
 	BRANCH_PREFIX_MODES,
 	EXTERNAL_APPS,
@@ -11,7 +12,6 @@ import {
 	workspaces,
 	worktrees,
 } from "@velix/local-db";
-import { TRPCError } from "@trpc/server";
 import { and, desc, eq, inArray, isNotNull, isNull, not } from "drizzle-orm";
 import type { BrowserWindow } from "electron";
 import { dialog } from "electron";

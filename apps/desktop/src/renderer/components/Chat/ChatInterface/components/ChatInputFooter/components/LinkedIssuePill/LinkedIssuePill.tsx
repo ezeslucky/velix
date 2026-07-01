@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import { toast } from "@velix/ui/sonner";
-import { useNavigate } from "@tanstack/react-router";
 import { XIcon } from "lucide-react";
 import { LinearIcon } from "renderer/components/icons/LinearIcon";
 

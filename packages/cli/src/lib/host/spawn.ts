@@ -65,7 +65,6 @@ async function pollHealth(port: number, secret: string): Promise<boolean> {
 	return false;
 }
 
-
 function resolveHostBinary(): string {
 	if (process.env.VELIX_HOST_BIN) return process.env.VELIX_HOST_BIN;
 	const cliBin = process.execPath;
@@ -76,7 +75,7 @@ function resolveMigrationsFolder(): string {
 	if (process.env.HOST_MIGRATIONS_FOLDER) {
 		return process.env.HOST_MIGRATIONS_FOLDER;
 	}
-	
+
 	const cliBin = process.execPath;
 	const bundleRoot = dirname(dirname(cliBin));
 	return join(bundleRoot, "share", "migrations");

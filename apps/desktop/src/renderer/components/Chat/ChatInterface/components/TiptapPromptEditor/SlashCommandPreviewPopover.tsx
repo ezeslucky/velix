@@ -1,6 +1,6 @@
+import type { Editor } from "@tiptap/core";
 import { usePromptInputController } from "@velix/ui/ai-elements/prompt-input";
 import { Popover, PopoverAnchor, PopoverContent } from "@velix/ui/popover";
-import type { Editor } from "@tiptap/core";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedValue } from "renderer/hooks/useDebouncedValue";
 import {

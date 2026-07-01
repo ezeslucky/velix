@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
 	Breadcrumb,
 	BreadcrumbEllipsis,
@@ -20,7 +21,6 @@ import { ScrollArea } from "@velix/ui/scroll-area";
 import { Skeleton } from "@velix/ui/skeleton";
 import { toast } from "@velix/ui/sonner";
 import { cn } from "@velix/ui/utils";
-import { useQuery } from "@tanstack/react-query";
 import { Fragment, useEffect, useState } from "react";
 import {
 	LuExternalLink,

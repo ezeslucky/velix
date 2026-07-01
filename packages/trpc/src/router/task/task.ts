@@ -1,3 +1,4 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { db, dbWs } from "@velix/db/client";
 import { members, taskStatuses, tasks, users } from "@velix/db/schema";
 import { seedDefaultStatuses } from "@velix/db/seed-default-statuses";
@@ -6,7 +7,6 @@ import {
 	generateBaseTaskSlug,
 	generateUniqueTaskSlug,
 } from "@velix/shared/task-slug";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, desc, eq, ilike, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";

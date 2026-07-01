@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { SelectV2Workspace } from "@velix/db/schema";
 import {
 	Command,
@@ -7,7 +8,6 @@ import {
 	CommandList,
 } from "@velix/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useMemo, useState } from "react";
 import { HiCheck } from "react-icons/hi2";
 import { LuGitBranch, LuSparkles } from "react-icons/lu";

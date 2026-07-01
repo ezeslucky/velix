@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import {
 	CommandEmpty,
 	CommandGroup,
@@ -5,7 +6,6 @@ import {
 	CommandItem as RawCommandItem,
 } from "@velix/ui/command";
 import { toast } from "@velix/ui/sonner";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useDeferredValue, useMemo } from "react";
 import {
 	StatusIcon,

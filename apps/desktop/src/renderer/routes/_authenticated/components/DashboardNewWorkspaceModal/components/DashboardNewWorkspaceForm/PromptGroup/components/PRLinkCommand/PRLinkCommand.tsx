@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { Checkbox } from "@velix/ui/checkbox";
 import {
 	Command,
@@ -10,7 +11,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { toast } from "@velix/ui/sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useHostUrl } from "renderer/hooks/host-service/useHostTargetUrl";

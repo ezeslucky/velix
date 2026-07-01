@@ -62,10 +62,8 @@ function run(
 
 function buildCliBuildEnv(): NodeJS.ProcessEnv {
 	const env = { ...process.env };
-	const apiUrl =
-		process.env.VELIX_API_URL || process.env.NEXT_PUBLIC_API_URL;
-	const webUrl =
-		process.env.VELIX_WEB_URL || process.env.NEXT_PUBLIC_WEB_URL;
+	const apiUrl = process.env.VELIX_API_URL || process.env.NEXT_PUBLIC_API_URL;
+	const webUrl = process.env.VELIX_WEB_URL || process.env.NEXT_PUBLIC_WEB_URL;
 
 	if (apiUrl) {
 		env.VELIX_API_URL = apiUrl;

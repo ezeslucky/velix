@@ -268,9 +268,9 @@ describe("getShellLaunchArgs", () => {
 	});
 
 	test("ksh launches as login shell", () => {
-		expect(
-			getShellLaunchArgs({ shell: "/usr/bin/ksh", velixHomeDir }),
-		).toEqual(["-l"]);
+		expect(getShellLaunchArgs({ shell: "/usr/bin/ksh", velixHomeDir })).toEqual(
+			["-l"],
+		);
 	});
 
 	test("unsupported shells launch natively without bootstrap", () => {

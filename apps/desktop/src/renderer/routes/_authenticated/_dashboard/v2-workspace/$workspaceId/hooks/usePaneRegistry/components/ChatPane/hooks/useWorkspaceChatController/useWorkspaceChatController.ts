@@ -1,6 +1,6 @@
-import { workspaceTrpc } from "@velix/workspace-client";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useCallback, useMemo } from "react";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { authClient } from "renderer/lib/auth-client";

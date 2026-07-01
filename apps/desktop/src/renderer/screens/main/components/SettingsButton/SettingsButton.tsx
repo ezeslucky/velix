@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useNavigate } from "@tanstack/react-router";
 import { CiSettings } from "react-icons/ci";
 import { HotkeyLabel } from "renderer/hotkeys";
 

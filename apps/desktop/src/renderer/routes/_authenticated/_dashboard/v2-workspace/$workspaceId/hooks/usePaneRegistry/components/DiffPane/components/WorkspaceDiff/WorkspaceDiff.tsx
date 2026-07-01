@@ -1,6 +1,6 @@
 import { MultiFileDiff } from "@pierre/diffs/react";
-import { workspaceTrpc } from "@velix/workspace-client";
 import { useQuery } from "@tanstack/react-query";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { memo, useCallback, useMemo } from "react";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import {

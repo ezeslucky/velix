@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@velix/auth/client";
 import { isPaidPlan } from "@velix/shared/billing";
 import { Avatar, AvatarFallback, AvatarImage } from "@velix/ui/avatar";
@@ -18,7 +19,6 @@ import {
 } from "@velix/ui/dropdown-menu";
 import { useIsMobile } from "@velix/ui/hooks/use-mobile";
 import { toast } from "@velix/ui/sonner";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

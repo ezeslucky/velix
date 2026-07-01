@@ -1,7 +1,7 @@
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { type AuthProvider, COMPANY } from "@velix/shared/constants";
 import { Button } from "@velix/ui/button";
 import { Spinner } from "@velix/ui/spinner";
-import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { env } from "renderer/env.renderer";

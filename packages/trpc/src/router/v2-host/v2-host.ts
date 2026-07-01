@@ -1,8 +1,8 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { db, dbWs } from "@velix/db/client";
 import { v2UsersHostRoleValues } from "@velix/db/enums";
 import { members, v2Hosts, v2UsersHosts } from "@velix/db/schema";
 import { getCurrentTxid } from "@velix/db/utils";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";

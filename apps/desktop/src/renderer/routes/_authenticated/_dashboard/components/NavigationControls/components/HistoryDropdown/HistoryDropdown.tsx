@@ -1,3 +1,6 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,9 +11,6 @@ import {
 } from "@velix/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { cn } from "@velix/ui/utils";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useLocation, useNavigate } from "@tanstack/react-router";
 import { LuCpu, LuGitBranch, LuHistory } from "react-icons/lu";
 import { usePresetIcon } from "renderer/assets/app-icons/preset-icons";
 import { useIsV2CloudEnabled } from "renderer/hooks/useIsV2CloudEnabled";

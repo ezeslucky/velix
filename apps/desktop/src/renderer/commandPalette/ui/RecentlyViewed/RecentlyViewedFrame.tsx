@@ -1,3 +1,6 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import {
 	CommandEmpty,
 	CommandGroup,
@@ -5,9 +8,6 @@ import {
 	CommandList,
 } from "@velix/ui/command";
 import { cn } from "@velix/ui/utils";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useLocation, useNavigate } from "@tanstack/react-router";
 import { LuCpu, LuGitBranch } from "react-icons/lu";
 import { useIsV2CloudEnabled } from "renderer/hooks/useIsV2CloudEnabled";
 import { electronTrpc } from "renderer/lib/electron-trpc";

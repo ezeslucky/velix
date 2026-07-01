@@ -1,7 +1,7 @@
 "use client";
 
-import { THEME_STORAGE_KEY } from "@velix/shared/constants";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { THEME_STORAGE_KEY } from "@velix/shared/constants";
 import { ThemeProvider } from "next-themes";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";

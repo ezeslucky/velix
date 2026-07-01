@@ -1,5 +1,5 @@
-import type { ExternalApp } from "@velix/local-db";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
+import type { ExternalApp } from "@velix/local-db";
 import { useRef } from "react";
 import type { ChangeCategory, ChangedFile } from "shared/changes-types";
 import { FileItem } from "../FileItem";

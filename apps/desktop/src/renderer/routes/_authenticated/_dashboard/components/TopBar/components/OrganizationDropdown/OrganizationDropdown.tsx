@@ -1,3 +1,5 @@
+import { useLiveQuery } from "@tanstack/react-db";
+import { useNavigate } from "@tanstack/react-router";
 import { Avatar } from "@velix/ui/atoms/Avatar";
 import { Badge } from "@velix/ui/badge";
 import {
@@ -11,8 +13,6 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useNavigate } from "@tanstack/react-router";
 import { FiUsers } from "react-icons/fi";
 import {
 	HiCheck,

@@ -1,7 +1,7 @@
-import { db, dbWs } from "@velix/db/client";
-import { projects, secrets } from "@velix/db/schema";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
+import { db, dbWs } from "@velix/db/client";
+import { projects, secrets } from "@velix/db/schema";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../../trpc";

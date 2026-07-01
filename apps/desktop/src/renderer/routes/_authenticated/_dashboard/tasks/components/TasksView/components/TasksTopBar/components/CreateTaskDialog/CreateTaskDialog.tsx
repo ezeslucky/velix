@@ -1,3 +1,5 @@
+import { useLiveQuery } from "@tanstack/react-db";
+import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@velix/auth/client";
 import type { TaskPriority } from "@velix/db/enums";
 import { Button } from "@velix/ui/button";
@@ -12,8 +14,6 @@ import {
 } from "@velix/ui/dialog";
 import { Kbd, KbdGroup } from "@velix/ui/kbd";
 import { toast } from "@velix/ui/sonner";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HiChevronRight, HiOutlinePaperClip, HiXMark } from "react-icons/hi2";
 import { MarkdownEditor } from "renderer/components/MarkdownEditor";

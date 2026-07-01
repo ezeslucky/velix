@@ -1,7 +1,6 @@
 import "highlight.js/styles/github-dark.css";
 import "./markdown-editor.css";
 
-import { cn } from "@velix/ui/utils";
 import { Extension } from "@tiptap/core";
 import { Blockquote } from "@tiptap/extension-blockquote";
 import { Bold } from "@tiptap/extension-bold";
@@ -33,6 +32,7 @@ import {
 	useEditor,
 } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
+import { cn } from "@velix/ui/utils";
 import { common, createLowlight } from "lowlight";
 import { useEffect, useRef } from "react";
 import { BubbleMenuToolbar } from "renderer/components/MarkdownRenderer/components/TipTapMarkdownRenderer/components/BubbleMenuToolbar";

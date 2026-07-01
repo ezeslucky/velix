@@ -2,8 +2,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { FileXIcon } from "lucide-react";
 import type { ToolPart } from "../../../../utils/tool-helpers";
 import { getResult } from "../../../../utils/tool-helpers";
-import { VelixToolCall } from "../VelixToolCall";
 import { TaskItemDisplay } from "../TaskItemDisplay";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface DeleteTaskToolCallProps {
 	part: ToolPart;

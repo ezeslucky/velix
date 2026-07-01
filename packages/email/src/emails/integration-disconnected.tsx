@@ -68,8 +68,8 @@ export function IntegrationDisconnectedEmail({
 
 			<Text className="text-base leading-[26px] text-foreground mb-4">
 				If your org should be the one connected, ask the listed owner to
-				disconnect from their Velix Integrations page first, then reconnect
-				from yours.
+				disconnect from their Velix Integrations page first, then reconnect from
+				yours.
 			</Text>
 
 			<Section className="mt-6 mb-6">

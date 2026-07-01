@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { AppRouter } from "@velix/trpc";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@velix/trpc";
 import { headers } from "next/headers";
 import { cache } from "react";
 import SuperJSON from "superjson";

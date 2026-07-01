@@ -45,9 +45,7 @@ export async function GET(request: Request) {
 		userId: session.user.id,
 	});
 
-	const installUrl = new URL(
-		"https://github.com/apps/velix/installations/new",
-	);
+	const installUrl = new URL("https://github.com/apps/velix/installations/new");
 	installUrl.searchParams.set("state", state);
 	installUrl.searchParams.set(
 		"redirect_url",

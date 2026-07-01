@@ -1,7 +1,7 @@
-import { Button } from "@velix/ui/button";
-import { ScrollArea } from "@velix/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
+import { ScrollArea } from "@velix/ui/scroll-area";
 import { useMemo } from "react";
 import { GoIssueClosed, GoIssueOpened } from "react-icons/go";
 import { HiArrowLeft } from "react-icons/hi2";

@@ -1,6 +1,6 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { WorkspaceState } from "@velix/panes";
 import { buildHostRoutingKey } from "@velix/shared/host-routing";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useEffectEvent, useMemo } from "react";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
 import { electronTrpc } from "renderer/lib/electron-trpc";

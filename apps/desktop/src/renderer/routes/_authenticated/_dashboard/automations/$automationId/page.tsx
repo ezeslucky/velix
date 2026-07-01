@@ -1,13 +1,10 @@
-import type {
-	SelectAutomation,
-	SelectAutomationRun,
-} from "@velix/db/schema";
-import { alert } from "@velix/ui/atoms/Alert";
-import { toast } from "@velix/ui/sonner";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { SelectAutomation, SelectAutomationRun } from "@velix/db/schema";
+import { alert } from "@velix/ui/atoms/Alert";
+import { toast } from "@velix/ui/sonner";
 import { useState } from "react";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

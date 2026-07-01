@@ -11,7 +11,6 @@ export const TERMINAL_THEME: ITerminalOptions["theme"] = undefined;
 // Fallback timeout for first render (in case xterm doesn't emit onRender)
 export const FIRST_RENDER_RESTORE_FALLBACK_MS = 250;
 
-
 export const DEBUG_TERMINAL =
 	typeof localStorage !== "undefined" &&
 	localStorage.getItem("VELIX_TERMINAL_DEBUG") === "1";

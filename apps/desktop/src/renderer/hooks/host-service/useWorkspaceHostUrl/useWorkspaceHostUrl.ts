@@ -1,6 +1,6 @@
-import { buildHostRoutingKey } from "@velix/shared/host-routing";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { buildHostRoutingKey } from "@velix/shared/host-routing";
 import { useMemo } from "react";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

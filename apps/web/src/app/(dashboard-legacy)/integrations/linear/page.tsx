@@ -68,8 +68,8 @@ export default async function LinearIntegrationPage() {
 						)}
 					</div>
 					<p className="mt-1 text-muted-foreground">
-						Sync issues bidirectionally with Linear. Create tasks in Velix
-						and have them appear in Linear, or import existing Linear issues.
+						Sync issues bidirectionally with Linear. Create tasks in Velix and
+						have them appear in Linear, or import existing Linear issues.
 					</p>
 				</div>
 			</div>

@@ -1,4 +1,3 @@
-
 export function extractWorkspaceIdFromUrl(url: string): string | null {
 	try {
 		const hash = new URL(url).hash;

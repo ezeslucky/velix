@@ -250,7 +250,6 @@ app.get("/hosts/:hostId/_whoowns", async (c) => {
 	return c.body(null, 200, replay.header);
 });
 
-
 app.use("/hosts/:hostId/*", async (c, next) => {
 	const path = new URL(c.req.url).pathname;
 	const hostId = c.req.param("hostId") ?? "";

@@ -1,5 +1,5 @@
-import type { SelectSubscription } from "@velix/db/schema";
 import { TRPCError } from "@trpc/server";
+import type { SelectSubscription } from "@velix/db/schema";
 import type { TRPCContext } from "../../trpc";
 import {
 	verifyOrgMembership,

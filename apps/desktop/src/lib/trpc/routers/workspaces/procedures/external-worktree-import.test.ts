@@ -11,8 +11,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { listExternalWorktrees } from "../utils/git";
 
-
-
 const TEST_DIR = join(
 	realpathSync(tmpdir()),
 	`velix-test-external-wt-${process.pid}`,
@@ -86,7 +84,6 @@ describe("External worktree detection and import", () => {
 	});
 
 	test("external worktree can be created and detected", () => {
-		
 		createExternalWorktree(
 			mainRepoPath,
 			"feature-external",
@@ -144,7 +141,6 @@ describe("External worktree detection and import", () => {
 			true,
 		);
 
-		
 		expect(existsSync(join(externalWorktreePath, "important-data.txt"))).toBe(
 			true,
 		);

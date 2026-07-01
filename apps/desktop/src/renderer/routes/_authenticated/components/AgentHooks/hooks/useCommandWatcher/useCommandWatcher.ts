@@ -1,6 +1,6 @@
-import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { authClient } from "renderer/lib/auth-client";

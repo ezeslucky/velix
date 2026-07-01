@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { SelectTaskStatus } from "@velix/db/schema";
 import {
 	ContextMenu,
@@ -9,7 +10,6 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "@velix/ui/context-menu";
-import { useLiveQuery } from "@tanstack/react-db";
 import { type ReactNode, useMemo } from "react";
 import {
 	HiOutlineDocumentDuplicate,

@@ -1,6 +1,6 @@
-import { toast } from "@velix/ui/sonner";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { toast } from "@velix/ui/sonner";
 import { useMemo } from "react";
 import { authClient } from "renderer/lib/auth-client";
 import {

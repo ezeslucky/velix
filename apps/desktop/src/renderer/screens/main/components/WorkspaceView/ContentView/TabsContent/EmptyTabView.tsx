@@ -1,5 +1,5 @@
-import type { ExternalApp } from "@velix/local-db";
 import { useParams } from "@tanstack/react-router";
+import type { ExternalApp } from "@velix/local-db";
 import { useCallback, useMemo } from "react";
 import type { IconType } from "react-icons";
 import { BsTerminalPlus } from "react-icons/bs";

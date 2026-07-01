@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { SelectTaskStatus } from "@velix/db/schema";
 import {
 	DropdownMenu,
@@ -5,7 +6,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useMemo, useState } from "react";
 import { useOptimisticCollectionActions } from "renderer/routes/_authenticated/hooks/useOptimisticCollectionActions";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

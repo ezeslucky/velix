@@ -1,6 +1,6 @@
-import { workspaceTrpc } from "@velix/workspace-client";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { workspaceTrpc } from "@velix/workspace-client";
 import { useMemo } from "react";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import type { DiffRef } from "../useChangeset/types";

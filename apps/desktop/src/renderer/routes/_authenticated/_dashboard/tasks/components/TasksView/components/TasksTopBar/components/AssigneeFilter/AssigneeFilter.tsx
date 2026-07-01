@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import type { SelectUser } from "@velix/db/schema";
 import { Avatar } from "@velix/ui/atoms/Avatar";
 import { Button } from "@velix/ui/button";
@@ -11,7 +12,6 @@ import {
 	CommandSeparator,
 } from "@velix/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HiCheck, HiChevronDown, HiOutlineUserCircle } from "react-icons/hi2";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

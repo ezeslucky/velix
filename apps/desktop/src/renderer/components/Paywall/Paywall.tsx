@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import { Dialog, DialogContent } from "@velix/ui/dialog";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { track } from "renderer/lib/analytics";
 import { FeaturePreview } from "./components/FeaturePreview";

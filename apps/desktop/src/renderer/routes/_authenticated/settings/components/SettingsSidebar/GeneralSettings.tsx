@@ -1,5 +1,5 @@
-import { cn } from "@velix/ui/utils";
 import { Link, useMatchRoute } from "@tanstack/react-router";
+import { cn } from "@velix/ui/utils";
 import { useMemo } from "react";
 import {
 	HiOutlineBeaker,

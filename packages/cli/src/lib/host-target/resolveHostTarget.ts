@@ -1,8 +1,8 @@
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { CLIError } from "@velix/cli-framework";
 import type { AppRouter as HostServiceRouter } from "@velix/host-service/trpc";
 import { getHostId } from "@velix/shared/host-info";
 import { buildHostRoutingKey } from "@velix/shared/host-routing";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import { env } from "../env";
 import { isProcessAlive, readManifest } from "../host/manifest";

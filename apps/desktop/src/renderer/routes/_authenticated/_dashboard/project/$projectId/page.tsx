@@ -1,3 +1,4 @@
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { sanitizeSegment } from "@velix/shared/workspace-launch";
 import { Button } from "@velix/ui/button";
 import { Checkbox } from "@velix/ui/checkbox";
@@ -18,7 +19,6 @@ import { Label } from "@velix/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { toast } from "@velix/ui/sonner";
 import { Textarea } from "@velix/ui/textarea";
-import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GoGitBranch } from "react-icons/go";

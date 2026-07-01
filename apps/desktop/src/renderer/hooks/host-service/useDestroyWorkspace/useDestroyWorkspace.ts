@@ -1,8 +1,8 @@
+import { TRPCClientError } from "@trpc/client";
 import type {
 	DeleteInProgressCause,
 	TeardownFailureCause,
 } from "@velix/host-service";
-import { TRPCClientError } from "@trpc/client";
 import { useCallback } from "react";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";

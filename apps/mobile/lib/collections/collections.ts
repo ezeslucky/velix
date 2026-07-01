@@ -1,4 +1,7 @@
 import { snakeCamelMapper } from "@electric-sql/client";
+import { electricCollectionOptions } from "@tanstack/electric-db-collection";
+import type { Collection } from "@tanstack/react-db";
+import { createCollection } from "@tanstack/react-db";
 import type {
 	SelectInvitation,
 	SelectMember,
@@ -8,9 +11,6 @@ import type {
 	SelectTaskStatus,
 	SelectUser,
 } from "@velix/db/schema";
-import { electricCollectionOptions } from "@tanstack/electric-db-collection";
-import type { Collection } from "@tanstack/react-db";
-import { createCollection } from "@tanstack/react-db";
 import { authClient } from "../auth/client";
 import { env } from "../env";
 import { apiClient } from "../trpc/client";

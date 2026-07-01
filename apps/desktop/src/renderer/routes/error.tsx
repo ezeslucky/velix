@@ -1,6 +1,6 @@
-import { Button } from "@velix/ui/button";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
 import { useEffect, useState } from "react";
 import {
 	HiCheck,
@@ -8,7 +8,6 @@ import {
 	HiOutlineClipboard,
 } from "react-icons/hi2";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
-import React from "react";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 const ERROR_DETAILS_ID = "error-details";

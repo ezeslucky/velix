@@ -3,6 +3,22 @@ import {
 	type ShapeStreamOptions,
 	snakeCamelMapper,
 } from "@electric-sql/client";
+import { BasicIndex } from "@tanstack/db";
+import { electricCollectionOptions } from "@tanstack/electric-db-collection";
+import {
+	createElectronSQLitePersistence,
+	persistedCollectionOptions,
+} from "@tanstack/electron-db-sqlite-persistence";
+import type {
+	Collection,
+	LocalStorageCollectionUtils,
+} from "@tanstack/react-db";
+import {
+	createCollection,
+	localStorageCollectionOptions,
+} from "@tanstack/react-db";
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import type { inferRouterOutputs } from "@trpc/server";
 import type {
 	SelectAgentCommand,
 	SelectAutomation,
@@ -30,22 +46,6 @@ import type {
 } from "@velix/db/schema";
 import type { AppRouter as HostServiceAppRouter } from "@velix/host-service";
 import type { AppRouter } from "@velix/trpc";
-import { BasicIndex } from "@tanstack/db";
-import { electricCollectionOptions } from "@tanstack/electric-db-collection";
-import {
-	createElectronSQLitePersistence,
-	persistedCollectionOptions,
-} from "@tanstack/electron-db-sqlite-persistence";
-import type {
-	Collection,
-	LocalStorageCollectionUtils,
-} from "@tanstack/react-db";
-import {
-	createCollection,
-	localStorageCollectionOptions,
-} from "@tanstack/react-db";
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import type { inferRouterOutputs } from "@trpc/server";
 import { env } from "renderer/env.renderer";
 import {
 	authClient,

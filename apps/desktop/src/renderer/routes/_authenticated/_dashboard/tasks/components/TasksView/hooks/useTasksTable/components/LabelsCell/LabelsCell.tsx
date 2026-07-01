@@ -1,6 +1,6 @@
+import type { CellContext } from "@tanstack/react-table";
 import type { SelectTask } from "@velix/db/schema";
 import { Badge } from "@velix/ui/badge";
-import type { CellContext } from "@tanstack/react-table";
 
 interface LabelsCellProps {
 	info: CellContext<SelectTask, string[] | null>;

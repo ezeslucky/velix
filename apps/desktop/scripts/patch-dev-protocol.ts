@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
 
-
 import { Database as BunSqliteDatabase } from "bun:sqlite";
 import { execSync } from "node:child_process";
 import {

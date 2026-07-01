@@ -1,9 +1,9 @@
-import type { SelectV2Workspace } from "@velix/db/schema";
-import { buildHostRoutingKey } from "@velix/shared/host-routing";
-import { MIN_HOST_SERVICE_VERSION } from "@velix/shared/host-version";
 import { and, eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
+import type { SelectV2Workspace } from "@velix/db/schema";
+import { buildHostRoutingKey } from "@velix/shared/host-routing";
+import { MIN_HOST_SERVICE_VERSION } from "@velix/shared/host-version";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

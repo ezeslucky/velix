@@ -1,7 +1,7 @@
-import { toast } from "@velix/ui/sonner";
-import { Spinner } from "@velix/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { toast } from "@velix/ui/sonner";
+import { Spinner } from "@velix/ui/spinner";
 import { useEffect } from "react";
 import { LuFolder } from "react-icons/lu";
 import { env } from "renderer/env.renderer";

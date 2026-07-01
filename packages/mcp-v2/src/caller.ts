@@ -5,7 +5,6 @@ import type { McpContext } from "./auth";
 
 export type McpCaller = ReturnType<typeof makeAppCaller>;
 
-
 export function createMcpCaller(ctx: McpContext): McpCaller {
 	const headers = new Headers();
 	headers.set("authorization", `Bearer ${ctx.bearerToken}`);

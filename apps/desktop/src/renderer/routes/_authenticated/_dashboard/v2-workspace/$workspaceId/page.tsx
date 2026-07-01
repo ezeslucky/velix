@@ -1,6 +1,6 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { Workspace } from "@velix/panes";
 import { workspaceTrpc } from "@velix/workspace-client";
-import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useQuickOpenStore } from "renderer/commandPalette/ui/QuickOpen/quickOpenStore";

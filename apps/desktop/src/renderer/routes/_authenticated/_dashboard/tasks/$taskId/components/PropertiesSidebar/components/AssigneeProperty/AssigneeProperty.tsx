@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { Avatar } from "@velix/ui/atoms/Avatar";
 import {
 	DropdownMenu,
@@ -5,7 +6,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useMemo, useState } from "react";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { useOptimisticCollectionActions } from "renderer/routes/_authenticated/hooks/useOptimisticCollectionActions";

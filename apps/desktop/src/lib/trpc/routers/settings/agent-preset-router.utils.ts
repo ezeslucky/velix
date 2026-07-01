@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { PROMPT_TRANSPORTS } from "@velix/local-db";
 import type { AgentDefinition } from "@velix/shared/agent-catalog";
 import type {
@@ -5,7 +6,6 @@ import type {
 	CustomAgentDefinitionPatch,
 } from "@velix/shared/agent-settings";
 import { validateTaskPromptTemplate } from "@velix/shared/agent-settings";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const updateAgentPresetInputSchema = z.object({

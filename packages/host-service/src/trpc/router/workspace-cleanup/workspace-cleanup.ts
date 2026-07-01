@@ -124,7 +124,6 @@ export const workspaceCleanupRouter = router({
 			}
 		}),
 
-	
 	destroy: protectedProcedure
 		.input(
 			z.object({

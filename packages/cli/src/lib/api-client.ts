@@ -1,7 +1,7 @@
-import { ORGANIZATION_HEADER } from "@velix/shared/constants";
-import type { AppRouter } from "@velix/trpc";
 import type { TRPCClient } from "@trpc/client";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { ORGANIZATION_HEADER } from "@velix/shared/constants";
+import type { AppRouter } from "@velix/trpc";
 import SuperJSON from "superjson";
 import { getApiUrl } from "./config";
 

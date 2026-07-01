@@ -1,4 +1,3 @@
-import { cn } from "@velix/ui/utils";
 import { Extension } from "@tiptap/core";
 import { Document } from "@tiptap/extension-document";
 import { EmojiSuggestionPluginKey } from "@tiptap/extension-emoji";
@@ -7,6 +6,7 @@ import { Paragraph } from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Text } from "@tiptap/extension-text";
 import { EditorContent, useEditor } from "@tiptap/react";
+import { cn } from "@velix/ui/utils";
 import { useEffect } from "react";
 import { EmojiSuggestion } from "renderer/components/MarkdownEditor/components/EmojiSuggestion";
 

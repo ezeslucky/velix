@@ -10,10 +10,6 @@ export function DeleteWorkspaceToolCall({
 	part,
 }: DeleteWorkspaceToolCallProps) {
 	return (
-		<VelixToolCall
-			part={part}
-			toolName="Delete workspace"
-			icon={Trash2Icon}
-		/>
+		<VelixToolCall part={part} toolName="Delete workspace" icon={Trash2Icon} />
 	);
 }

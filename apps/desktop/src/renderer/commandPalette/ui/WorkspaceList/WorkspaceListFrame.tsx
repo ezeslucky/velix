@@ -1,3 +1,4 @@
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import {
 	CommandEmpty,
 	CommandGroup,
@@ -5,7 +6,6 @@ import {
 	CommandList,
 } from "@velix/ui/command";
 import { cn } from "@velix/ui/utils";
-import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CgLaptop } from "react-icons/cg";
 import { LuGitBranch, LuLaptop, LuMonitor } from "react-icons/lu";

@@ -219,9 +219,7 @@ describe("agent-wrappers copilot", () => {
 		expect(wrapper).toContain('kill -TERM "$_velix_child_pid"');
 		expect(wrapper).toContain('kill -KILL "$_velix_watcher_pid"');
 		expect(wrapper).not.toContain("mkfifo");
-		expect(wrapper).not.toContain(
-			"VELIX_CODEX_SESSION_WATCHER_TAIL_PID_PATH",
-		);
+		expect(wrapper).not.toContain("VELIX_CODEX_SESSION_WATCHER_TAIL_PID_PATH");
 		expect(wrapper).toContain('"UserTurn"');
 		expect(wrapper).toContain("_approval_request");
 
@@ -564,8 +562,7 @@ exit 0
 
 	it("replaces stale Cursor hook commands from old velix paths", () => {
 		const cursorHooksPath = path.join(mockedHomeDir, ".cursor", "hooks.json");
-		const staleHookPath =
-			"/tmp/worktree/velix-dev-data/hooks/cursor-hook.sh";
+		const staleHookPath = "/tmp/worktree/velix-dev-data/hooks/cursor-hook.sh";
 		const currentHookPath = "/tmp/.velix-new/hooks/cursor-hook.sh";
 
 		mkdirSync(path.dirname(cursorHooksPath), { recursive: true });
@@ -630,8 +627,7 @@ exit 0
 			".gemini",
 			"settings.json",
 		);
-		const staleHookPath =
-			"/tmp/worktree/velix-dev-data/hooks/gemini-hook.sh";
+		const staleHookPath = "/tmp/worktree/velix-dev-data/hooks/gemini-hook.sh";
 		const currentHookPath = "/tmp/.velix-new/hooks/gemini-hook.sh";
 
 		mkdirSync(path.dirname(geminiSettingsPath), { recursive: true });
@@ -1522,7 +1518,7 @@ describe("agent-wrappers codex hooks.json", () => {
 
 	it("reaps stale notify.sh paths from in-repo dev worktrees", () => {
 		const codexHooksPath = path.join(mockedHomeDir, ".codex", "hooks.json");
-		
+
 		const staleHookPath =
 			"/Users/test/code/velix/.worktrees/old-branch/velix-dev-data/hooks/notify.sh";
 		const currentHookPath = "/tmp/.velix-new/hooks/notify.sh";
@@ -1635,13 +1631,7 @@ describe("agent-wrappers pi", () => {
 	it("installs the pi extension into the global ~/.pi/agent/extensions directory", () => {
 		const extensionPath = getPiExtensionPath();
 		expect(extensionPath).toBe(
-			path.join(
-				mockedHomeDir,
-				".pi",
-				"agent",
-				"extensions",
-				"velix-hooks.ts",
-			),
+			path.join(mockedHomeDir, ".pi", "agent", "extensions", "velix-hooks.ts"),
 		);
 
 		createPiExtension();

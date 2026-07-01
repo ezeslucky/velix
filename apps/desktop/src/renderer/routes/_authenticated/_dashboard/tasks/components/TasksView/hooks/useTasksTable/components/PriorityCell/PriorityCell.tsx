@@ -1,3 +1,4 @@
+import type { CellContext } from "@tanstack/react-table";
 import type { TaskPriority } from "@velix/db/enums";
 import {
 	DropdownMenu,
@@ -5,7 +6,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
-import type { CellContext } from "@tanstack/react-table";
 import { useState } from "react";
 import { useOptimisticCollectionActions } from "renderer/routes/_authenticated/hooks/useOptimisticCollectionActions";
 import { PriorityIcon } from "../../../../components/shared/PriorityIcon";

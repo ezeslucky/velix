@@ -1,3 +1,4 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import {
 	type ExecutionMode,
 	normalizeExecutionMode,
@@ -5,7 +6,6 @@ import {
 } from "@velix/local-db";
 import { HOST_AGENT_PRESETS } from "@velix/shared/host-agent-presets";
 import { Button } from "@velix/ui/button";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { useIsDarkTheme } from "renderer/assets/app-icons/preset-icons";

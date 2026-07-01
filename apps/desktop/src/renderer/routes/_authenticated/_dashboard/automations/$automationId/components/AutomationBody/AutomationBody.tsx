@@ -1,5 +1,5 @@
-import type { SelectAutomation } from "@velix/db/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { SelectAutomation } from "@velix/db/schema";
 import { useEffect, useRef, useState } from "react";
 import { EmojiTextInput } from "renderer/components/EmojiTextInput";
 import { MarkdownEditor } from "renderer/components/MarkdownEditor";

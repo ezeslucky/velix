@@ -1,5 +1,5 @@
-import { COMPANY } from "@velix/shared/constants";
 import { Link } from "@tanstack/react-router";
+import { COMPANY } from "@velix/shared/constants";
 import {
 	HiArrowLeft,
 	HiArrowTopRightOnSquare,

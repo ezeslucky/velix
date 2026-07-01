@@ -22,10 +22,7 @@ import {
 	parsePrUrl,
 } from "./git";
 
-const TEST_DIR = join(
-	realpathSync(tmpdir()),
-	`velix-test-git-${process.pid}`,
-);
+const TEST_DIR = join(realpathSync(tmpdir()), `velix-test-git-${process.pid}`);
 
 function createTestRepo(name: string): string {
 	const repoPath = join(TEST_DIR, name);
@@ -980,9 +977,7 @@ describe("hasUnpushedCommits", () => {
 
 describe("parsePrUrl", () => {
 	test("parses canonical GitHub PR URL", () => {
-		expect(
-			parsePrUrl("https://github.com/ezeslucky/velix/pull/1781"),
-		).toEqual({
+		expect(parsePrUrl("https://github.com/ezeslucky/velix/pull/1781")).toEqual({
 			owner: "ezeslucky",
 			repo: "velix",
 			number: 1781,
@@ -998,8 +993,8 @@ describe("parsePrUrl", () => {
 	});
 
 	test("returns null for non-PR URLs", () => {
-		expect(
-			parsePrUrl("https://github.com/ezeslucky/velix/issues/1781"),
-		).toBe(null);
+		expect(parsePrUrl("https://github.com/ezeslucky/velix/issues/1781")).toBe(
+			null,
+		);
 	});
 });

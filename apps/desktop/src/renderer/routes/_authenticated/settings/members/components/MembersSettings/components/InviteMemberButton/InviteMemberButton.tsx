@@ -1,7 +1,4 @@
-import {
-	getInvitableRoles,
-	type OrganizationRole,
-} from "@velix/shared/auth";
+import { getInvitableRoles, type OrganizationRole } from "@velix/shared/auth";
 import { alert } from "@velix/ui/atoms/Alert";
 import { Button } from "@velix/ui/button";
 import { useState } from "react";

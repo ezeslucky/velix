@@ -1,6 +1,6 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Spinner } from "@velix/ui/spinner";
 import { cn } from "@velix/ui/utils";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { LuCircleCheck, LuExternalLink, LuShieldCheck } from "react-icons/lu";
 import { electronTrpc } from "renderer/lib/electron-trpc";

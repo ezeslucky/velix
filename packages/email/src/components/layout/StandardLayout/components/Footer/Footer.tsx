@@ -40,7 +40,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 							className="block"
 						/>
 					</Link>
-					
+
 					<Link
 						href="https://www.linkedin.com/company/ezeslucky"
 						className="inline-block"

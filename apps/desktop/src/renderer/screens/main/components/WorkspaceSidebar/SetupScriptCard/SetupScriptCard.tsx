@@ -1,5 +1,5 @@
-import { SidebarCard } from "@velix/ui/sidebar-card";
 import { useNavigate } from "@tanstack/react-router";
+import { SidebarCard } from "@velix/ui/sidebar-card";
 import { AnimatePresence, motion } from "framer-motion";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 

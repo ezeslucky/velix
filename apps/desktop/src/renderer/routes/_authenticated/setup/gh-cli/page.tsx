@@ -1,5 +1,5 @@
-import { Spinner } from "@velix/ui/spinner";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Spinner } from "@velix/ui/spinner";
 import { useEffect } from "react";
 import { FaGithub } from "react-icons/fa";
 import { LuCheck, LuExternalLink, LuRefreshCw } from "react-icons/lu";

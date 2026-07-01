@@ -1,5 +1,3 @@
-
-
 const isDebugEnabled =
 	typeof process !== "undefined" &&
 	(process.env.VELIX_DEBUG === "1" || process.env.VELIX_DEBUG === "true");

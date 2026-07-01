@@ -7,8 +7,8 @@ import {
 	toRecord,
 	toStringArray,
 } from "../../utils/taskToolCallHelpers";
-import { VelixToolCall } from "../VelixToolCall";
 import { TaskItemDisplay } from "../TaskItemDisplay";
+import { VelixToolCall } from "../VelixToolCall";
 
 interface UpdateTaskToolCallProps {
 	part: ToolPart;

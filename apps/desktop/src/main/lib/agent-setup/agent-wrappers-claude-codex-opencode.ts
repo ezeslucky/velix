@@ -27,7 +27,6 @@ const CODEX_WRAPPER_EXEC_TEMPLATE_PATH = path.join(
 	"codex-wrapper-exec.template.sh",
 );
 
-
 export function getOpenCodePluginPath(): string {
 	return path.join(OPENCODE_PLUGIN_DIR, OPENCODE_PLUGIN_FILE);
 }
@@ -69,7 +68,6 @@ const CLAUDE_DYNAMIC_NOTIFY_PATH_MARKER = `$VELIX_HOME_DIR/${CLAUDE_DYNAMIC_NOTI
 function isPlainObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-
 
 export function getClaudeManagedHookCommand(): string {
 	return `[ -n "$VELIX_HOME_DIR" ] && [ -x "$VELIX_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" ] && VELIX_AGENT_ID=claude "$VELIX_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" || true`;
@@ -233,7 +231,6 @@ export function getClaudeGlobalSettingsJsonContent(
 	return JSON.stringify(existing, null, 2);
 }
 
-
 export function createClaudeSettingsJson(): void {
 	const notifyScriptPath = getNotifyScriptPath();
 	const globalPath = getClaudeGlobalSettingsJsonPath();
@@ -258,14 +255,12 @@ export function getOpenCodePluginContent(notifyPath: string): string {
 		.replace("{{NOTIFY_PATH}}", notifyPath);
 }
 
-
 export function createClaudeWrapper(): void {
 	const script = buildWrapperScript("claude", `exec "$REAL_BIN" "$@"`, {
 		agentId: "claude",
 	});
 	createWrapper("claude", script);
 }
-
 
 export function createCodexWrapper(): void {
 	const notifyPath = getNotifyScriptPath();
@@ -332,7 +327,6 @@ export function getCodexGlobalHooksJsonPath(): string {
 	return path.join(os.homedir(), ".codex", "hooks.json");
 }
 
-
 export function getCodexGlobalHooksJsonContent(
 	notifyScriptPath: string,
 ): string | null {
@@ -393,7 +387,6 @@ export function getCodexGlobalHooksJsonContent(
 
 	return JSON.stringify(existing, null, 2);
 }
-
 
 export function createCodexHooksJson(): void {
 	const notifyScriptPath = getNotifyScriptPath();

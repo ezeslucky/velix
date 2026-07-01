@@ -1,6 +1,6 @@
+import { useParams } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useParams } from "@tanstack/react-router";
 import { useCallback } from "react";
 import {
 	LuExpand,

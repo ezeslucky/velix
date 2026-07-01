@@ -1,9 +1,9 @@
 "use client";
 
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "@velix/ui/badge";
 import { Button } from "@velix/ui/button";
 import { toast } from "@velix/ui/sonner";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { GitBranch, Lock, RefreshCw, Unlock } from "lucide-react";
 import { useTRPC } from "@/trpc/react";
 

@@ -1,5 +1,5 @@
-import { getHostId, getHostName } from "@velix/shared/host-info";
 import { TRPCError } from "@trpc/server";
+import { getHostId, getHostName } from "@velix/shared/host-info";
 import { protectedProcedure } from "../../../index";
 import { ensureMainWorkspace } from "../../project/utils/ensure-main-workspace";
 import { adoptInputSchema } from "../schemas";
@@ -10,7 +10,6 @@ import {
 } from "../shared/branch-search";
 import { requireLocalProject } from "../shared/local-project";
 import type { TerminalDescriptor } from "../shared/types";
-
 
 export const adopt = protectedProcedure
 	.input(adoptInputSchema)

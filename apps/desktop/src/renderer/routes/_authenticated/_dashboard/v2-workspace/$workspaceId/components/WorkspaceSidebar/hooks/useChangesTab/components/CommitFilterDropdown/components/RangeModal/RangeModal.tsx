@@ -1,3 +1,4 @@
+import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@velix/host-service";
 import { Button } from "@velix/ui/button";
 import {
@@ -9,7 +10,6 @@ import {
 	DialogTitle,
 } from "@velix/ui/dialog";
 import { ScrollArea } from "@velix/ui/scroll-area";
-import type { inferRouterOutputs } from "@trpc/server";
 import { useEffect, useState } from "react";
 import { CommitRow } from "../CommitRow";
 

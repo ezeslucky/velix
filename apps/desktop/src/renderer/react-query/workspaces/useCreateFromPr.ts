@@ -1,5 +1,5 @@
-import type { AgentLaunchRequest } from "@velix/shared/agent-launch";
 import { useNavigate } from "@tanstack/react-router";
+import type { AgentLaunchRequest } from "@velix/shared/agent-launch";
 import { useCallback, useRef } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { navigateToWorkspace } from "renderer/routes/_authenticated/_dashboard/utils/workspace-navigation";

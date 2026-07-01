@@ -80,7 +80,6 @@ export interface CreateWorkspaceFromExternalWorktreeResult {
 	wasExisting: true;
 }
 
-
 export async function createWorkspaceFromExternalWorktree({
 	projectId,
 	branch,

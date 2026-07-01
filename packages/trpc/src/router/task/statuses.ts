@@ -1,6 +1,6 @@
+import type { TRPCRouterRecord } from "@trpc/server";
 import { db } from "@velix/db/client";
 import { taskStatuses } from "@velix/db/schema";
-import type { TRPCRouterRecord } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { protectedProcedure } from "../../trpc";
 import { requireActiveOrgMembership } from "../utils/active-org";

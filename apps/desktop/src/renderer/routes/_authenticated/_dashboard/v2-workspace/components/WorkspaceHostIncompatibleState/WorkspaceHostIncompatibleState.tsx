@@ -1,5 +1,5 @@
-import { Button } from "@velix/ui/button";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
 import { ArrowRight, ArrowUpCircle, Monitor } from "lucide-react";
 
 interface WorkspaceHostIncompatibleStateProps {
@@ -38,8 +38,7 @@ export function WorkspaceHostIncompatibleState({
 					</h1>
 					<p className="select-text cursor-text text-[13px] leading-relaxed text-muted-foreground">
 						This workspace's host is on an older version of Velix than this
-						client supports. Update the Velix app on that device to
-						reconnect.
+						client supports. Update the Velix app on that device to reconnect.
 					</p>
 				</div>
 

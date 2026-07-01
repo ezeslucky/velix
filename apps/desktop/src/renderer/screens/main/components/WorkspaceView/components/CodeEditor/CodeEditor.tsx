@@ -22,8 +22,8 @@ import {
 	keymap,
 	lineNumbers,
 } from "@codemirror/view";
-import { cn } from "@velix/ui/utils";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@velix/ui/utils";
 import { type MutableRefObject, useEffect, useRef } from "react";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import type { CodeEditorAdapter } from "renderer/screens/main/components/WorkspaceView/ContentView/components";

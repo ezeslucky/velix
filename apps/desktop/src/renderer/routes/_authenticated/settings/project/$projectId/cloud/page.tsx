@@ -1,5 +1,5 @@
-import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 
 export const Route = createFileRoute(

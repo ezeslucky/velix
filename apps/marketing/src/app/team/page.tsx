@@ -52,8 +52,8 @@ export default function TeamPage() {
 					</h1>
 
 					<p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mb-8">
-						Velix is built by a team of 3 ex YC CTOs. We want to create the
-						best team that has fun working together.
+						Velix is built by a team of 3 ex YC CTOs. We want to create the best
+						team that has fun working together.
 						<br />
 						Success will be a lagging indicator.
 					</p>

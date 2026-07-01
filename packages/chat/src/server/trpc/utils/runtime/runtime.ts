@@ -1,5 +1,5 @@
-import type { AppRouter } from "@velix/trpc";
 import type { createTRPCClient } from "@trpc/client";
+import type { AppRouter } from "@velix/trpc";
 import type { createMastraCode } from "mastracode";
 import { generateTitleFromMessage } from "../../../desktop";
 import type { ThinkingLevel } from "../../zod";

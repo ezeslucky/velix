@@ -1,10 +1,3 @@
-import type {
-	SelectTask,
-	SelectTaskStatus,
-	SelectUser,
-} from "@velix/db/schema";
-import { Badge } from "@velix/ui/badge";
-import { Checkbox } from "@velix/ui/checkbox";
 import { eq, isNull } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import {
@@ -19,6 +12,13 @@ import {
 	type Table,
 	useReactTable,
 } from "@tanstack/react-table";
+import type {
+	SelectTask,
+	SelectTaskStatus,
+	SelectUser,
+} from "@velix/db/schema";
+import { Badge } from "@velix/ui/badge";
+import { Checkbox } from "@velix/ui/checkbox";
 import { format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HiChevronRight } from "react-icons/hi2";

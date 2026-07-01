@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { getPresetById } from "@velix/shared/host-agent-presets";
 import {
 	DropdownMenu,
@@ -7,7 +8,6 @@ import {
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
 import { getPresetIcon } from "@velix/ui/icons/preset-icons";
-import { useNavigate } from "@tanstack/react-router";
 import { HiCheck } from "react-icons/hi2";
 import { LuCpu, LuSettings } from "react-icons/lu";
 import { useIsDarkTheme } from "renderer/assets/app-icons/preset-icons";

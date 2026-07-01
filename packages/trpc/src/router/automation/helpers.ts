@@ -1,11 +1,11 @@
 import { createHash } from "node:crypto";
+import { TRPCError } from "@trpc/server";
 import { db, type dbWs } from "@velix/db/client";
 import {
 	type AutomationPromptSource,
 	automationPromptVersions,
 	automations,
 } from "@velix/db/schema";
-import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 
 const PROMPT_VERSION_BUCKET_SECONDS = 600;

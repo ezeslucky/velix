@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	ModelSelector,
 	ModelSelectorContent,
@@ -10,7 +11,6 @@ import {
 import { PromptInputButton } from "@velix/ui/ai-elements/prompt-input";
 import { claudeIcon } from "@velix/ui/icons/preset-icons";
 import { workspaceTrpc } from "@velix/workspace-client";
-import { useNavigate } from "@tanstack/react-router";
 import { ChevronDownIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { PILL_BUTTON_CLASS } from "renderer/components/Chat/ChatInterface/styles";

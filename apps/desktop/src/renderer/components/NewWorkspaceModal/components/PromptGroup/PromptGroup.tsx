@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import type { AgentLaunchRequest } from "@velix/shared/agent-launch";
 import { buildPromptAgentLaunchRequest } from "@velix/shared/agent-launch-request";
 import {
@@ -34,7 +35,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@velix/ui/popover";
 import { toast } from "@velix/ui/sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { cn } from "@velix/ui/utils";
-import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	ArrowUpIcon,

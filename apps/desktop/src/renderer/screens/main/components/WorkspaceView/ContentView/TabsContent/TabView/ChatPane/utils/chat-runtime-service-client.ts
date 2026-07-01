@@ -1,8 +1,8 @@
-import { createChatRuntimeServiceClient } from "@velix/chat/client";
-import type { ChatRuntimeServiceRouter } from "@velix/chat/server/trpc";
 import type { TRPCLink } from "@trpc/client";
 import type { AnyRouter } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
+import { createChatRuntimeServiceClient } from "@velix/chat/client";
+import type { ChatRuntimeServiceRouter } from "@velix/chat/server/trpc";
 import { sessionIdLink } from "renderer/lib/session-id-link";
 import superjson from "superjson";
 import { ipcLink } from "trpc-electron/renderer";

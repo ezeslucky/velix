@@ -77,17 +77,13 @@ describe("resolveInitialCommand", () => {
 		writeFallbackScript(sandbox.repoPath);
 
 		const cmd = resolve();
-		expect(cmd).toBe(
-			`bash '${join(sandbox.repoPath, ".velix", "setup.sh")}'`,
-		);
+		expect(cmd).toBe(`bash '${join(sandbox.repoPath, ".velix", "setup.sh")}'`);
 	});
 
 	it("falls back to setup.sh when no config.json exists at all", () => {
 		writeFallbackScript(sandbox.repoPath);
 		const cmd = resolve();
-		expect(cmd).toBe(
-			`bash '${join(sandbox.repoPath, ".velix", "setup.sh")}'`,
-		);
+		expect(cmd).toBe(`bash '${join(sandbox.repoPath, ".velix", "setup.sh")}'`);
 	});
 
 	it("config setup wins over the fallback script", () => {

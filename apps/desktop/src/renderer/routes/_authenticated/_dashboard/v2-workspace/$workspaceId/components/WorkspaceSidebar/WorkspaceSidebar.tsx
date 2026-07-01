@@ -1,7 +1,7 @@
-import { Button } from "@velix/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
+import { Button } from "@velix/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { LuFile, LuGitCompareArrows } from "react-icons/lu";

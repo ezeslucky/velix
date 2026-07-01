@@ -1,7 +1,7 @@
 "use client";
 
-import { authClient } from "@velix/auth/client";
 import { useQuery } from "@tanstack/react-query";
+import { authClient } from "@velix/auth/client";
 import posthog from "posthog-js";
 import { useEffect } from "react";
 import { useTRPC } from "@/trpc/react";

@@ -1,3 +1,13 @@
+import { type Editor, Extension } from "@tiptap/core";
+import { Document } from "@tiptap/extension-document";
+import { HardBreak } from "@tiptap/extension-hard-break";
+import { History } from "@tiptap/extension-history";
+import { Paragraph } from "@tiptap/extension-paragraph";
+import Placeholder from "@tiptap/extension-placeholder";
+import { Text } from "@tiptap/extension-text";
+import { PluginKey } from "@tiptap/pm/state";
+import { EditorContent, useEditor } from "@tiptap/react";
+import Suggestion from "@tiptap/suggestion";
 import {
 	usePromptInputAttachments,
 	usePromptInputController,
@@ -12,16 +22,6 @@ import {
 } from "@velix/ui/command";
 import { Popover, PopoverAnchor, PopoverContent } from "@velix/ui/popover";
 import { cn } from "@velix/ui/utils";
-import { type Editor, Extension } from "@tiptap/core";
-import { Document } from "@tiptap/extension-document";
-import { HardBreak } from "@tiptap/extension-hard-break";
-import { History } from "@tiptap/extension-history";
-import { Paragraph } from "@tiptap/extension-paragraph";
-import Placeholder from "@tiptap/extension-placeholder";
-import { Text } from "@tiptap/extension-text";
-import { PluginKey } from "@tiptap/pm/state";
-import { EditorContent, useEditor } from "@tiptap/react";
-import Suggestion from "@tiptap/suggestion";
 
 const slashSuggestionKey = new PluginKey("slashCommandSuggestion");
 const mentionSuggestionKey = new PluginKey("fileMentionSuggestion");

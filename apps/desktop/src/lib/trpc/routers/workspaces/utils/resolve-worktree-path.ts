@@ -14,8 +14,7 @@ export function resolveWorktreePath(
 
 	const row = localDb.select().from(settings).get();
 	const baseDir =
-		row?.worktreeBaseDir ??
-		join(homedir(), VELIX_DIR_NAME, WORKTREES_DIR_NAME);
+		row?.worktreeBaseDir ?? join(homedir(), VELIX_DIR_NAME, WORKTREES_DIR_NAME);
 
 	return join(baseDir, project.name, branch);
 }

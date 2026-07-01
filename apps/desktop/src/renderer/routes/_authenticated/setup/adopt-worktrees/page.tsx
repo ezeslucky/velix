@@ -1,7 +1,7 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Checkbox } from "@velix/ui/checkbox";
 import { toast } from "@velix/ui/sonner";
 import { Spinner } from "@velix/ui/spinner";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GoGitBranch } from "react-icons/go";
 import { useEnsureV2Project } from "renderer/hooks/useEnsureV2Project";

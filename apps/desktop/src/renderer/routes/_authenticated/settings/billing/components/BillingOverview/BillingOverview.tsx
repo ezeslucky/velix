@@ -1,7 +1,7 @@
-import { Button } from "@velix/ui/button";
-import { toast } from "@velix/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
+import { toast } from "@velix/ui/sonner";
 import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi2";
 import { env } from "renderer/env.renderer";

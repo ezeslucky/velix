@@ -9,7 +9,7 @@ const publicRoutes = [
 	"/api/auth/desktop",
 	"/accept-invitation",
 	"/cli/auth/code",
-	
+
 	"/agents/remote-control/",
 ];
 

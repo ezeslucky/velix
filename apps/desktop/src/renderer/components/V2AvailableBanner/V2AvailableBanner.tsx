@@ -1,5 +1,5 @@
-import { SidebarCard } from "@velix/ui/sidebar-card";
 import { useNavigate } from "@tanstack/react-router";
+import { SidebarCard } from "@velix/ui/sidebar-card";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsV2CloudEnabled } from "renderer/hooks/useIsV2CloudEnabled";
 import { track } from "renderer/lib/analytics";

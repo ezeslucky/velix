@@ -1,3 +1,7 @@
+import { eq, or } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type {
 	SelectTask,
 	SelectTaskStatus,
@@ -5,10 +9,6 @@ import type {
 } from "@velix/db/schema";
 import { ScrollArea } from "@velix/ui/scroll-area";
 import { Separator } from "@velix/ui/separator";
-import { eq, or } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { MarkdownEditor } from "renderer/components/MarkdownEditor";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";

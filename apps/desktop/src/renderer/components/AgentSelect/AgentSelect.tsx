@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	Select,
 	SelectContent,
@@ -6,7 +7,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@velix/ui/select";
-import { useNavigate } from "@tanstack/react-router";
 import {
 	getPresetIcon,
 	useIsDarkTheme,

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { Button } from "@velix/ui/button";
 import { Card, CardContent, CardHeader } from "@velix/ui/card";
 import {
@@ -12,7 +13,6 @@ import {
 } from "@velix/ui/form";
 import { Input } from "@velix/ui/input";
 import { toast } from "@velix/ui/sonner";
-import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";

@@ -15,7 +15,6 @@ const PI_EXTENSION_TEMPLATE_PATH = path.join(
 	"pi-extension.template.ts",
 );
 
-
 export function getPiExtensionPath(): string {
 	return path.join(
 		os.homedir(),
@@ -26,12 +25,10 @@ export function getPiExtensionPath(): string {
 	);
 }
 
-
 export function getPiExtensionContent(): string {
 	const template = fs.readFileSync(PI_EXTENSION_TEMPLATE_PATH, "utf-8");
 	return template.replace("{{MARKER}}", PI_EXTENSION_MARKER);
 }
-
 
 export function createPiExtension(): void {
 	const extensionPath = getPiExtensionPath();

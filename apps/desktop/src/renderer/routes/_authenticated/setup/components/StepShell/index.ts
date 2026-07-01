@@ -1,6 +1,6 @@
 export {
 	StepHeader,
 	StepShell,
-	VelixPill,
 	useSetupChromeStore,
+	VelixPill,
 } from "./StepShell";

@@ -1,5 +1,5 @@
-import { toast } from "@velix/ui/sonner";
 import { useMatchRoute, useNavigate } from "@tanstack/react-router";
+import { toast } from "@velix/ui/sonner";
 import { useState } from "react";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";

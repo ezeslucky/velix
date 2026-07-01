@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { COMPANY } from "@velix/shared/constants";
 import {
 	DropdownMenu,
@@ -10,7 +11,6 @@ import {
 	DropdownMenuTrigger,
 } from "@velix/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@velix/ui/tooltip";
-import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 import {

@@ -1,6 +1,4 @@
 import { WorkerPoolContextProvider } from "@pierre/diffs/react";
-import { Button } from "@velix/ui/button";
-import { Spinner } from "@velix/ui/spinner";
 import {
 	createFileRoute,
 	Navigate,
@@ -8,6 +6,8 @@ import {
 	useLocation,
 	useNavigate,
 } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
+import { Spinner } from "@velix/ui/spinner";
 import { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HiOutlineWifi } from "react-icons/hi2";

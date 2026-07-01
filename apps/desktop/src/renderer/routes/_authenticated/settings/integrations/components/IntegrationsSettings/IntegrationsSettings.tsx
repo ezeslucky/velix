@@ -1,7 +1,7 @@
+import { useLiveQuery } from "@tanstack/react-db";
 import { FEATURE_FLAGS } from "@velix/shared/constants";
 import { Button } from "@velix/ui/button";
 import { Skeleton } from "@velix/ui/skeleton";
-import { useLiveQuery } from "@tanstack/react-db";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useCallback, useEffect, useState } from "react";
 import { FaGithub, FaSlack } from "react-icons/fa";

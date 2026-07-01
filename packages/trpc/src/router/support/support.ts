@@ -1,9 +1,9 @@
-import { db } from "@velix/db/client";
-import { submittedPrompts } from "@velix/db/schema";
-import { COMPANY } from "@velix/shared/constants";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { db } from "@velix/db/client";
+import { submittedPrompts } from "@velix/db/schema";
+import { COMPANY } from "@velix/shared/constants";
 import { Resend } from "resend";
 import { z } from "zod";
 import { env } from "../../env";

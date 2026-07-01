@@ -1,6 +1,6 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { db } from "@velix/db/client";
 import { teams } from "@velix/db/schema";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";

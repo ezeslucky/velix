@@ -273,6 +273,6 @@
 	"productName": "Velix",
 	"resources": "src/resources",
 	"optionalDependencies": {
-    "@velix/macos-process-metrics": "workspace:*"
-  }
+		"@velix/macos-process-metrics": "workspace:*"
+	}
 }

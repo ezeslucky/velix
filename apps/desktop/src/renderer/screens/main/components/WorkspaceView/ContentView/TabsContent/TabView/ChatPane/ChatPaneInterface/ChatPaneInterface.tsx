@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
 	chatRuntimeServiceTrpc,
 	chatServiceTrpc,
@@ -10,7 +11,6 @@ import {
 	PromptInputProvider,
 	useProviderAttachments,
 } from "@velix/ui/ai-elements/prompt-input";
-import { useQuery } from "@tanstack/react-query";
 import type { ChatStatus } from "ai";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

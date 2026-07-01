@@ -413,7 +413,6 @@ export class ChatRuntimeManager {
 		});
 	}
 
-	
 	private ensureGlobalAgentInstructions(): void {
 		const MANAGED_MARKER = "<!-- managed-by: velix -->";
 		const INSTRUCTIONS = `${MANAGED_MARKER}

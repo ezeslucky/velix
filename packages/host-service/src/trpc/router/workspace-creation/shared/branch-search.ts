@@ -61,7 +61,6 @@ export async function listWorktreeBranches(git: GitClient): Promise<{
 	return { worktreeMap, checkedOutBranches };
 }
 
-
 export async function findWorktreeAtPath(
 	git: GitClient,
 	worktreePath: string,

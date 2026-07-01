@@ -1,16 +1,12 @@
-import { chatServiceTrpc } from "@velix/chat/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { chatServiceTrpc } from "@velix/chat/client";
 import { useEffect } from "react";
 import { AnthropicOAuthDialog } from "renderer/components/Chat/ChatInterface/components/ModelPicker/components/AnthropicOAuthDialog";
 import { useAnthropicOAuth } from "renderer/components/Chat/ChatInterface/components/ModelPicker/hooks/useAnthropicOAuth";
 import { track } from "renderer/lib/analytics";
 import { useOnboardingStore } from "renderer/stores/onboarding";
 import { SetupButton } from "../../components/SetupButton";
-import {
-	StepHeader,
-	StepShell,
-	VelixPill,
-} from "../../components/StepShell";
+import { StepHeader, StepShell, VelixPill } from "../../components/StepShell";
 import { ClaudeBrandIcon } from "../components/ClaudeBrandIcon";
 import { VelixIcon } from "../components/VelixIcon";
 

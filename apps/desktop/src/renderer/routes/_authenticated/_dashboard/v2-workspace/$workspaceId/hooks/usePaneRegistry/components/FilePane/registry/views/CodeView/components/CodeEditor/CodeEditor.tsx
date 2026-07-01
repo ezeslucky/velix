@@ -24,8 +24,8 @@ import {
 	lineNumbers,
 } from "@codemirror/view";
 import { colorPicker } from "@replit/codemirror-css-color-picker";
-import { cn } from "@velix/ui/utils";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@velix/ui/utils";
 import { type MutableRefObject, useEffect, useRef } from "react";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { useResolvedTheme } from "renderer/stores/theme";

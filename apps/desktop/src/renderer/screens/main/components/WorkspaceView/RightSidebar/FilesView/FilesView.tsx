@@ -5,13 +5,13 @@ import {
 	selectionFeature,
 } from "@headless-tree/core";
 import { useTree } from "@headless-tree/react";
+import { useParams } from "@tanstack/react-router";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "@velix/ui/context-menu";
-import { useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LuFile, LuFolder } from "react-icons/lu";
 import { electronTrpc } from "renderer/lib/electron-trpc";

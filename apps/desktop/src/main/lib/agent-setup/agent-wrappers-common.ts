@@ -107,7 +107,6 @@ export function getWrapperPath(binaryName: string): string {
 }
 
 export interface BuildWrapperScriptOptions {
-	
 	agentId?: string;
 }
 

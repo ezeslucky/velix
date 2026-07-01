@@ -1,5 +1,5 @@
-import { toast } from "@velix/ui/sonner";
 import { useMatchRoute, useNavigate } from "@tanstack/react-router";
+import { toast } from "@velix/ui/sonner";
 import { useCallback } from "react";
 import { authClient } from "renderer/lib/auth-client";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";

@@ -40,11 +40,11 @@ import { RequestSandboxAccessToolCall } from "./components/RequestSandboxAccessT
 import { SkillToolCall } from "./components/SkillToolCall";
 import { StartAgentSessionToolCall } from "./components/StartAgentSessionToolCall";
 import { SubagentToolCall } from "./components/SubagentToolCall";
-import { VelixToolCall } from "./components/VelixToolCall";
 import { SwitchWorkspaceToolCall } from "./components/SwitchWorkspaceToolCall";
 import { TaskWriteToolCall } from "./components/TaskWriteToolCall";
 import { UpdateTaskToolCall } from "./components/UpdateTaskToolCall";
 import { UpdateWorkspaceToolCall } from "./components/UpdateWorkspaceToolCall";
+import { VelixToolCall } from "./components/VelixToolCall";
 import { getExecuteCommandViewModel } from "./utils/getExecuteCommandViewModel";
 import { getWebSearchViewModel } from "./utils/getWebSearchViewModel";
 
@@ -610,9 +610,7 @@ export function ToolCallBlock({
 	}
 
 	if (toolName === "mastra_workspace_delete") {
-		return (
-			<VelixToolCall part={part} toolName="Delete path" icon={FileIcon} />
-		);
+		return <VelixToolCall part={part} toolName="Delete path" icon={FileIcon} />;
 	}
 
 	if (toolName === "request_access") {

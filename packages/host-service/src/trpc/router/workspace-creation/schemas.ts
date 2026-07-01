@@ -15,7 +15,7 @@ export const adoptInputSchema = z.object({
 	branch: z.string(),
 	baseBranch: z.string().optional(),
 	existingWorkspaceId: z.string().optional(),
-	
+
 	worktreePath: z.string().optional(),
 });
 

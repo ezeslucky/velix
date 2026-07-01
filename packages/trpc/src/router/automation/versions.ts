@@ -1,10 +1,6 @@
-import { db, dbWs } from "@velix/db/client";
-import {
-	automationPromptVersions,
-	automations,
-	users,
-} from "@velix/db/schema";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
+import { db, dbWs } from "@velix/db/client";
+import { automationPromptVersions, automations, users } from "@velix/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";

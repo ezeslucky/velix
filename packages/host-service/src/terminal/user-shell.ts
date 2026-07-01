@@ -38,7 +38,6 @@ export function __setAccountShellForTesting(
 	accountShellForTesting = shell;
 }
 
-
 export function resolveConfiguredShell(
 	env: ShellEnvSource,
 	options: ResolveConfiguredShellOptions = {},

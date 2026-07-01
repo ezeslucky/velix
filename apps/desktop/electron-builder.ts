@@ -95,7 +95,7 @@ const config: Configuration = {
 	// Rebuild native modules for Electron's Node.js version
 	// npmRebuild: true,
 	npmRebuild: false,
-nodeGypRebuild: false,
+	nodeGypRebuild: false,
 
 	// macOS DMG installer
 	dmg: {

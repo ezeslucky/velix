@@ -1,6 +1,6 @@
-import { SidebarCard } from "@velix/ui/sidebar-card";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { SidebarCard } from "@velix/ui/sidebar-card";
 import { AnimatePresence, motion } from "framer-motion";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import { useV2SetupCardDismissalsStore } from "renderer/stores/v2-setup-card-dismissals";

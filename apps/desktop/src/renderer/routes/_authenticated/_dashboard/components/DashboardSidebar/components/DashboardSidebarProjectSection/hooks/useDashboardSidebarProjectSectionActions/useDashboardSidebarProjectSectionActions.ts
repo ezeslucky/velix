@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { alert } from "@velix/ui/atoms/Alert";
 import { toast } from "@velix/ui/sonner";
-import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useDashboardSidebarSectionRename } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar/components/DashboardSidebarSectionRenameContext";
 import { useDashboardSidebarState } from "renderer/routes/_authenticated/hooks/useDashboardSidebarState";

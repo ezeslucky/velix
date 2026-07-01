@@ -70,8 +70,7 @@ async function runFresh(): Promise<void> {
 	// Env takes precedence so the supervisor (or a test harness) can pin
 	// the version to a known value. Falls back to the package.json read
 	// when env is unset — that's the deployed-artifact source of truth.
-	const daemonVersion =
-		process.env.VELIX_PTY_DAEMON_VERSION ?? DAEMON_VERSION;
+	const daemonVersion = process.env.VELIX_PTY_DAEMON_VERSION ?? DAEMON_VERSION;
 	const server = new Server({
 		socketPath: args.socket,
 		daemonVersion,

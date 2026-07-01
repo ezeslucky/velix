@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import type { HostAgentConfig } from "@velix/host-service/settings";
 import type { PromptTransport } from "@velix/shared/agent-prompt-launch";
 import { Button } from "@velix/ui/button";
@@ -5,7 +6,6 @@ import { Input } from "@velix/ui/input";
 import { Label } from "@velix/ui/label";
 import { toast } from "@velix/ui/sonner";
 import { cn } from "@velix/ui/utils";
-import { useMutation } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {

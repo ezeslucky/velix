@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import {
 	projects,
 	settings,
@@ -5,7 +6,6 @@ import {
 	workspaces,
 	worktrees,
 } from "@velix/local-db";
-import { TRPCError } from "@trpc/server";
 import { eq, isNotNull, isNull } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 import { selectWorkspaceRunDefinition } from "shared/workspace-run-definition";
@@ -287,7 +287,7 @@ export const createQueryProcedures = () => {
 						worktreePath,
 						isUnread: workspace.isUnread ?? false,
 						isUnnamed: workspace.isUnnamed ?? false,
-						createdByVeix: workspace.worktreeId
+						createdByVelix: workspace.worktreeId
 							? (worktreeCreatedByVelixMap.get(workspace.worktreeId) ?? null)
 							: null,
 					};

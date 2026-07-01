@@ -1,3 +1,9 @@
+import { mergeAttributes, Node } from "@tiptap/core";
+import {
+	type NodeViewProps,
+	NodeViewWrapper,
+	ReactNodeViewRenderer,
+} from "@tiptap/react";
 import {
 	Command,
 	CommandEmpty,
@@ -7,12 +13,6 @@ import {
 } from "@velix/ui/command";
 import { Popover, PopoverAnchor, PopoverContent } from "@velix/ui/popover";
 import { cn } from "@velix/ui/utils";
-import { mergeAttributes, Node } from "@tiptap/core";
-import {
-	type NodeViewProps,
-	NodeViewWrapper,
-	ReactNodeViewRenderer,
-} from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 function SlashCommandChip({

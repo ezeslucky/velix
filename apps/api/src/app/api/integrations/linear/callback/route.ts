@@ -1,8 +1,8 @@
 import { LinearClient } from "@linear/sdk";
+import { Client } from "@upstash/qstash";
 import { db } from "@velix/db/client";
 import { integrationConnections, members } from "@velix/db/schema";
 import { linearTokenResponseSchema } from "@velix/trpc/integrations/linear";
-import { Client } from "@upstash/qstash";
 import { and, eq } from "drizzle-orm";
 
 import { env } from "@/env";

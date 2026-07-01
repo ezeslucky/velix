@@ -1,3 +1,4 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { db, dbWs } from "@velix/db/client";
 import {
 	subscriptions,
@@ -12,7 +13,6 @@ import {
 	isPaidPlan,
 } from "@velix/shared/billing";
 import { parseHostRoutingKey } from "@velix/shared/host-routing";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { jwtProcedure, protectedProcedure } from "../../trpc";

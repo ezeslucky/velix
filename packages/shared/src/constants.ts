@@ -19,12 +19,8 @@ export const COMPANY = {
 	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.velix.sh",
 	MARKETING_URL: process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh",
 	TERMS_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh"}/terms`,
-	PRIVACY_URL:
-		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh") +
-		"/privacy",
-	CHANGELOG_URL:
-		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh") +
-		"/changelog",
+	PRIVACY_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh"}/privacy`,
+	CHANGELOG_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://velix.sh"}/changelog`,
 	X_URL: "https://x.com/ezeslucky",
 	LINKEDIN_URL: "https://www.linkedin.com/company/ezeslucky",
 	YOUTUBE_URL: "https://www.youtube.com/@ezeslucky",
@@ -58,7 +54,6 @@ export const TEARDOWN_TIMEOUT_MS = 60_000;
 // PostHog
 export const POSTHOG_COOKIE_NAME = "velix";
 
-
 export const V2_ONLY_USER_CUTOFF = "2026-05-15T14:00:00.000Z";
 
 export const FEATURE_FLAGS = {
@@ -74,9 +69,9 @@ export const FEATURE_FLAGS = {
 	CLOUD_ACCESS: "cloud-access",
 	/** When enabled, blocks remote agent execution on the desktop (e.g., for enterprise orgs). */
 	DISABLE_REMOTE_AGENT: "disable-remote-agent",
-	
+
 	SLACK_MCP_V2: "slack-mcp-v2",
-	
+
 	WEB_REMOTE_CONTROL_ACCESS: "web-remote-control-access",
 	/**
 	 * Per-user override for the relay base URL. Payload shape:

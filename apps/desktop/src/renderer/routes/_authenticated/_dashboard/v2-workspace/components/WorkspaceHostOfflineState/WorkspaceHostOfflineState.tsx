@@ -1,5 +1,5 @@
-import { Button } from "@velix/ui/button";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
 import { ArrowRight, Monitor, Settings, WifiOff } from "lucide-react";
 
 interface WorkspaceHostOfflineStateProps {

@@ -1,7 +1,7 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { dbWs } from "@velix/db/client";
 import { agentCommands, commandStatusValues } from "@velix/db/schema";
 import { getCurrentTxid } from "@velix/db/utils";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";

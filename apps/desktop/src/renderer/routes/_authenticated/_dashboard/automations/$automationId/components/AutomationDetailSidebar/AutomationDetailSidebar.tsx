@@ -1,10 +1,7 @@
-import type {
-	SelectAutomation,
-	SelectAutomationRun,
-} from "@velix/db/schema";
+import { useMutation } from "@tanstack/react-query";
+import type { SelectAutomation, SelectAutomationRun } from "@velix/db/schema";
 import { formatDateTimeInTimezone } from "@velix/shared/rrule";
 import { cn } from "@velix/ui/utils";
-import { useMutation } from "@tanstack/react-query";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { DevicePicker } from "renderer/routes/_authenticated/components/DashboardNewWorkspaceModal/components/DashboardNewWorkspaceForm/components/DevicePicker";
 import { useWorkspaceHostOptions } from "renderer/routes/_authenticated/components/DashboardNewWorkspaceModal/components/DashboardNewWorkspaceForm/components/DevicePicker/hooks/useWorkspaceHostOptions/useWorkspaceHostOptions";

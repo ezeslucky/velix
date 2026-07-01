@@ -594,9 +594,7 @@ export async function runSlackAgent(
 			}),
 		]);
 
-		const deniedTools = useV2
-			? DENIED_VElIX_TOOLS_V2
-			: DENIED_VElIX_TOOLS_V1;
+		const deniedTools = useV2 ? DENIED_VELIX_TOOLS_V2 : DENIED_VELIX_TOOLS_V1;
 		const velixTools = velixToolsResult.tools
 			.filter((t) => !deniedTools.has(t.name))
 			.map((t) => mcpToolToAnthropicTool(t, "velix"));

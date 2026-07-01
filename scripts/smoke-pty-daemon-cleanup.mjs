@@ -506,8 +506,7 @@ async function findProductionDaemon(orgId) {
 }
 
 function listProductionDaemonManifests() {
-	const home =
-		process.env.VELIX_HOME_DIR || path.join(os.homedir(), ".velix");
+	const home = process.env.VELIX_HOME_DIR || path.join(os.homedir(), ".velix");
 	const hostDir = path.join(home, "host");
 	if (!existsSync(hostDir)) return [];
 

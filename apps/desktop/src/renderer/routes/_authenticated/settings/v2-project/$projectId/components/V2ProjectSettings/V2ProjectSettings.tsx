@@ -1,3 +1,7 @@
+import { eq } from "@tanstack/db";
+import { useLiveQuery } from "@tanstack/react-db";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import {
 	Select,
 	SelectContent,
@@ -5,10 +9,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@velix/ui/select";
-import { eq } from "@tanstack/db";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { HiOutlineComputerDesktop, HiOutlineServer } from "react-icons/hi2";
 import { useHostUrl } from "renderer/hooks/host-service/useHostTargetUrl";

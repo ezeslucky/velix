@@ -1,4 +1,3 @@
-
 export const DEFAULT_TERMINAL_COLORS_DARK: TerminalColors = {
 	background: "#000000",
 	foreground: "#ffffff",

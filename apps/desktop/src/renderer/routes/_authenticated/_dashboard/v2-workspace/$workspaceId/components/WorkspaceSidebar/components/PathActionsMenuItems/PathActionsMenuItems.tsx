@@ -1,7 +1,4 @@
-import {
-	ContextMenuItem,
-	ContextMenuSeparator,
-} from "@velix/ui/context-menu";
+import { ContextMenuItem, ContextMenuSeparator } from "@velix/ui/context-menu";
 import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,

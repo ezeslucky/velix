@@ -1,8 +1,8 @@
+import { TRPCError } from "@trpc/server";
 import {
 	REMOTE_CONTROL_MAX_TTL_SEC,
 	REMOTE_CONTROL_MIN_TTL_SEC,
 } from "@velix/shared/remote-control-protocol";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
 	listActiveSessions,

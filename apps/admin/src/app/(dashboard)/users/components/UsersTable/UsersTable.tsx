@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getInitials } from "@velix/shared/names";
 import {
 	AlertDialog,
@@ -35,7 +36,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@velix/ui/table";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { LuEllipsis, LuLoaderCircle, LuTrash2, LuUser } from "react-icons/lu";

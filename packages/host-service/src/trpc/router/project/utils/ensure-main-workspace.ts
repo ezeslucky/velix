@@ -1,5 +1,5 @@
-import { getHostId, getHostName } from "@velix/shared/host-info";
 import { TRPCError } from "@trpc/server";
+import { getHostId, getHostName } from "@velix/shared/host-info";
 import { workspaces } from "../../../../db/schema";
 import type { HostServiceContext } from "../../../../types";
 

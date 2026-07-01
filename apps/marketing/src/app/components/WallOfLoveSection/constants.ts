@@ -52,8 +52,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: "5",
-		content:
-			"Was using Warp, but now @velix_sh has become my primary terminal",
+		content: "Was using Warp, but now @velix_sh has become my primary terminal",
 		author: "Eric Clemmons",
 		handle: "@ericclemmons",
 		role: "Principal Engineer at Cloudflare",
@@ -104,8 +103,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: "11",
-		content:
-			"velix became my default tools now so keep the great work folks",
+		content: "velix became my default tools now so keep the great work folks",
 		author: "Vlad Arbatov",
 		handle: "@vladzima",
 		role: "Founding Engineer at Loyal",

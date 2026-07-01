@@ -1,7 +1,7 @@
-import { Button } from "@velix/ui/button";
-import { Checkbox } from "@velix/ui/checkbox";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@velix/ui/button";
+import { Checkbox } from "@velix/ui/checkbox";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { GoGitPullRequest } from "react-icons/go";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";

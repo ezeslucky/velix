@@ -12,13 +12,11 @@ import {
 
 import { organizations, users } from "./auth";
 
-
 export const githubInstallations = pgTable(
 	"github_installations",
 	{
 		id: uuid().primaryKey().defaultRandom(),
 
-		
 		organizationId: uuid("organization_id")
 			.notNull()
 			.references(() => organizations.id, { onDelete: "cascade" }),

@@ -1,6 +1,6 @@
+import type { TRPCRouterRecord } from "@trpc/server";
 import { db } from "@velix/db/client";
 import { users } from "@velix/db/schema";
-import type { TRPCRouterRecord } from "@trpc/server";
 import { inArray } from "drizzle-orm";
 import { z } from "zod";
 

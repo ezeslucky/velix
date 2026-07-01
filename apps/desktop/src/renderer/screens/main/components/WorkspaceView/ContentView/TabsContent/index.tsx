@@ -1,5 +1,5 @@
-import type { ExternalApp } from "@velix/local-db";
 import { useParams } from "@tanstack/react-router";
+import type { ExternalApp } from "@velix/local-db";
 import { useEffect, useMemo, useRef } from "react";
 import { useTabsStore } from "renderer/stores/tabs/store";
 import { resolveActiveTabIdForWorkspace } from "renderer/stores/tabs/utils";

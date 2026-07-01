@@ -1,4 +1,5 @@
 import type { LinearClient, WorkflowState } from "@linear/sdk";
+import { Receiver } from "@upstash/qstash";
 import { db } from "@velix/db/client";
 import type { LinearConfig, SelectTask } from "@velix/db/schema";
 import {
@@ -12,7 +13,6 @@ import {
 	getLinearClient,
 	mapPriorityToLinear,
 } from "@velix/trpc/integrations/linear";
-import { Receiver } from "@upstash/qstash";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "@/env";
