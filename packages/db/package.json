@@ -41,7 +41,7 @@
 		"typecheck": "tsc --noEmit --emitDeclarationOnly false"
 	},
 	"dependencies": {
-		"@neondatabase/serverless": "1.0.2",
+		"@neondatabase/serverless": "1.1.0",
 		"@t3-oss/env-core": "0.13.11",
 		"@velix/shared": "workspace:*",
 		"dotenv": "17.3.1",
