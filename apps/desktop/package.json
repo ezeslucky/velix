@@ -240,7 +240,7 @@
 	},
 	"devDependencies": {
 		"@sentry/vite-plugin": "4.9.1",
-		"@tailwindcss/vite": "4.2.2",
+		"@tailwindcss/vite": "4.3.2",
 		"@tanstack/router-cli": "1.166.23",
 		"@tanstack/router-plugin": "1.167.9",
 		"@types/better-sqlite3": "7.6.13",
