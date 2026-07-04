@@ -24,6 +24,9 @@ import { bearer, customSession, organization } from "better-auth/plugins";
 import { jwt } from "better-auth/plugins/jwt";
 import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import type Stripe from "stripe";
+// Side-effect import: registers the stripe + razorpay billing providers so
+// getProvider() works across the process (tRPC billing router, webhook route).
+import "./billing/register";
 import { env } from "./env";
 import { acceptInvitationEndpoint } from "./lib/accept-invitation-endpoint";
 import { generateMagicTokenForInvite } from "./lib/generate-magic-token";

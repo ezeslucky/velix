@@ -231,7 +231,9 @@ export type InsertIntegrationConnection =
 export type SelectIntegrationConnection =
 	typeof integrationConnections.$inferSelect;
 
-// Stripe subscriptions (org-based billing)
+// Org-based billing subscriptions. Provider-agnostic: `provider` selects which
+// payment processor owns the row; the `stripe*` / `razorpay*` columns hold that
+// provider's identifiers. Existing rows backfill to "stripe" via the default.
 export const subscriptions = pgTable(
 	"subscriptions",
 	{
@@ -240,8 +242,15 @@ export const subscriptions = pgTable(
 		referenceId: uuid("reference_id")
 			.notNull()
 			.references(() => organizations.id, { onDelete: "cascade" }),
+		// "stripe" | "razorpay". Existing rows backfill to "stripe"; new
+		// subscriptions are created as "razorpay". Every servicing operation
+		// dispatches on this column.
+		provider: text().notNull().default("stripe"),
 		stripeCustomerId: text("stripe_customer_id"),
 		stripeSubscriptionId: text("stripe_subscription_id"),
+		razorpayCustomerId: text("razorpay_customer_id"),
+		razorpaySubscriptionId: text("razorpay_subscription_id"),
+		razorpayPlanId: text("razorpay_plan_id"),
 		status: text().default("incomplete").notNull(),
 		periodStart: timestamp("period_start"),
 		periodEnd: timestamp("period_end"),
@@ -263,6 +272,9 @@ export const subscriptions = pgTable(
 	(table) => [
 		index("subscriptions_reference_id_idx").on(table.referenceId),
 		index("subscriptions_stripe_customer_id_idx").on(table.stripeCustomerId),
+		index("subscriptions_razorpay_subscription_id_idx").on(
+			table.razorpaySubscriptionId,
+		),
 		index("subscriptions_status_idx").on(table.status),
 	],
 );

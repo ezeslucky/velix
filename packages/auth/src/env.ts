@@ -15,11 +15,18 @@ export const env = createEnv({
 		RESEND_API_KEY: z.string(),
 		KV_REST_API_URL: z.string(),
 		KV_REST_API_TOKEN: z.string(),
+		// Stripe stays configured while it services existing subscribers
+		// (webhooks, cancel, invoices). New subscriptions go to Razorpay.
 		STRIPE_SECRET_KEY: z.string(),
 		STRIPE_WEBHOOK_SECRET: z.string(),
 		STRIPE_PRO_MONTHLY_PRICE_ID: z.string(),
 		STRIPE_PRO_YEARLY_PRICE_ID: z.string(),
 		STRIPE_ENTERPRISE_YEARLY_PRICE_ID: z.string(),
+		RAZORPAY_KEY_ID: z.string(),
+		RAZORPAY_KEY_SECRET: z.string(),
+		RAZORPAY_WEBHOOK_SECRET: z.string(),
+		RAZORPAY_PRO_MONTHLY_PLAN_ID: z.string(),
+		RAZORPAY_PRO_YEARLY_PLAN_ID: z.string(),
 		QSTASH_TOKEN: z.string().min(1),
 		SLACK_BILLING_WEBHOOK_URL: z.string().url(),
 	},

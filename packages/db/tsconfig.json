@@ -1,6 +1,7 @@
 {
 	"extends": "@velix/typescript/internal-package.json",
 	"compilerOptions": {
+		//@ts-ignore
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"]

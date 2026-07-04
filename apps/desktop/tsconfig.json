@@ -1,11 +1,9 @@
 {
 	"extends": "@velix/typescript/electron.json",
 	"compilerOptions": {
-		"ignoreDeprecations": "5.0",
 		"types": ["bun"],
-		"baseUrl": ".",
 		"paths": {
-			"*": ["src/*"],
+			"*": ["./src/*"],
 			"~/*": ["./*"]
 		}
 	},

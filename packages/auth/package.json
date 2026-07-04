@@ -19,6 +19,10 @@
 		"./stripe": {
 			"types": "./src/stripe.ts",
 			"default": "./src/stripe.ts"
+		},
+		"./razorpay": {
+			"types": "./src/razorpay.ts",
+			"default": "./src/razorpay.ts"
 		}
 	},
 	"scripts": {
@@ -42,6 +46,7 @@
 		"better-auth": "1.6.5",
 		"dotenv": "17.3.1",
 		"drizzle-orm": "0.45.2",
+		"razorpay": "2.9.6",
 		"resend": "4.8.0",
 		"stripe": "20.4.1",
 		"zod": "4.3.6"

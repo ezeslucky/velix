@@ -11,7 +11,7 @@
 #          keyboard — "Mechanical Keyboard Typing HD" by VirtualZero (Pixabay).
 # Individual keystrokes are sliced out of keyboard.mp3 and dropped onto the
 # .tape timeline (one random sample per key, with slight pitch/level jitter).
-# If keyboard.mp3 is missing, the clicks fall back to a numpy synth.
+# If keyboard.mp3 is missing, the clicks fall back to a Go synth.
 set -euo pipefail
 cd "$(dirname "$0")/.."          # -> packages/cli
 SRC=demo/velix-cli.mp4
@@ -22,6 +22,11 @@ OUT=demo/velix-cli-sound.mp4
 TMP=$(mktemp -d -t demo-sound)
 CLICKS="$TMP/clicks.wav"
 
+# Build the Go sound tools once into $TMP (module lives in demo/).
+EXE=""; [ "${OS:-}" = "Windows_NT" ] && EXE=".exe"
+( cd demo && go build -o "$TMP/extract-keys$EXE" ./extractkeys \
+           && go build -o "$TMP/gen-audio$EXE"   ./genaudio )
+
 [ -f "$SRC" ]   || { echo "missing $SRC — run: vhs demo/velix-cli.tape" >&2; exit 1; }
 [ -f "$MUSIC" ] || { echo "missing music bed: $MUSIC" >&2; exit 1; }
 DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$SRC")
@@ -31,12 +36,12 @@ KEYS_ARG=""
 if [ -f "$KB" ]; then
   echo "slicing keystroke samples from $KB ..."
   ffmpeg -y -loglevel error -i "$KB" -ac 1 -ar 44100 "$TMP/kb.wav"
-  python3 demo/extract_keys.py "$TMP/kb.wav" "$TMP/keys"
+  "$TMP/extract-keys$EXE" "$TMP/kb.wav" "$TMP/keys"
   KEYS_ARG="$TMP/keys"
 fi
 
 echo "placing clicks on the timeline..."
-python3 demo/gen_audio.py "$TAPE" "$CLICKS" "$DUR" "$KEYS_ARG"
+"$TMP/gen-audio$EXE" "$TAPE" "$CLICKS" "$DUR" "$KEYS_ARG"
 
 # [music]  -> trim to video length, fade in/out, light low-pass, drop the level
 # [clicks] -> as-is (already left headroom); mix, keep under the ceiling
