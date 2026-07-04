@@ -66,6 +66,7 @@ Velix works with any CLI-based coding agent.
 ```bash
 git clone https://github.com/ezeslucky/velix.git
 cd velix
+./.velix/setup.local.sh
 ```
 
 ### Install Dependencies
