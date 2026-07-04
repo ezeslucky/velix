@@ -23,7 +23,7 @@ export default async function CliAuthCodePage({
 						src="/title.svg"
 						alt="Velix"
 						width={140}
-						height={24}
+						height={15}
 						priority
 					/>
 				</a>

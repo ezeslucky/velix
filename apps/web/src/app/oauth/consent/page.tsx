@@ -34,7 +34,7 @@ export default async function ConsentPage({ searchParams }: ConsentPageProps) {
 							src="/title.svg"
 							alt="Velix"
 							width={140}
-							height={24}
+							height={15}
 							priority
 						/>
 					</a>
@@ -79,7 +79,7 @@ export default async function ConsentPage({ searchParams }: ConsentPageProps) {
 						src="/title.svg"
 						alt="Velix"
 						width={140}
-						height={24}
+						height={15}
 						priority
 					/>
 				</a>

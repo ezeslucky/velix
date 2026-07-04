@@ -58,7 +58,7 @@ export function Header() {
 						src="/title.svg"
 						alt="Velix"
 						width={150}
-						height={25}
+						height={15}
 						priority
 					/>
 				</Link>
