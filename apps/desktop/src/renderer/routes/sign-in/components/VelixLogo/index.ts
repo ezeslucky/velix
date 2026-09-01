@@ -1,1 +1,0 @@
-export { VelixLogo } from "./VelixLogo";

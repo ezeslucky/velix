@@ -1,1 +1,0 @@
-ALTER TABLE `worktrees` ADD `created_by_velix` integer DEFAULT true NOT NULL;

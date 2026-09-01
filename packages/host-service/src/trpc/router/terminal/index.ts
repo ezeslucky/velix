@@ -1,1 +1,0 @@
-export { terminalRouter } from "./terminal";

@@ -1,0 +1,697 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import './fonts/fonts.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* Prefer light native form controls (number spinners, etc.) */
+  color-scheme: light;
+
+  /* Font families */
+  --font-family-sans: 'Inter', -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+  --font-family-mono:
+    'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
+
+  /* Font sizes (defaults, overridden by JS based on preferences) */
+  --ui-font-size: 16px;
+  --ui-line-height: 1.6;
+  --chat-font-size: 16px;
+  --chat-line-height: 1.5;
+  --app-zoom: 1;
+  /* Font weights (defaults, overridden by JS based on preferences) */
+  --ui-font-weight: 400;
+  --chat-font-weight: 400;
+  /* Chat font family (can be monospace or sans-serif) */
+  --font-family-chat:
+    'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
+
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --warning: #fcd452;
+  --success: #22c55e;
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --toast-background: var(--popover);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+}
+
+.dark {
+  /* Prefer dark native form controls so spin buttons/chevrons are light */
+  color-scheme: dark;
+
+  /* Coolify-inspired coolgray color scheme */
+  --background: #101010; /* base */
+  --foreground: #fafafa; /* light text */
+  --card: #181818; /* coolgray-100 */
+  --card-foreground: #fafafa;
+  --popover: #181818; /* coolgray-100 */
+  --popover-foreground: #fafafa;
+  --primary: #fcd452; /* yellow accent */
+  --primary-foreground: #101010; /* dark text on yellow */
+  --secondary: #202020; /* coolgray-200 */
+  --secondary-foreground: #fafafa;
+  --muted: #242424; /* coolgray-300 */
+  --muted-foreground: #a1a1a1; /* gray text */
+  --accent: #282828; /* coolgray-400 */
+  --accent-foreground: #fafafa;
+  --destructive: #dc2626; /* error red */
+  --warning: #fcd452; /* yellow */
+  --success: #22c55e; /* green */
+  --border: #323232; /* coolgray-500 */
+  --input: #323232; /* coolgray-500 */
+  --ring: #fcd452; /* yellow focus ring */
+  --chart-1: #fcd452;
+  --chart-2: #22c55e;
+  --chart-3: #6b16ed;
+  --chart-4: #dc2626;
+  --chart-5: #3b82f6;
+  --sidebar: #101010; /* matches background */
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #fcd452; /* yellow */
+  --sidebar-primary-foreground: #101010;
+  --sidebar-accent: #282828; /* coolgray-400 */
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #323232; /* coolgray-500 */
+  --sidebar-ring: #fcd452;
+  --toast-background: #2a2a2a; /* distinct from app bg (#101010) and chat input (#181818) */
+  --toast-border: #3a3a3a;
+}
+
+/* Wave animation for vibing indicator */
+@keyframes wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+}
+
+.animate-wave {
+  animation: wave 0.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Blink animation for waiting indicator */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s ease-in-out infinite;
+}
+
+/* Border spin animation for running indicator */
+@keyframes border-spin {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-border-spin {
+  animation: border-spin 1s linear infinite;
+}
+
+/* Square spinner: rotating conic-gradient border */
+.square-spinner {
+  --spinner-color: oklch(0.795 0.184 86.047); /* yellow-500 */
+  position: relative;
+  background: color-mix(in srgb, var(--spinner-color) 10%, transparent);
+  border-radius: 2px;
+}
+.square-spinner::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 3px;
+  background: conic-gradient(
+    from var(--spinner-angle, 0deg),
+    transparent 60%,
+    var(--spinner-color) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  padding: 2px;
+  animation: square-spin 1s linear infinite;
+}
+@keyframes square-spin {
+  to {
+    --spinner-angle: 360deg;
+  }
+}
+@property --spinner-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Failed terminal: static red square (no spinning) */
+.square-spinner-failed {
+  --spinner-color: oklch(0.637 0.237 25.331); /* red-500 */
+  position: relative;
+  background: color-mix(in srgb, var(--spinner-color) 25%, transparent);
+  border: 1px solid var(--spinner-color);
+  border-radius: 2px;
+}
+
+/* Animated border for session cards in running state.
+   Uses transform:rotate on an oversized conic-gradient pseudo-element
+   (WebKit doesn't support @property animation needed for the from-angle approach). */
+.card-border-spin {
+  --card-spin-color: oklch(0.795 0.184 86.047); /* yellow-500 */
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 1.5px;
+}
+.card-border-spin::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(
+    transparent 0%,
+    transparent 70%,
+    var(--card-spin-color) 100%
+  );
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: card-border-rotate 2s linear infinite;
+}
+@keyframes card-border-rotate {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+.card-border-spin:hover::before {
+  background: var(--card-spin-color);
+  animation: none;
+}
+.card-border-spin--destructive {
+  --card-spin-color: var(--destructive);
+}
+
+/* Animated dots for loading indicator */
+@keyframes dots {
+  0%,
+  20% {
+    content: '';
+  }
+  40% {
+    content: '.';
+  }
+  60% {
+    content: '..';
+  }
+  80%,
+  100% {
+    content: '...';
+  }
+}
+
+.animate-dots::after {
+  content: '';
+  display: inline-block;
+  width: 1.5ch;
+  text-align: left;
+  animation: dots 1.5s steps(1, end) infinite;
+}
+
+/* Collapsible animations */
+@keyframes collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.animate-collapsible-down {
+  animation: collapsible-down 150ms ease-out;
+}
+
+.animate-collapsible-up {
+  animation: collapsible-up 150ms ease-out;
+}
+
+/* Force GPU compositing layer on scroll viewport to prevent WebKit blank-screen bug.
+   Without this, rapid programmatic scrollTop changes during CSS collapse animations
+   can leave the viewport visually blank until a user scroll gesture forces a repaint. */
+.will-change-scroll {
+  will-change: scroll-position;
+  -webkit-transform: translateZ(0);
+}
+
+/* Bell ring animation for unread notifications */
+@keyframes bell-ring {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0deg);
+  }
+  5% {
+    transform: rotate(14deg);
+  }
+  10% {
+    transform: rotate(-12deg);
+  }
+  15% {
+    transform: rotate(10deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  30% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Pulsing glow for running terminal icon indicator (opacity-based, GPU-friendly) */
+@keyframes icon-glow {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-icon-glow {
+  animation: icon-glow 2s ease-in-out infinite;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 outline-none;
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+    min-height: 100dvh;
+    background: var(--background);
+  }
+
+  html {
+    @apply bg-background;
+  }
+
+  body {
+    @apply text-foreground;
+    /* Grayscale AA looks cleaner on HiDPI / Retina. On 1x external LCDs it
+       often makes text look soft — see max-resolution override below. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100dvh;
+    min-width: 100vw;
+    position: relative;
+  }
+
+  /* Non-retina / 1× displays (typical external monitors): let the platform
+     use its default anti-aliasing. Forced grayscale AA is a common source of
+     "blurry Jean text" on macOS multi-monitor setups. */
+  @media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 1dppx) {
+    body {
+      -webkit-font-smoothing: auto;
+      -moz-osx-font-smoothing: auto;
+    }
+  }
+
+  #root {
+    isolation: isolate;
+  }
+
+  /* Desktop-only styles — applied when body has .native-app class */
+  body.native-app {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body.native-app * {
+    cursor: default;
+  }
+
+  /* Use app background color so native titlebar overlay area blends in */
+  html:has(body.native-app) {
+    background: hsl(var(--background));
+  }
+
+  svg {
+    color: inherit;
+  }
+
+  /* Allow text selection in specific areas */
+  input,
+  textarea,
+  [contenteditable='true'],
+  .select-text,
+  .select-text * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    cursor: text !important;
+  }
+
+  /* Tool-call header rows live inside .select-text chat. Keep them
+     unselectable so the whole line is a click target, not a drag-select. */
+  .select-text .tool-call-row,
+  .select-text .tool-call-row * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+  }
+
+  /* Links should always have pointer cursor */
+  a,
+  .select-text a,
+  .select-text a * {
+    cursor: pointer !important;
+  }
+
+  /* Utility class for when pointer cursor is explicitly needed */
+  .cursor-pointer,
+  .cursor-pointer * {
+    cursor: pointer !important;
+  }
+}
+
+/* Ensure toast notifications remain clickable above Radix modal overlays.
+   Radix Dialog (modal mode) sets pointer-events:none on <body>;
+   App Toaster sets an explicit topmost z-index, and this restores pointer events. */
+[data-sonner-toaster] {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
+}
+
+[data-sonner-toaster] [data-sonner-toast] {
+  pointer-events: auto !important;
+}
+
+/* Make text column grow so action/cancel buttons align to the right edge
+   regardless of title length. Sonner ships [data-content] with flex-column
+   only; without flex:1 the buttons sit flush to text and shift per-toast. */
+[data-sonner-toaster] [data-sonner-toast] [data-content] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Ensures the title bar window controls (minimize, maximize, close) remain clickable
+   above Radix modal overlays (e.g. onboarding dialog). The title bar uses
+   data-tauri-drag-region and z-[60] to sit above the z-50 dialog overlay. */
+[data-tauri-drag-region] {
+  pointer-events: auto !important;
+}
+
+/* Font overrides - outside @layer to ensure higher specificity */
+body {
+  font-family: var(--font-family-sans) !important;
+  font-size: var(--ui-font-size) !important;
+  font-weight: var(--ui-font-weight) !important;
+  line-height: var(--ui-line-height) !important;
+}
+
+/* Text size overrides - scale relative to UI font preference */
+.text-xs {
+  font-size: calc(var(--ui-font-size) * 0.85) !important;
+}
+.text-sm {
+  font-size: var(--ui-font-size) !important;
+}
+.text-base {
+  font-size: var(--ui-font-size) !important;
+}
+.text-lg {
+  font-size: calc(var(--ui-font-size) * 1.15) !important;
+}
+.text-xl {
+  font-size: calc(var(--ui-font-size) * 1.25) !important;
+}
+.text-2xl {
+  font-size: calc(var(--ui-font-size) * 1.5) !important;
+}
+
+/* Monospace elements (code blocks inside markdown, etc.) - use fixed mono font */
+code,
+pre,
+kbd {
+  font-family: var(--font-family-mono) !important;
+}
+
+/* Keyboard shortcut indicators only make sense in the native desktop app. */
+body:not(.native-app) kbd {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  kbd {
+    display: none !important;
+  }
+}
+
+/* UI text styling - font-sans uses UI font preference */
+.font-sans {
+  font-family: var(--font-family-sans) !important;
+}
+
+/* Chat text styling - font-mono in chat context uses chat font preference */
+.font-mono {
+  font-family: var(--font-family-chat) !important;
+  font-size: var(--chat-font-size) !important;
+  line-height: var(--chat-line-height) !important;
+}
+
+/* Inside chat context (.font-mono), text sizes scale relative to chat font */
+.font-mono .text-xs {
+  font-size: calc(var(--chat-font-size) * 0.85) !important;
+}
+.font-mono .text-sm {
+  font-size: var(--chat-font-size) !important;
+}
+.font-mono .text-base {
+  font-size: var(--chat-font-size) !important;
+}
+.font-mono .text-lg {
+  font-size: calc(var(--chat-font-size) * 1.15) !important;
+}
+.font-mono .text-xl {
+  font-size: calc(var(--chat-font-size) * 1.25) !important;
+}
+.font-mono .text-2xl {
+  font-size: calc(var(--chat-font-size) * 1.5) !important;
+}
+
+/* Hidden scrollbar for horizontally scrollable tab bars */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* Settings search highlight flash */
+@keyframes settings-highlight-flash {
+  0%,
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+  15% {
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+    box-shadow:
+      0 0 0 8px color-mix(in srgb, var(--primary) 12%, transparent),
+      0 0 0 10px color-mix(in srgb, var(--primary) 25%, transparent);
+  }
+}
+.settings-search-highlight {
+  animation: settings-highlight-flash 1.8s ease-out;
+  border-radius: calc(var(--radius) - 2px);
+}
+
+/* Number input spinners inherit color-scheme from .dark (light arrows).
+   Keep an explicit rule so nested light color-scheme overrides can't darken them. */
+.dark input[type='number'] {
+  color-scheme: dark;
+}
+
+/* Chat search highlights (CSS Custom Highlight API) */
+::highlight(chat-search) {
+  background-color: rgba(250, 204, 21, 0.4);
+}
+::highlight(chat-search-active) {
+  background-color: rgba(251, 146, 60, 0.75);
+}
+.dark ::highlight(chat-search) {
+  background-color: rgba(250, 204, 21, 0.3);
+}
+.dark ::highlight(chat-search-active) {
+  background-color: rgba(251, 146, 60, 0.6);
+}
+
+/* Global custom scrollbar — applies to every scrollable element so Windows
+   WebView2 doesn't render its native gray scrollbar. */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+  background-clip: padding-box;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.xterm .composition-view {
+  color: var(--foreground) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-wave,
+  .animate-blink,
+  .animate-border-spin,
+  .animate-icon-glow,
+  .animate-dots,
+  .animate-spin,
+  .animate-pulse,
+  [class*='bell-ring'],
+  .square-spinner::before,
+  .card-border-spin::before {
+    animation: none !important;
+  }
+}
+
+.window-blurred .animate-wave,
+.window-blurred .animate-blink,
+.window-blurred .animate-border-spin,
+.window-blurred .animate-icon-glow,
+.window-blurred .animate-dots,
+.window-blurred .animate-spin,
+.window-blurred .animate-pulse,
+.window-blurred [class*='bell-ring'],
+.window-blurred .card-border-spin::before,
+.window-blurred .square-spinner::before {
+  animation-play-state: paused !important;
+}

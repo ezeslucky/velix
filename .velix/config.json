@@ -1,5 +1,0 @@
-{
-	"setup": ["./.velix/setup.sh"],
-	"teardown": ["./.velix/teardown.sh"],
-	"run": ["bun dev"]
-}

@@ -1,1 +1,0 @@
-ALTER TABLE `settings` ADD `agent_preset_permissions_migrated_at` integer;

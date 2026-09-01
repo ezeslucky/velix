@@ -1,1 +1,0 @@
-export { notificationsRouter } from "./notifications";
