@@ -1,0 +1,1327 @@
+import { useEffect, useRef } from 'react'
+import { listen, listenLocal, invoke } from '@/lib/transport'
+import { isNativeApp, hasBackend } from '@/lib/environment'
+import { notify } from '@/lib/notifications'
+import { useQueryClient, type QueryClient } from '@tanstack/react-query'
+import { useUIStore } from '@/store/ui-store'
+import { useProjectsStore } from '@/store/projects-store'
+import { useChatStore } from '@/store/chat-store'
+import { isPanelTerminal, useTerminalStore } from '@/store/terminal-store'
+import { useBrowserStore } from '@/store/browser-store'
+import { projectsQueryKeys } from '@/services/projects'
+import { chatQueryKeys } from '@/services/chat'
+import type {
+  AllSessionsResponse,
+  QueuedMessage,
+  Session,
+  WorktreeSessions,
+} from '@/types/chat'
+import { disposeTerminal, startHeadless } from '@/lib/terminal-instances'
+import { toast } from 'sonner'
+import { useCommandContext } from './use-command-context'
+import { usePreferences } from '@/services/preferences'
+import { logger } from '@/lib/logger'
+import {
+  eventToShortcutString,
+  isModKeyEvent,
+  DEFAULT_KEYBINDINGS,
+  type KeybindingAction,
+  type KeybindingsMap,
+} from '@/types/keybindings'
+import { installWindowKeyboardFocusRestore } from '@/lib/restore-keyboard-focus'
+import { useIsMobile } from '@/hooks/use-mobile'
+
+const PLAN_DIALOG_APPROVAL_ACTIONS = new Set<KeybindingAction>([
+  'approve_plan',
+  'approve_plan_yolo',
+  'approve_plan_clear_context',
+  'approve_plan_clear_context_build',
+  'approve_plan_worktree_build',
+  'approve_plan_worktree_yolo',
+])
+
+interface RunEnvironmentStartedEvent {
+  worktreeId: string
+  terminalId: string
+  command: string
+}
+
+export function handleRunEnvironmentStarted(
+  payload: RunEnvironmentStartedEvent
+): void {
+  const terminalStore = useTerminalStore.getState()
+  terminalStore.registerStartedRun(
+    payload.worktreeId,
+    payload.terminalId,
+    payload.command
+  )
+
+  const uiState = useUIStore.getState()
+  if (
+    uiState.sessionChatModalOpen &&
+    uiState.sessionChatModalWorktreeId === payload.worktreeId
+  ) {
+    terminalStore.setModalTerminalOpen(payload.worktreeId, true)
+  }
+}
+
+export function shouldLetPlanDialogHandleAction(
+  action: KeybindingAction,
+  planDialogOpen: boolean
+): boolean {
+  return planDialogOpen && PLAN_DIALOG_APPROVAL_ACTIONS.has(action)
+}
+
+export function shouldLetChatInputHandleAction(
+  action: KeybindingAction,
+  target: EventTarget | null,
+  planDialogOpen: boolean
+): boolean {
+  return (
+    action === 'approve_plan' &&
+    !planDialogOpen &&
+    target instanceof Element &&
+    target.closest('[data-chat-input]') !== null
+  )
+}
+
+export function findKeybindingAction(
+  shortcut: string,
+  keybindings: KeybindingsMap
+): KeybindingAction | null {
+  for (const [action, binding] of Object.entries(keybindings)) {
+    if (binding === shortcut) return action as KeybindingAction
+  }
+
+  return null
+}
+
+export function useWindowKeyboardFocusRestore() {
+  const isMobile = useIsMobile()
+
+  useEffect(() => {
+    if (!isNativeApp() || isMobile) return
+    return installWindowKeyboardFocusRestore()
+  }, [isMobile])
+}
+
+/**
+ * Keybindings that intentionally re-fire while a key is held (OS key-repeat).
+ * Everything else is one-shot: a held Ctrl+W must not cascade-close terminals
+ * or sessions (GitHub issue #56).
+ */
+const KEYBINDING_ACTIONS_ALLOWING_REPEAT = new Set<KeybindingAction>([
+  'scroll_chat_up',
+  'scroll_chat_down',
+  'scroll_chat_up_medium',
+  'scroll_chat_down_medium',
+  'scroll_chat_up_small',
+  'scroll_chat_down_small',
+  'next_session',
+  'previous_session',
+])
+
+/** Whether OS key-repeat should re-execute this keybinding action. */
+export function allowsKeybindingRepeat(action: KeybindingAction): boolean {
+  return KEYBINDING_ACTIONS_ALLOWING_REPEAT.has(action)
+}
+
+/**
+ * Apply backend `cache:invalidate` keys to the React Query client.
+ * Shared by the debounced multi-client sync listener.
+ *
+ * `sessions` also invalidates `['all-sessions']` (finished/unread bell) which
+ * is intentionally outside `chatQueryKeys.all` (`['chat']`).
+ */
+export function applyCacheInvalidationKeys(
+  queryClient: QueryClient,
+  keys: Iterable<string>
+): void {
+  for (const key of keys) {
+    switch (key) {
+      case 'sessions':
+        queryClient.invalidateQueries({
+          queryKey: chatQueryKeys.all,
+        })
+        // UnreadBell / useUnreadCount read from this separate key.
+        queryClient.invalidateQueries({
+          queryKey: ['all-sessions'],
+        })
+        break
+      case 'projects':
+        queryClient.invalidateQueries({
+          queryKey: projectsQueryKeys.all,
+        })
+        break
+      case 'preferences':
+        queryClient.invalidateQueries({
+          queryKey: ['preferences'],
+        })
+        break
+      case 'ui-state':
+        queryClient.invalidateQueries({
+          queryKey: ['ui-state'],
+        })
+        break
+      case 'contexts':
+        queryClient.invalidateQueries({
+          queryKey: ['contexts'],
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['saved-contexts'],
+        })
+        break
+    }
+  }
+}
+
+/**
+ * Optimistically apply a session rename across all React Query caches that
+ * display session names (tab bar, ProjectCanvas with-counts, all-sessions bell).
+ * Used by the `session-renamed` event so web clients update immediately without
+ * waiting for a refetch race against concurrent chat:done cache writes.
+ */
+export function applySessionRenamedToCaches(
+  queryClient: QueryClient,
+  worktreeId: string,
+  sessionId: string,
+  newName: string
+): void {
+  const patchWorktreeSessions = (
+    old: WorktreeSessions | undefined
+  ): WorktreeSessions | undefined => {
+    if (!old) return old
+    let changed = false
+    const sessions = old.sessions.map(session => {
+      if (session.id !== sessionId || session.name === newName) return session
+      changed = true
+      return { ...session, name: newName }
+    })
+    return changed ? { ...old, sessions } : old
+  }
+
+  queryClient.setQueryData<WorktreeSessions>(
+    chatQueryKeys.sessions(worktreeId),
+    patchWorktreeSessions
+  )
+  // ProjectCanvasView uses the with-counts variant — update it directly so the
+  // dashboard list renames even before the invalidate refetch completes.
+  queryClient.setQueryData<WorktreeSessions>(
+    [...chatQueryKeys.sessions(worktreeId), 'with-counts'],
+    patchWorktreeSessions
+  )
+  queryClient.setQueryData<Session>(chatQueryKeys.session(sessionId), old => {
+    if (!old || old.name === newName) return old
+    return { ...old, name: newName }
+  })
+  queryClient.setQueryData<AllSessionsResponse>(['all-sessions'], old => {
+    if (!old) return old
+    let changed = false
+    const entries = old.entries.map(entry => {
+      let entryChanged = false
+      const sessions = entry.sessions.map(session => {
+        if (session.id !== sessionId || session.name === newName) return session
+        entryChanged = true
+        changed = true
+        return { ...session, name: newName }
+      })
+      return entryChanged ? { ...entry, sessions } : entry
+    })
+    return changed ? { ...old, entries } : old
+  })
+}
+
+export function shouldAllowKeybindingThroughOpenOverlay(
+  action: KeybindingAction | null,
+  uiState: ReturnType<typeof useUIStore.getState>
+): boolean {
+  // GitDiffModal is intentionally a full-screen workflow overlay, but users
+  // still need the global "Open in..." picker from there (Cmd/Ctrl+O).
+  if (
+    uiState.sessionChatModalOpen &&
+    (action === 'toggle_zen_mode' || action === 'clear_session_context')
+  ) {
+    return true
+  }
+
+  return action === 'open_in_modal' && uiState.gitDiffModalOpen
+}
+
+function getFocusedTerminalElement(): HTMLElement | null {
+  const activeElement = document.activeElement
+  if (!(activeElement instanceof HTMLElement)) return null
+
+  return activeElement.closest('.xterm, [data-terminal-emulator]')
+}
+
+export function isPlainSessionTerminalFocused(): boolean {
+  return !!getFocusedTerminalElement()?.closest(
+    '[data-terminal-surface="session"]'
+  )
+}
+
+export function blurFocusedTerminalForShortcut(): boolean {
+  const terminalElement = getFocusedTerminalElement()
+  if (!terminalElement) return false
+
+  const activeElement = document.activeElement
+  if (activeElement instanceof HTMLElement) {
+    activeElement.blur()
+  }
+
+  document.body.focus({ preventScroll: true })
+  return true
+}
+
+export function getTerminalShortcutWorktreeId(): string | null {
+  if (!getFocusedTerminalElement()) return null
+
+  const uiState = useUIStore.getState()
+  const chatState = useChatStore.getState()
+  const terminalState = useTerminalStore.getState()
+
+  const worktreeId = uiState.sessionChatModalOpen
+    ? (uiState.sessionChatModalWorktreeId ?? chatState.activeWorktreeId)
+    : chatState.activeWorktreeId
+
+  if (!worktreeId) return null
+
+  const terminalOpen =
+    terminalState.terminalPanelOpen[worktreeId] ||
+    terminalState.modalTerminalOpen[worktreeId]
+
+  return terminalOpen ? worktreeId : null
+}
+
+export function addTerminalTabForShortcut(): boolean {
+  const worktreeId = getTerminalShortcutWorktreeId()
+  if (!worktreeId) return false
+
+  useTerminalStore.getState().addTerminal(worktreeId)
+  return true
+}
+
+export function closeActiveTerminalTabForShortcut(): boolean {
+  const worktreeId = getTerminalShortcutWorktreeId()
+  if (!worktreeId) return false
+
+  const terminalStore = useTerminalStore.getState()
+  const activeTerminalId = terminalStore.activeTerminalIds[worktreeId]
+
+  if (!activeTerminalId) return true
+
+  // Running PTYs need an explicit confirm (issue #56). TerminalView listens
+  // for this event and opens the same dialog as the tab close button.
+  if (terminalStore.runningTerminals.has(activeTerminalId)) {
+    window.dispatchEvent(
+      new CustomEvent('confirm-close-terminal', {
+        detail: { worktreeId, terminalId: activeTerminalId },
+      })
+    )
+    return true
+  }
+
+  invoke('stop_terminal', { terminalId: activeTerminalId }).catch(() => {
+    /* noop */
+  })
+  disposeTerminal(activeTerminalId)
+  terminalStore.removeTerminal(worktreeId, activeTerminalId)
+
+  const remaining = (
+    useTerminalStore.getState().terminals[worktreeId] ?? []
+  ).filter(isPanelTerminal)
+  if (remaining.length === 0) {
+    terminalStore.setTerminalPanelOpen(worktreeId, false)
+    terminalStore.setTerminalVisible(false)
+    terminalStore.setModalTerminalOpen(worktreeId, false)
+  }
+
+  return true
+}
+
+export function switchActiveTerminalTabByIndexForShortcut(
+  index: number
+): boolean {
+  const worktreeId = getTerminalShortcutWorktreeId()
+  if (!worktreeId) return false
+
+  const terminalStore = useTerminalStore.getState()
+  const terminals = (terminalStore.terminals[worktreeId] ?? []).filter(
+    isPanelTerminal
+  )
+  const targetTerminal = terminals[index]
+
+  if (targetTerminal) {
+    terminalStore.setActiveTerminal(worktreeId, targetTerminal.id)
+  }
+
+  return true
+}
+
+/**
+ * Main window event listeners - handles global keyboard shortcuts and other app-level events
+ *
+ * This hook provides a centralized place for all global event listeners, keeping
+ * the MainWindow component clean while maintaining good separation of concerns.
+ */
+// Execute a keybinding action
+function executeKeybindingAction(
+  action: KeybindingAction,
+  commandContext: ReturnType<typeof useCommandContext>,
+  queryClient: QueryClient
+) {
+  // Canvas-only actions: blocked when the session chat modal is open
+  const CANVAS_ONLY_ACTIONS = new Set<KeybindingAction>([
+    'open_plan',
+    'restore_last_archived',
+    'focus_canvas_search',
+  ])
+  if (
+    CANVAS_ONLY_ACTIONS.has(action) &&
+    useUIStore.getState().sessionChatModalOpen
+  ) {
+    return
+  }
+
+  switch (action) {
+    case 'focus_chat_input':
+      logger.debug('Keybinding: focus_chat_input')
+      window.dispatchEvent(new CustomEvent('focus-chat-input'))
+      break
+    case 'toggle_left_sidebar': {
+      logger.debug('Keybinding: toggle_left_sidebar')
+      const { leftSidebarVisible, setLeftSidebarVisible } =
+        useUIStore.getState()
+      setLeftSidebarVisible(!leftSidebarVisible)
+      break
+    }
+    case 'toggle_file_browser': {
+      logger.debug('Keybinding: toggle_file_browser')
+      const { fileBrowserVisible, setFileBrowserVisible } =
+        useUIStore.getState()
+      setFileBrowserVisible(!fileBrowserVisible)
+      break
+    }
+    case 'toggle_zen_mode': {
+      logger.debug('Keybinding: toggle_zen_mode')
+      useUIStore.getState().toggleZenMode()
+      break
+    }
+    case 'clear_session_context':
+      logger.debug('Keybinding: clear_session_context')
+      window.dispatchEvent(new CustomEvent('clear-session-context'))
+      break
+    case 'open_preferences':
+      logger.debug('Keybinding: open_preferences')
+      commandContext.openPreferences()
+      break
+    case 'open_commit_modal':
+      logger.debug('Keybinding: open_commit_modal')
+      commandContext.openCommitModal()
+      break
+    case 'open_git_diff':
+      logger.debug('Keybinding: open_git_diff')
+      window.dispatchEvent(new CustomEvent('open-git-diff'))
+      break
+    case 'execute_run': {
+      logger.debug('Keybinding: execute_run')
+      if (!hasBackend()) break
+
+      // Skip if git diff modal is open
+      const uiStore = useUIStore.getState()
+      if (uiStore.gitDiffModalOpen) break
+
+      const chatStore = useChatStore.getState()
+      const sessionModalOpen = uiStore.sessionChatModalOpen
+
+      // Resolve target worktree: modal > active worktree > selected worktree (canvas/dashboard)
+      const targetWorktreeId =
+        sessionModalOpen && uiStore.sessionChatModalWorktreeId
+          ? uiStore.sessionChatModalWorktreeId
+          : (chatStore.activeWorktreeId ??
+            useProjectsStore.getState().selectedWorktreeId)
+
+      // Resolve path: chat store first, then fall back to worktrees query cache (canvas)
+      let targetWorktreePath = targetWorktreeId
+        ? (chatStore.activeWorktreePath ??
+          chatStore.worktreePaths[targetWorktreeId])
+        : null
+
+      if (!targetWorktreePath && targetWorktreeId) {
+        const projectId = useProjectsStore.getState().selectedProjectId
+        if (projectId) {
+          const worktrees = queryClient.getQueryData<
+            { id: string; path: string }[]
+          >(projectsQueryKeys.worktrees(projectId))
+          targetWorktreePath =
+            worktrees?.find(w => w.id === targetWorktreeId)?.path ?? null
+        }
+      }
+
+      if (!targetWorktreeId || !targetWorktreePath) {
+        notify('Open a worktree to run', undefined, { type: 'error' })
+        break
+      }
+
+      const resolvedWorktreePath = targetWorktreePath
+
+      // Always read jean.json from disk. A cached copy stays stale after
+      // the branch is updated from latest or Settings saves a new command.
+      ;(async () => {
+        let runScripts: string[] = []
+        try {
+          runScripts = await queryClient.fetchQuery<string[]>({
+            queryKey: ['run-scripts', resolvedWorktreePath],
+            queryFn: () =>
+              invoke<string[]>('get_run_scripts', {
+                worktreePath: resolvedWorktreePath,
+              }),
+            staleTime: 0,
+          })
+        } catch {
+          runScripts = []
+        }
+
+        const firstScript = runScripts?.[0]
+        if (!firstScript) {
+          const projectId = useProjectsStore.getState().selectedProjectId
+          toast.error('No run script configured in jean.json', {
+            action: projectId
+              ? {
+                  label: 'Configure',
+                  onClick: () =>
+                    useProjectsStore
+                      .getState()
+                      .openProjectSettings(projectId, 'jean-json'),
+                }
+              : undefined,
+          })
+          return
+        }
+
+        // Start run
+        const terminalId = useTerminalStore
+          .getState()
+          .startRun(targetWorktreeId, firstScript)
+
+        if (sessionModalOpen) {
+          // Modal view: open terminal drawer
+          useTerminalStore
+            .getState()
+            .setModalTerminalOpen(targetWorktreeId, true)
+        } else {
+          // Canvas view: start PTY headlessly (no terminal UI mounted yet)
+          startHeadless(terminalId, {
+            worktreeId: targetWorktreeId,
+            worktreePath: resolvedWorktreePath,
+            command: firstScript,
+          })
+        }
+      })()
+      break
+    }
+    case 'open_in_modal':
+      logger.debug('Keybinding: open_in_modal')
+      useUIStore.getState().setOpenInModalOpen(true)
+      break
+    case 'open_magic_modal': {
+      logger.debug('Keybinding: open_magic_modal')
+      const chatStore = useChatStore.getState()
+      const uiStore = useUIStore.getState()
+      const { activeWorktreeId, activeWorktreePath } = chatStore
+
+      // Block only when there's no worktree context at all (e.g., project dashboard with nothing selected)
+      const selectedWorktreeId = useProjectsStore.getState().selectedWorktreeId
+      const worktreeIdToCheck = selectedWorktreeId ?? activeWorktreeId
+
+      if (!worktreeIdToCheck && !activeWorktreePath) {
+        notify('Select a worktree to use magic commands', undefined, {
+          type: 'error',
+        })
+        break
+      }
+
+      uiStore.setMagicModalOpen(true)
+      break
+    }
+    case 'new_session': {
+      // When terminal is focused, CMD+T should create a terminal tab.
+      if (addTerminalTabForShortcut()) break
+      logger.debug('Keybinding: new_session')
+      window.dispatchEvent(
+        new CustomEvent('create-new-session', {
+          detail: { intent: 'default' },
+        })
+      )
+      break
+    }
+    case 'open_new_session_modal': {
+      logger.debug('Keybinding: open_new_session_modal')
+      window.dispatchEvent(
+        new CustomEvent('create-new-session', {
+          detail: { intent: 'picker' },
+        })
+      )
+      break
+    }
+    case 'next_session':
+      logger.debug('Keybinding: next_session')
+      window.dispatchEvent(
+        new CustomEvent('switch-session', { detail: { direction: 'next' } })
+      )
+      break
+    case 'previous_session':
+      logger.debug('Keybinding: previous_session')
+      window.dispatchEvent(
+        new CustomEvent('switch-session', { detail: { direction: 'previous' } })
+      )
+      break
+    case 'close_session_or_worktree': {
+      // When terminal is focused, CMD+W should close the active terminal tab.
+      if (closeActiveTerminalTabForShortcut()) break
+      // Default: close session/worktree
+      logger.debug('Keybinding: close_session_or_worktree')
+      window.dispatchEvent(new CustomEvent('close-session-or-worktree'))
+      break
+    }
+    case 'new_worktree':
+      logger.debug('Keybinding: new_worktree')
+      window.dispatchEvent(new CustomEvent('create-new-worktree'))
+      break
+    case 'cycle_execution_mode': {
+      logger.debug('Keybinding: cycle_execution_mode')
+      window.dispatchEvent(new CustomEvent('cycle-execution-mode'))
+      break
+    }
+    case 'approve_plan': {
+      logger.debug('Keybinding: approve_plan')
+      const planDialogOpen = useUIStore.getState().planDialogOpen
+      if (planDialogOpen) break // Let PlanDialog handle it directly
+      window.dispatchEvent(new CustomEvent('approve-plan'))
+      window.dispatchEvent(new CustomEvent('answer-question'))
+      break
+    }
+    case 'approve_plan_yolo': {
+      logger.debug('Keybinding: approve_plan_yolo')
+      const planDialogOpenYolo = useUIStore.getState().planDialogOpen
+      if (planDialogOpenYolo) break // Let PlanDialog handle it directly
+      window.dispatchEvent(new CustomEvent('approve-plan-yolo'))
+      break
+    }
+    case 'approve_plan_clear_context': {
+      logger.debug('Keybinding: approve_plan_clear_context')
+      const planDialogOpenClear = useUIStore.getState().planDialogOpen
+      if (planDialogOpenClear) break // Let PlanDialog handle it directly
+      window.dispatchEvent(new CustomEvent('approve-plan-clear-context'))
+      break
+    }
+    case 'approve_plan_clear_context_build': {
+      logger.debug('Keybinding: approve_plan_clear_context_build')
+      const planDialogOpenClearBuild = useUIStore.getState().planDialogOpen
+      if (planDialogOpenClearBuild) break // Let PlanDialog handle it directly
+      window.dispatchEvent(new CustomEvent('approve-plan-clear-context-build'))
+      break
+    }
+    case 'approve_plan_worktree_build': {
+      logger.debug('Keybinding: approve_plan_worktree_build')
+      const planDialogOpenWtBuild = useUIStore.getState().planDialogOpen
+      if (planDialogOpenWtBuild) break
+      window.dispatchEvent(new CustomEvent('approve-plan-worktree-build'))
+      break
+    }
+    case 'approve_plan_worktree_yolo': {
+      logger.debug('Keybinding: approve_plan_worktree_yolo')
+      const planDialogOpenWtYolo = useUIStore.getState().planDialogOpen
+      if (planDialogOpenWtYolo) break
+      window.dispatchEvent(new CustomEvent('approve-plan-worktree-yolo'))
+      break
+    }
+    case 'open_plan':
+      logger.debug('Keybinding: open_plan')
+      window.dispatchEvent(new CustomEvent('open-plan'))
+      break
+    case 'restore_last_archived':
+      logger.debug('Keybinding: restore_last_archived')
+      window.dispatchEvent(new CustomEvent('restore-last-archived'))
+      break
+    case 'focus_canvas_search':
+      logger.debug('Keybinding: focus_canvas_search')
+      window.dispatchEvent(new CustomEvent('focus-canvas-search'))
+      break
+    case 'open_unread_sessions':
+      logger.debug('Keybinding: open_unread_sessions')
+      window.dispatchEvent(new CustomEvent('command:open-unread-sessions'))
+      break
+    case 'toggle_terminal': {
+      logger.debug('Keybinding: toggle_terminal')
+      const uiState = useUIStore.getState()
+      const chatState = useChatStore.getState()
+      if (uiState.sessionChatModalOpen) {
+        const wid =
+          uiState.sessionChatModalWorktreeId ?? chatState.activeWorktreeId
+        if (wid) useTerminalStore.getState().toggleModalTerminal(wid)
+      } else {
+        const wid = chatState.activeWorktreeId
+        if (wid) useTerminalStore.getState().toggleTerminal(wid)
+      }
+      break
+    }
+    case 'toggle_browser': {
+      logger.debug('Keybinding: toggle_browser')
+      const uiState = useUIStore.getState()
+      const chatState = useChatStore.getState()
+      if (uiState.sessionChatModalOpen) {
+        const wid =
+          uiState.sessionChatModalWorktreeId ?? chatState.activeWorktreeId
+        if (wid) useBrowserStore.getState().toggleModal(wid)
+      } else {
+        const wid = chatState.activeWorktreeId
+        if (wid) useBrowserStore.getState().toggleSidePane(wid)
+      }
+      break
+    }
+    case 'open_provider_dropdown':
+      logger.debug('Keybinding: open_provider_dropdown')
+      window.dispatchEvent(new CustomEvent('open-provider-dropdown'))
+      break
+    case 'open_model_dropdown':
+      logger.debug('Keybinding: open_model_dropdown')
+      window.dispatchEvent(new CustomEvent('open-model-dropdown'))
+      break
+    case 'open_thinking_dropdown':
+      logger.debug('Keybinding: open_thinking_dropdown')
+      window.dispatchEvent(new CustomEvent('open-thinking-dropdown'))
+      break
+    case 'cancel_prompt':
+      logger.debug('Keybinding: cancel_prompt')
+      window.dispatchEvent(new CustomEvent('cancel-prompt'))
+      break
+    case 'scroll_chat_up':
+      window.dispatchEvent(
+        new CustomEvent('scroll-chat', { detail: { direction: 'up' } })
+      )
+      break
+    case 'scroll_chat_down':
+      window.dispatchEvent(
+        new CustomEvent('scroll-chat', { detail: { direction: 'down' } })
+      )
+      break
+    case 'scroll_chat_up_medium':
+      window.dispatchEvent(
+        new CustomEvent('scroll-chat', {
+          detail: { direction: 'up', amount: 'medium' },
+        })
+      )
+      break
+    case 'scroll_chat_down_medium':
+      window.dispatchEvent(
+        new CustomEvent('scroll-chat', {
+          detail: { direction: 'down', amount: 'medium' },
+        })
+      )
+      break
+    case 'scroll_chat_up_small':
+      window.dispatchEvent(
+        new CustomEvent('scroll-chat', {
+          detail: { direction: 'up', amount: 'small' },
+        })
+      )
+      break
+    case 'scroll_chat_down_small':
+      window.dispatchEvent(
+        new CustomEvent('scroll-chat', {
+          detail: { direction: 'down', amount: 'small' },
+        })
+      )
+      break
+    case 'search_chat': {
+      logger.debug('Keybinding: search_chat')
+      const uiStoreSearch = useUIStore.getState()
+      if (!uiStoreSearch.chatSearchOpen) {
+        uiStoreSearch.setChatSearchOpen(true)
+      } else {
+        // If open, dispatch event so the component can decide to close or re-focus
+        window.dispatchEvent(new CustomEvent('chat-search-toggle'))
+      }
+      break
+    }
+    case 'open_github_dashboard':
+      useUIStore.getState().setGitHubDashboardOpen(true)
+      break
+    case 'open_quick_menu':
+      window.dispatchEvent(new CustomEvent('toggle-quick-menu'))
+      break
+    case 'open_usage_dropdown':
+      window.dispatchEvent(new CustomEvent('toggle-usage-menu'))
+      break
+    case 'toggle_session_label': {
+      logger.debug('Keybinding: toggle_session_label')
+      // Works when a session is active (modal open or in session view) or on project canvas
+      const uiStoreForLabel = useUIStore.getState()
+      const chatStoreForLabel = useChatStore.getState()
+      const projectsStoreForLabel = useProjectsStore.getState()
+      if (
+        !uiStoreForLabel.sessionChatModalOpen &&
+        !chatStoreForLabel.activeWorktreePath &&
+        !projectsStoreForLabel.selectedProjectId
+      )
+        break
+      window.dispatchEvent(new CustomEvent('toggle-session-label'))
+      break
+    }
+  }
+}
+
+export function useMainWindowEventListeners() {
+  const commandContext = useCommandContext()
+  const queryClient = useQueryClient()
+  const { data: preferences } = usePreferences()
+
+  // Keep keybindings in a ref so the event handler always has the latest
+  const keybindingsRef = useRef<KeybindingsMap>(DEFAULT_KEYBINDINGS)
+
+  // Update ref when preferences change
+  useEffect(() => {
+    keybindingsRef.current = {
+      ...DEFAULT_KEYBINDINGS,
+      ...(preferences?.keybindings ?? {}),
+    }
+  }, [preferences?.keybindings])
+
+  // After alt-tab / OS window reactivation, WebViews often leave the document
+  // without keyboard focus until a click. Restore the last focused element
+  // (or chat input / body) so typing and shortcuts like Ctrl/Cmd+L work again.
+  // Issue #577.
+  useWindowKeyboardFocusRestore()
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Convert the keyboard event to our shortcut string format
+      const shortcut = eventToShortcutString(e)
+      if (!shortcut) return
+
+      // Skip single-key shortcuts (no modifier) when focus is in input/textarea
+      const hasModifier = e.metaKey || e.ctrlKey || e.altKey || e.shiftKey
+      if (!hasModifier) {
+        const tag = document.activeElement?.tagName
+        if (
+          tag === 'INPUT' ||
+          tag === 'TEXTAREA' ||
+          (document.activeElement as HTMLElement)?.isContentEditable
+        ) {
+          return
+        }
+      }
+
+      if (shortcut === 'mod+shift+escape' && blurFocusedTerminalForShortcut()) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+
+      // A focused full-screen/plain terminal session should own all keybindings.
+      // Side/modal terminals still use the terminal-specific remapping below.
+      if (isPlainSessionTerminalFocused()) return
+
+      const keybindings = keybindingsRef.current
+      const matchedAction = findKeybindingAction(shortcut, keybindings)
+
+      // Cmd/Ctrl+Enter is also the chat input's explicit steer shortcut. The
+      // global approve-plan binding runs in capture phase, so it must yield or
+      // the textarea never receives Enter. A visible plan dialog still owns
+      // the same shortcut.
+      if (
+        matchedAction &&
+        shouldLetChatInputHandleAction(
+          matchedAction,
+          e.target,
+          useUIStore.getState().planDialogOpen
+        )
+      ) {
+        return
+      }
+
+      // OS key-repeat must not re-fire one-shot actions (issue #56: holding
+      // Ctrl/Cmd+W cascade-closed every terminal/session under the cursor).
+      // Consume the event so the browser does not handle the repeated shortcut.
+      if (e.repeat && matchedAction && !allowsKeybindingRepeat(matchedAction)) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+
+      // Cancel prompt should work even when modals are open
+      if (matchedAction === 'cancel_prompt') {
+        logger.debug('Cancel prompt shortcut matched', { shortcut })
+        e.preventDefault()
+        e.stopPropagation()
+        executeKeybindingAction('cancel_prompt', commandContext, queryClient)
+        return
+      }
+
+      // Skip when any modal/dialog is open - let it handle its own shortcuts.
+      // Covers all shadcn/Radix Dialog + AlertDialog instances automatically
+      // (including future modals) via their data-state attribute.
+      // Also skip when a Radix DropdownMenu / Select is open so its built-in
+      // arrow-key navigation isn't hijacked (e.g. by scroll_chat_*).
+      const uiState = useUIStore.getState()
+      if (
+        !shouldAllowKeybindingThroughOpenOverlay(matchedAction, uiState) &&
+        document.querySelector(
+          '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"], [role="menu"][data-state="open"], [role="listbox"][data-state="open"]'
+        )
+      )
+        return
+      if (
+        !shouldAllowKeybindingThroughOpenOverlay(matchedAction, uiState) &&
+        useProjectsStore.getState().projectSettingsDialogOpen
+      )
+        return
+
+      // When terminal is focused, remap shortcuts for terminal-specific actions
+      // and block all others so they don't interfere with terminal usage.
+      {
+        const terminalShortcutWorktreeId = getTerminalShortcutWorktreeId()
+
+        if (terminalShortcutWorktreeId) {
+          const kb = keybindingsRef.current
+          const digitMatch = e.code.match(/^Digit(\d)$/)
+          const digit = digitMatch?.[1] ? parseInt(digitMatch[1], 10) : NaN
+
+          if (
+            isModKeyEvent(e) &&
+            !e.shiftKey &&
+            !e.altKey &&
+            digit >= 1 &&
+            digit <= 9
+          ) {
+            e.preventDefault()
+            e.stopPropagation()
+            switchActiveTerminalTabByIndexForShortcut(digit - 1)
+            return
+          }
+
+          if (shortcut === kb.new_session) {
+            e.preventDefault()
+            e.stopPropagation()
+            addTerminalTabForShortcut()
+            return
+          }
+          if (shortcut === kb.close_session_or_worktree) {
+            e.preventDefault()
+            e.stopPropagation()
+            closeActiveTerminalTabForShortcut()
+            return
+          }
+          if (
+            shortcut === kb.toggle_terminal ||
+            shortcut === kb.toggle_browser ||
+            shortcut === kb.open_new_session_modal ||
+            shortcut === kb.cancel_prompt
+          ) {
+            // Let these fall through to the normal keybinding handler below
+          } else {
+            // Block all other shortcuts
+            return
+          }
+        }
+      }
+
+      // Mod+1–9: switch session tabs (when modal open), dashboard tabs, or worktree by index
+      // Use platform mod (Cmd on macOS native, Ctrl elsewhere) so Ctrl+digit reaches terminals.
+      if (isModKeyEvent(e) && !e.shiftKey && !e.altKey) {
+        // Use e.code (physical key) since e.key can vary with CMD held on macOS
+        const digitMatch = e.code.match(/^Digit(\d)$/)
+        const digit = digitMatch?.[1] ? parseInt(digitMatch[1], 10) : NaN
+        if (digit >= 1 && digit <= 9) {
+          e.preventDefault()
+          e.stopPropagation()
+          if (useUIStore.getState().sessionChatModalOpen) {
+            window.dispatchEvent(
+              new CustomEvent('switch-session', {
+                detail: { index: digit - 1 },
+              })
+            )
+          } else if (
+            useUIStore.getState().githubDashboardOpen &&
+            digit >= 1 &&
+            digit <= 4
+          ) {
+            const TAB_MAP = ['issues', 'prs', 'security', 'advisories']
+            window.dispatchEvent(
+              new CustomEvent('switch-dashboard-tab', {
+                detail: { tab: TAB_MAP[digit - 1] },
+              })
+            )
+          } else {
+            window.dispatchEvent(
+              new CustomEvent('open-worktree-by-index', {
+                detail: { index: digit - 1 },
+              })
+            )
+          }
+          return
+        }
+      }
+
+      // On the project canvas, Cmd/Ctrl+ArrowUp/Down reorders the selected
+      // worktree. The global chat-scroll shortcuts use the same keys and run in
+      // capture phase, so handle this before they stop propagation.
+      if (
+        (matchedAction === 'scroll_chat_up' ||
+          matchedAction === 'scroll_chat_down') &&
+        !useUIStore.getState().sessionChatModalOpen &&
+        document.querySelector(
+          '[data-pdnd-worktree-scope="canvas-worktree-list"]'
+        )
+      ) {
+        e.preventDefault()
+        e.stopPropagation()
+        window.dispatchEvent(
+          new CustomEvent('move-selected-worktree', {
+            detail: {
+              direction: matchedAction === 'scroll_chat_up' ? 'up' : 'down',
+            },
+          })
+        )
+        return
+      }
+
+      // Look up matching action in keybindings
+      if (matchedAction) {
+        const action = matchedAction
+        if (
+          shouldLetPlanDialogHandleAction(
+            action,
+            useUIStore.getState().planDialogOpen
+          )
+        ) {
+          return
+        }
+        // Scope small-scroll arrow keys to ChatWindow context
+        // so canvas/list arrow navigation still works elsewhere
+        if (
+          action === 'scroll_chat_up_small' ||
+          action === 'scroll_chat_down_small' ||
+          action === 'scroll_chat_up_medium' ||
+          action === 'scroll_chat_down_medium'
+        ) {
+          const chatVisible =
+            !!useChatStore.getState().activeWorktreeId ||
+            useUIStore.getState().sessionChatModalOpen
+          if (!chatVisible) return
+        }
+        e.preventDefault()
+        e.stopPropagation()
+        executeKeybindingAction(action, commandContext, queryClient)
+        return
+      }
+    }
+
+    // Set up native menu event listeners
+    const setupMenuListeners = async () => {
+      logger.debug('Setting up menu event listeners')
+      const unlisteners = await Promise.all([
+        listen<RunEnvironmentStartedEvent>(
+          'run-environment:started',
+          event => handleRunEnvironmentStarted(event.payload)
+        ),
+        listen<{ sessionId: string }>('terminal:working', event => {
+          const sessionId = event.payload?.sessionId
+          if (!sessionId) return
+          const store = useChatStore.getState()
+          store.addSendingSession(sessionId)
+          // Mirror chat turn start: clear waiting so the session shows as running.
+          store.setWaitingForInput(sessionId, false)
+        }),
+
+        listen<{ sessionId: string }>('terminal:attention', event => {
+          const sessionId = event.payload?.sessionId
+          if (!sessionId) return
+          const store = useChatStore.getState()
+          store.removeSendingSession(sessionId)
+          // Mirror chat:done waiting so canvas/list badges update before sessions
+          // cache invalidation lands (terminal sessions have no run transcript).
+          store.setWaitingForInput(sessionId, true)
+        }),
+
+        listenLocal('menu-about', async () => {
+          logger.debug('About menu event received')
+          if (!isNativeApp()) return
+          const [{ getVersion }, { message }] = await Promise.all([
+            import('@tauri-apps/api/app'),
+            import('@tauri-apps/plugin-dialog'),
+          ])
+          // Show simple about dialog with dynamic version
+          const appVersion = await getVersion()
+          await message(
+            `Jean\n\nVersion: ${appVersion}\n\nBuilt with Tauri v2 + React + TypeScript`,
+            { title: 'About Jean', kind: 'info' }
+          )
+        }),
+
+        listenLocal('menu-check-updates', async () => {
+          logger.debug('Check for updates menu event received')
+          if (!isNativeApp()) return
+          const ui = useUIStore.getState()
+          // Package already installed this session — prompt restart, don't re-offer download
+          if (ui.updateReadyVersion) {
+            commandContext.showToast(
+              `Update ${ui.updateReadyVersion} is ready — restart to apply`,
+              'success'
+            )
+            return
+          }
+          if (ui.isUpdateInstalling) {
+            commandContext.showToast(
+              'Update download already in progress',
+              'info'
+            )
+            return
+          }
+          try {
+            const { check } = await import('@tauri-apps/plugin-updater')
+            const update = await check()
+            if (update) {
+              // Pass update object to App.tsx for installation handling
+              window.dispatchEvent(
+                new CustomEvent('update-available', { detail: update })
+              )
+              // Show the update modal (same as auto-check on startup)
+              useUIStore.getState().setUpdateModalVersion(update.version)
+            } else {
+              commandContext.showToast(
+                'You are running the latest version',
+                'success'
+              )
+            }
+          } catch (error) {
+            logger.error('Update check failed:', { error: String(error) })
+            commandContext.showToast('Failed to check for updates', 'error')
+          }
+        }),
+
+        listenLocal('menu-preferences', () => {
+          logger.debug('Preferences menu event received')
+          commandContext.openPreferences()
+        }),
+
+        listenLocal('menu-toggle-left-sidebar', () => {
+          logger.debug('Toggle left sidebar menu event received')
+          const { leftSidebarVisible, setLeftSidebarVisible } =
+            useUIStore.getState()
+          setLeftSidebarVisible(!leftSidebarVisible)
+        }),
+
+        listenLocal('menu-toggle-file-browser', () => {
+          logger.debug('Toggle file browser menu event received')
+          const { fileBrowserVisible, setFileBrowserVisible } =
+            useUIStore.getState()
+          setFileBrowserVisible(!fileBrowserVisible)
+        }),
+
+        listenLocal('menu-toggle-right-sidebar', () => {
+          logger.debug('Toggle right sidebar menu event received')
+          const { selectedWorktreeId } = useProjectsStore.getState()
+          if (selectedWorktreeId) {
+            const { rightSidebarVisible, setRightSidebarVisible } =
+              useUIStore.getState()
+            setRightSidebarVisible(!rightSidebarVisible)
+          }
+        }),
+
+        listenLocal('menu-magic-menu', () => {
+          logger.debug('Magic menu event received from native menu')
+          executeKeybindingAction(
+            'open_magic_modal',
+            commandContext,
+            queryClient
+          )
+        }),
+
+        listenLocal('menu-toggle-terminal', () => {
+          logger.debug('Toggle terminal menu event received from native menu')
+          executeKeybindingAction(
+            'toggle_terminal',
+            commandContext,
+            queryClient
+          )
+        }),
+
+        listenLocal('menu-toggle-browser', () => {
+          logger.debug('Toggle browser menu event received from native menu')
+          executeKeybindingAction('toggle_browser', commandContext, queryClient)
+        }),
+
+        listenLocal('menu-quick-menu', () => {
+          logger.debug('Quick menu event received from native menu')
+          executeKeybindingAction(
+            'open_quick_menu',
+            commandContext,
+            queryClient
+          )
+        }),
+
+        // Branch naming events (automatic branch renaming based on first message)
+        listen<{ worktree_id: string; old_branch: string; new_branch: string }>(
+          'branch-renamed',
+          event => {
+            logger.info('Branch renamed', {
+              worktreeId: event.payload.worktree_id,
+              oldBranch: event.payload.old_branch,
+              newBranch: event.payload.new_branch,
+            })
+            // Invalidate worktrees queries to refresh the worktree name in the UI
+            queryClient.invalidateQueries({
+              queryKey: projectsQueryKeys.all,
+            })
+          }
+        ),
+
+        listen<{ worktree_id: string; error: string; stage: string }>(
+          'branch-naming-failed',
+          event => {
+            logger.warn('Branch naming failed', {
+              worktreeId: event.payload.worktree_id,
+              error: event.payload.error,
+              stage: event.payload.stage,
+            })
+            // Silent failure - don't show toast to avoid interrupting workflow
+          }
+        ),
+
+        // Session naming events (automatic session renaming based on first message)
+        listen<{
+          session_id: string
+          worktree_id: string
+          old_name: string
+          new_name: string
+        }>('session-renamed', event => {
+          logger.info('Session renamed', {
+            sessionId: event.payload.session_id,
+            worktreeId: event.payload.worktree_id,
+            oldName: event.payload.old_name,
+            newName: event.payload.new_name,
+          })
+          // Optimistically patch all caches first so the UI renames immediately
+          // (especially important for web clients and ProjectCanvas with-counts).
+          applySessionRenamedToCaches(
+            queryClient,
+            event.payload.worktree_id,
+            event.payload.session_id,
+            event.payload.new_name
+          )
+          // Then invalidate so disk is the eventual source of truth.
+          queryClient.invalidateQueries({
+            queryKey: chatQueryKeys.sessions(event.payload.worktree_id),
+          })
+          queryClient.invalidateQueries({
+            queryKey: ['all-sessions'],
+          })
+        }),
+
+        listen<{
+          session_id: string
+          worktree_id: string
+          error: string
+          stage: string
+        }>('session-naming-failed', event => {
+          logger.warn('Session naming failed', {
+            sessionId: event.payload.session_id,
+            worktreeId: event.payload.worktree_id,
+            error: event.payload.error,
+            stage: event.payload.stage,
+          })
+          // Silent failure - don't show toast to avoid interrupting workflow
+        }),
+
+        // Queue sync between native + web clients.
+        // When another client enqueues/dequeues, update local Zustand state.
+        listen<{ sessionId: string; queue: QueuedMessage[] }>(
+          'queue:updated',
+          event => {
+            const { sessionId, queue } = event.payload
+            const currentQueue =
+              useChatStore.getState().messageQueues[sessionId] ?? []
+            // Skip if the queue already matches (this client caused the event)
+            if (JSON.stringify(currentQueue) === JSON.stringify(queue)) return
+            useChatStore.setState(state => ({
+              messageQueues: {
+                ...state.messageQueues,
+                [sessionId]: queue,
+              },
+            }))
+          }
+        ),
+
+        // Real-time cache sync between native + web clients.
+        // Debounce: collect keys over a 250ms window, then flush once.
+        // This coalesces rapid-fire events (e.g. bulk mutations) into a
+        // single invalidation wave instead of N separate ones.
+        (async () => {
+          const pendingKeys = new Set<string>()
+          let flushTimer: ReturnType<typeof setTimeout> | null = null
+
+          const flushInvalidations = () => {
+            flushTimer = null
+            applyCacheInvalidationKeys(queryClient, pendingKeys)
+            pendingKeys.clear()
+          }
+
+          const unlisten = await listen<{ keys: string[] }>(
+            'cache:invalidate',
+            event => {
+              for (const key of event.payload.keys) pendingKeys.add(key)
+              if (flushTimer) clearTimeout(flushTimer)
+              flushTimer = setTimeout(flushInvalidations, 250)
+            }
+          )
+
+          // Return a cleanup function that clears the pending timer
+          // and unregisters the event listener
+          return () => {
+            if (flushTimer) clearTimeout(flushTimer)
+            unlisten()
+          }
+        })(),
+      ])
+
+      logger.debug(
+        `Menu listeners set up successfully: ${unlisteners.length} listeners`
+      )
+      return unlisteners
+    }
+
+    // Use capture phase to handle keybindings before dialogs/modals can intercept
+    document.addEventListener('keydown', handleKeyDown, { capture: true })
+
+    let cleaned = false
+    let menuUnlisteners: (() => void)[] = []
+    setupMenuListeners()
+      .then(unlisteners => {
+        if (cleaned) {
+          // Effect was already cleaned up while awaiting — tear down immediately
+          unlisteners.forEach(fn => fn())
+          return
+        }
+        menuUnlisteners = unlisteners
+        logger.debug('Menu listeners initialized successfully')
+      })
+      .catch(error => {
+        logger.error('Failed to setup menu listeners:', error)
+      })
+
+    return () => {
+      cleaned = true
+      document.removeEventListener('keydown', handleKeyDown, { capture: true })
+      menuUnlisteners.forEach(unlisten => {
+        if (unlisten && typeof unlisten === 'function') {
+          unlisten()
+        }
+      })
+    }
+  }, [commandContext, queryClient])
+
+  // Window close / quit confirmation is owned by useNativeWindowCloseGuard at
+  // App root so it stays active during preloading (MainWindow unmounted).
+}

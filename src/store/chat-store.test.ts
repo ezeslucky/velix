@@ -1,0 +1,1708 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+const { mockInvoke } = vi.hoisted(() => ({
+  mockInvoke: vi.fn().mockResolvedValue(undefined),
+}))
+
+vi.mock('@/lib/transport', () => ({
+  invoke: mockInvoke,
+}))
+
+import { useChatStore } from './chat-store'
+import type {
+  ContentBlock,
+  ToolCall,
+  QueuedMessage,
+  CodexCommandApprovalRequest,
+  PermissionDenial,
+  PendingImage,
+  PendingTextFile,
+  QuestionAnswer,
+} from '@/types/chat'
+import type { ReviewResponse } from '@/types/projects'
+
+describe('ChatStore', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockInvoke.mockResolvedValue(undefined)
+
+    useChatStore.setState({
+      activeWorktreeId: null,
+      activeWorktreePath: null,
+      activeSessionIds: {},
+      reviewResults: {},
+      reviewSidebarVisible: false,
+      fixedReviewFindings: {},
+      tableCheckedRows: {},
+      worktreePaths: {},
+      sendingSessionIds: {},
+      sendStartedAt: {},
+      completedDurations: {},
+      waitingForInputSessionIds: {},
+      sessionWorktreeMap: {},
+      streamingContents: {},
+      activeToolCalls: {},
+      streamingContentBlocks: {},
+      streamingReplayContentBlocks: {},
+      streamingThinkingContent: {},
+      inputDrafts: {},
+      executionModes: {},
+      thinkingLevels: {},
+      selectedModels: {},
+      answeredQuestions: {},
+      submittedAnswers: {},
+      errors: {},
+      lastSentMessages: {},
+      setupScriptResults: {},
+      dismissedSetupScripts: {},
+      pendingImages: {},
+      pendingFiles: {},
+      pendingTextFiles: {},
+      activeTodos: {},
+      fixedFindings: {},
+      streamingPlanApprovals: {},
+      messageQueues: {},
+      executingModes: {},
+      approvedTools: {},
+      pendingPermissionDenials: {},
+      pendingCodexCommandApprovalRequests: {},
+      deniedMessageContext: {},
+      lastCompaction: {},
+      compactingSessions: {},
+      reviewingSessions: {},
+      sessionLabels: {},
+      savingContext: {},
+      skippedQuestionSessions: {},
+    })
+  })
+
+  it('persists setup-script dismissal per worktree in store state', () => {
+    useChatStore.getState().dismissSetupScript('worktree-1')
+
+    expect(useChatStore.getState().dismissedSetupScripts).toEqual({
+      'worktree-1': true,
+    })
+  })
+
+  describe('session management', () => {
+    it('sets active session for worktree', () => {
+      const { setActiveSession, getActiveSession } = useChatStore.getState()
+
+      setActiveSession('worktree-1', 'session-1')
+
+      expect(getActiveSession('worktree-1')).toBe('session-1')
+      expect(useChatStore.getState().sessionWorktreeMap['session-1']).toBe(
+        'worktree-1'
+      )
+    })
+
+    it('updates session-worktree mapping', () => {
+      const { setActiveSession } = useChatStore.getState()
+
+      setActiveSession('worktree-1', 'session-1')
+      setActiveSession('worktree-2', 'session-2')
+
+      const state = useChatStore.getState()
+      expect(state.sessionWorktreeMap['session-1']).toBe('worktree-1')
+      expect(state.sessionWorktreeMap['session-2']).toBe('worktree-2')
+    })
+
+    it('marks sessions opened by default when setting active session', async () => {
+      const handler = vi.fn()
+      window.addEventListener('session-opened', handler)
+
+      useChatStore.getState().setActiveSession('worktree-1', 'session-1')
+
+      expect(mockInvoke).toHaveBeenCalledWith('set_session_last_opened', {
+        sessionId: 'session-1',
+      })
+
+      await Promise.resolve()
+
+      expect(handler).toHaveBeenCalledTimes(1)
+      const event = handler.mock.calls[0]?.[0]
+      expect(event).toMatchObject({
+        detail: { sessionIds: ['session-1'] },
+      })
+
+      window.removeEventListener('session-opened', handler)
+    })
+
+    it('can set active session without marking it opened', async () => {
+      const handler = vi.fn()
+      window.addEventListener('session-opened', handler)
+
+      useChatStore
+        .getState()
+        .setActiveSession('worktree-1', 'session-1', { markOpened: false })
+
+      await Promise.resolve()
+
+      expect(mockInvoke).not.toHaveBeenCalled()
+      expect(handler).not.toHaveBeenCalled()
+      expect(useChatStore.getState().activeSessionIds['worktree-1']).toBe(
+        'session-1'
+      )
+
+      window.removeEventListener('session-opened', handler)
+    })
+  })
+
+  describe('worktree management', () => {
+    it('sets active worktree', () => {
+      const { setActiveWorktree } = useChatStore.getState()
+
+      setActiveWorktree('worktree-1', '/path/to/worktree')
+
+      const state = useChatStore.getState()
+      expect(state.activeWorktreeId).toBe('worktree-1')
+      expect(state.activeWorktreePath).toBe('/path/to/worktree')
+      expect(state.worktreePaths['worktree-1']).toBe('/path/to/worktree')
+    })
+
+    it('clears active worktree', () => {
+      const { setActiveWorktree, clearActiveWorktree } = useChatStore.getState()
+
+      setActiveWorktree('worktree-1', '/path')
+      clearActiveWorktree()
+
+      const state = useChatStore.getState()
+      expect(state.activeWorktreeId).toBeNull()
+      expect(state.activeWorktreePath).toBeNull()
+    })
+
+    // Regression: sidebar click must clear activeWorktreePath so MainWindowContent
+    // renders ProjectCanvasView (with topbar + session tabs) instead of bare ChatWindow.
+    // This mirrors the sequence in WorktreeItem.handleClick and handleSessionSelect.
+    it('sidebar worktree click clears activeWorktreePath before opening session modal', () => {
+      const store = useChatStore.getState()
+
+      // Simulate: user previously navigated into ChatWindow (activeWorktreePath is set)
+      store.setActiveWorktree('worktree-1', '/path/to/worktree-1')
+      expect(useChatStore.getState().activeWorktreePath).toBe(
+        '/path/to/worktree-1'
+      )
+
+      // Simulate: WorktreeItem.handleClick sequence
+      // 1. clearActiveWorktree() ensures ProjectCanvasView renders
+      store.clearActiveWorktree()
+      // 2. setActiveSession() picks the session to show in the modal
+      store.setActiveSession('worktree-2', 'session-abc')
+
+      const state = useChatStore.getState()
+      // activeWorktreePath must be null so MainWindowContent renders ProjectCanvasView
+      expect(state.activeWorktreePath).toBeNull()
+      expect(state.activeWorktreeId).toBeNull()
+      // The target session is correctly set
+      expect(state.activeSessionIds['worktree-2']).toBe('session-abc')
+    })
+
+    it('sidebar session select clears activeWorktreePath before setting session', () => {
+      const store = useChatStore.getState()
+
+      // Simulate: already viewing a worktree in ChatWindow mode
+      store.setActiveWorktree('worktree-1', '/path/to/worktree-1')
+
+      // Simulate: WorktreeItem.handleSessionSelect sequence
+      store.clearActiveWorktree()
+      store.setActiveSession('worktree-1', 'session-xyz')
+
+      const state = useChatStore.getState()
+      // Must be null for ProjectCanvasView to mount and receive open-session-modal event
+      expect(state.activeWorktreePath).toBeNull()
+      expect(state.activeSessionIds['worktree-1']).toBe('session-xyz')
+    })
+
+    it('registers worktree path', () => {
+      const { registerWorktreePath, getWorktreePath } = useChatStore.getState()
+
+      registerWorktreePath('worktree-1', '/path/to/worktree')
+
+      expect(getWorktreePath('worktree-1')).toBe('/path/to/worktree')
+    })
+  })
+
+  describe('sending state', () => {
+    it('adds and removes sending session', () => {
+      const { addSendingSession, removeSendingSession, isSending } =
+        useChatStore.getState()
+
+      expect(isSending('session-1')).toBe(false)
+
+      addSendingSession('session-1')
+      expect(isSending('session-1')).toBe(true)
+
+      removeSendingSession('session-1')
+      expect(isSending('session-1')).toBe(false)
+    })
+
+    it('checks if worktree is running', () => {
+      const { setActiveSession, addSendingSession, isWorktreeRunning } =
+        useChatStore.getState()
+
+      setActiveSession('worktree-1', 'session-1')
+
+      expect(isWorktreeRunning('worktree-1')).toBe(false)
+
+      addSendingSession('session-1')
+      expect(isWorktreeRunning('worktree-1')).toBe(true)
+    })
+
+    it('allows fast completion when the current run has streaming state', () => {
+      const now = Date.now()
+
+      useChatStore.setState({
+        sendingSessionIds: { 'session-1': true },
+        sendStartedAt: { 'session-1': now },
+        streamingContents: { 'session-1': 'Fast reply' },
+      })
+
+      useChatStore.getState().completeSession('session-1')
+
+      const state = useChatStore.getState()
+      expect(state.sendingSessionIds['session-1']).toBeUndefined()
+      expect(state.sendStartedAt['session-1']).toBeUndefined()
+      expect(state.completedDurations['session-1']).toBeGreaterThanOrEqual(0)
+      expect(state.reviewingSessions['session-1']).toBeUndefined()
+    })
+
+    it('stores completed duration when a session completes', () => {
+      const nowSpy = vi.spyOn(Date, 'now')
+      nowSpy.mockReturnValueOnce(10_000).mockReturnValueOnce(25_000)
+
+      const { addSendingSession, completeSession } = useChatStore.getState()
+      addSendingSession('session-1')
+
+      useChatStore.setState({
+        streamingContents: { 'session-1': 'Done' },
+      })
+
+      completeSession('session-1')
+
+      const state = useChatStore.getState()
+      expect(state.completedDurations['session-1']).toBe(15_000)
+      expect(state.sendStartedAt['session-1']).toBeUndefined()
+
+      nowSpy.mockRestore()
+    })
+
+    it('clears previous completed duration when a new send starts', () => {
+      useChatStore.setState({
+        completedDurations: { 'session-1': 12_000 },
+      })
+
+      useChatStore.getState().addSendingSession('session-1', 20_000)
+
+      const state = useChatStore.getState()
+      expect(state.completedDurations['session-1']).toBeUndefined()
+      expect(state.sendStartedAt['session-1']).toBe(20_000)
+    })
+
+    it('blocks fast completion when no current streaming state exists', () => {
+      const now = Date.now()
+
+      useChatStore.setState({
+        sendingSessionIds: { 'session-1': true },
+        sendStartedAt: { 'session-1': now },
+      })
+
+      useChatStore.getState().completeSession('session-1')
+
+      const state = useChatStore.getState()
+      expect(state.sendingSessionIds['session-1']).toBe(true)
+      expect(state.sendStartedAt['session-1']).toBe(now)
+      expect(state.reviewingSessions['session-1']).toBeUndefined()
+    })
+
+    it('clears sending state and approval leftovers for an explicit cancellation', () => {
+      const now = Date.now()
+
+      useChatStore.setState({
+        sendingSessionIds: { 'session-1': true },
+        sendStartedAt: { 'session-1': now },
+        pendingPermissionDenials: {
+          'session-1': [
+            {
+              tool_name: 'Bash',
+              tool_use_id: 'tool-1',
+              tool_input: { command: 'bun test' },
+            },
+          ],
+        },
+        deniedMessageContext: {
+          'session-1': {
+            message: 'run tests',
+            model: 'opus',
+            executionMode: 'build',
+            thinkingLevel: 'off',
+          },
+        },
+        streamingContents: { 'session-1': 'partial output' },
+      })
+
+      useChatStore.getState().cancelSession('session-1')
+
+      const state = useChatStore.getState()
+      expect(state.sendingSessionIds['session-1']).toBeUndefined()
+      expect(state.sendStartedAt['session-1']).toBeUndefined()
+      expect(state.completedDurations['session-1']).toBeGreaterThanOrEqual(0)
+      expect(state.pendingPermissionDenials['session-1']).toBeUndefined()
+      expect(state.deniedMessageContext['session-1']).toBeUndefined()
+      expect(state.reviewingSessions['session-1']).toBe(true)
+    })
+
+    it('stores completed duration when a session fails after running', () => {
+      const nowSpy = vi.spyOn(Date, 'now')
+      nowSpy.mockReturnValueOnce(30_000)
+
+      useChatStore.setState({
+        sendingSessionIds: { 'session-1': true },
+        sendStartedAt: { 'session-1': 20_000 },
+      })
+
+      useChatStore.getState().failSession('session-1')
+
+      expect(useChatStore.getState().completedDurations['session-1']).toBe(
+        10_000
+      )
+
+      nowSpy.mockRestore()
+    })
+  })
+
+  describe('waiting for input state', () => {
+    it('sets and checks waiting for input', () => {
+      const { setWaitingForInput, isWaitingForInput } = useChatStore.getState()
+
+      expect(isWaitingForInput('session-1')).toBe(false)
+
+      setWaitingForInput('session-1', true)
+      expect(isWaitingForInput('session-1')).toBe(true)
+
+      setWaitingForInput('session-1', false)
+      expect(isWaitingForInput('session-1')).toBe(false)
+    })
+  })
+
+  describe('streaming content', () => {
+    it('appends streaming content', () => {
+      const { appendStreamingContent } = useChatStore.getState()
+
+      appendStreamingContent('session-1', 'Hello ')
+      appendStreamingContent('session-1', 'World')
+
+      expect(useChatStore.getState().streamingContents['session-1']).toBe(
+        'Hello World'
+      )
+    })
+
+    it('clears streaming content', () => {
+      const { appendStreamingContent, clearStreamingContent } =
+        useChatStore.getState()
+
+      appendStreamingContent('session-1', 'Hello')
+      clearStreamingContent('session-1')
+
+      expect(
+        useChatStore.getState().streamingContents['session-1']
+      ).toBeUndefined()
+    })
+  })
+
+  describe('appendStreamingChunk (atomic string + block append)', () => {
+    it('appends to both streamingContents and streamingContentBlocks', () => {
+      const { appendStreamingChunk } = useChatStore.getState()
+
+      appendStreamingChunk('session-1', 'Hello ')
+      appendStreamingChunk('session-1', 'World')
+
+      const state = useChatStore.getState()
+      expect(state.streamingContents['session-1']).toBe('Hello World')
+      expect(state.streamingContentBlocks['session-1']).toEqual([
+        { type: 'text', text: 'Hello World' },
+      ])
+    })
+
+    it('matches the state produced by appendStreamingContent + addTextBlock', () => {
+      const { appendStreamingChunk, appendStreamingContent, addTextBlock } =
+        useChatStore.getState()
+
+      appendStreamingChunk('combined', 'part one ')
+      appendStreamingChunk('combined', 'part two')
+
+      appendStreamingContent('separate', 'part one ')
+      addTextBlock('separate', 'part one ')
+      appendStreamingContent('separate', 'part two')
+      addTextBlock('separate', 'part two')
+
+      const state = useChatStore.getState()
+      expect(state.streamingContents['combined']).toBe(
+        state.streamingContents['separate']
+      )
+      expect(state.streamingContentBlocks['combined']).toEqual(
+        state.streamingContentBlocks['separate']
+      )
+    })
+
+    it('starts a new text block after a tool block while the string keeps accumulating', () => {
+      const { appendStreamingChunk, addToolBlock } = useChatStore.getState()
+
+      appendStreamingChunk('session-1', 'Before tool. ')
+      addToolBlock('session-1', 'tool-1')
+      appendStreamingChunk('session-1', 'After tool.')
+
+      const state = useChatStore.getState()
+      expect(state.streamingContents['session-1']).toBe(
+        'Before tool. After tool.'
+      )
+      expect(state.streamingContentBlocks['session-1']).toEqual([
+        { type: 'text', text: 'Before tool. ' },
+        { type: 'tool_use', tool_call_id: 'tool-1' },
+        { type: 'text', text: 'After tool.' },
+      ])
+    })
+
+    it('is a no-op for empty text (state references unchanged)', () => {
+      const { appendStreamingChunk } = useChatStore.getState()
+
+      appendStreamingChunk('session-1', 'Hello')
+      const before = useChatStore.getState()
+
+      appendStreamingChunk('session-1', '')
+
+      const after = useChatStore.getState()
+      expect(after.streamingContents).toBe(before.streamingContents)
+      expect(after.streamingContentBlocks).toBe(before.streamingContentBlocks)
+    })
+  })
+
+  describe('tool calls', () => {
+    const mockToolCall: ToolCall = {
+      id: 'tool-1',
+      name: 'Read',
+      input: { file_path: '/test.txt' },
+    }
+
+    it('adds tool call', () => {
+      const { addToolCall } = useChatStore.getState()
+
+      addToolCall('session-1', mockToolCall)
+
+      expect(
+        useChatStore.getState().activeToolCalls['session-1']
+      ).toContainEqual(mockToolCall)
+    })
+
+    it('deduplicates tool calls by ID', () => {
+      const { addToolCall } = useChatStore.getState()
+
+      addToolCall('session-1', mockToolCall)
+      addToolCall('session-1', mockToolCall)
+
+      expect(useChatStore.getState().activeToolCalls['session-1']).toHaveLength(
+        1
+      )
+    })
+
+    it('updates tool call output', () => {
+      const { addToolCall, updateToolCallOutput } = useChatStore.getState()
+
+      addToolCall('session-1', mockToolCall)
+      updateToolCallOutput('session-1', 'tool-1', 'file contents')
+
+      const toolCalls = useChatStore.getState().activeToolCalls['session-1']
+      expect(toolCalls?.[0]?.output).toBe('file contents')
+    })
+
+    it('keeps tool_result when it arrives before tool_use (issue #572)', () => {
+      const { addToolCall, updateToolCallOutput } = useChatStore.getState()
+
+      // Result first (out-of-order) — must not drop stdout
+      updateToolCallOutput('session-1', 'tool-bash-1', 'exit: 0\nhello\n')
+
+      let toolCalls = useChatStore.getState().activeToolCalls['session-1']
+      expect(toolCalls).toHaveLength(1)
+      expect(toolCalls?.[0]?.id).toBe('tool-bash-1')
+      expect(toolCalls?.[0]?.output).toBe('exit: 0\nhello\n')
+
+      // Later tool_use enriches name/input without wiping output
+      addToolCall('session-1', {
+        id: 'tool-bash-1',
+        name: 'Bash',
+        input: { command: 'echo hello' },
+      })
+
+      toolCalls = useChatStore.getState().activeToolCalls['session-1']
+      expect(toolCalls).toHaveLength(1)
+      expect(toolCalls?.[0]?.name).toBe('Bash')
+      expect(toolCalls?.[0]?.input).toEqual({ command: 'echo hello' })
+      expect(toolCalls?.[0]?.output).toBe('exit: 0\nhello\n')
+    })
+
+    it('filters a large Read result that arrives before tool_use', () => {
+      const { addToolCall, updateToolCallOutput } = useChatStore.getState()
+      const largeFileContents = 'file contents\n'.repeat(10_000)
+
+      updateToolCallOutput('session-1', 'tool-read-1', largeFileContents)
+      addToolCall('session-1', {
+        id: 'tool-read-1',
+        name: 'Read',
+        input: { file_path: '/large-file.txt' },
+      })
+
+      const toolCall =
+        useChatStore.getState().activeToolCalls['session-1']?.[0]
+      expect(toolCall?.name).toBe('Read')
+      expect(toolCall?.input).toEqual({ file_path: '/large-file.txt' })
+      expect(toolCall?.output).toBe('')
+    })
+
+    it('removes a Monitor result that arrives before tool_use', () => {
+      const { addToolCall, updateToolCallOutput } = useChatStore.getState()
+
+      updateToolCallOutput('session-1', 'tool-monitor-1', 'duplicate output')
+      addToolCall('session-1', {
+        id: 'tool-monitor-1',
+        name: 'Monitor',
+        input: {},
+      })
+
+      const toolCall =
+        useChatStore.getState().activeToolCalls['session-1']?.[0]
+      expect(toolCall?.name).toBe('Monitor')
+      expect(toolCall?.output).toBeUndefined()
+    })
+
+    it('keeps an early question result until answer handling replaces it', () => {
+      const { addToolCall, updateToolCallOutput } = useChatStore.getState()
+
+      updateToolCallOutput('session-1', 'tool-question-1', 'Answer questions?')
+      addToolCall('session-1', {
+        id: 'tool-question-1',
+        name: 'question',
+        input: { questions: [{ question: 'Continue?' }] },
+      })
+
+      const toolCall =
+        useChatStore.getState().activeToolCalls['session-1']?.[0]
+      expect(toolCall?.name).toBe('question')
+      expect(toolCall?.output).toBe('Answer questions?')
+    })
+
+    it('clears tool calls', () => {
+      const { addToolCall, clearToolCalls } = useChatStore.getState()
+
+      addToolCall('session-1', mockToolCall)
+      clearToolCalls('session-1')
+
+      expect(
+        useChatStore.getState().activeToolCalls['session-1']
+      ).toBeUndefined()
+    })
+  })
+
+  describe('content blocks', () => {
+    it('adds text block', () => {
+      const { addTextBlock, getStreamingContentBlocks } =
+        useChatStore.getState()
+
+      addTextBlock('session-1', 'Hello')
+
+      const blocks = getStreamingContentBlocks('session-1')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0]).toEqual({ type: 'text', text: 'Hello' })
+    })
+
+    it('appends to existing text block', () => {
+      const { addTextBlock, getStreamingContentBlocks } =
+        useChatStore.getState()
+
+      addTextBlock('session-1', 'Hello ')
+      addTextBlock('session-1', 'World')
+
+      const blocks = getStreamingContentBlocks('session-1')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0]).toEqual({ type: 'text', text: 'Hello World' })
+    })
+
+    it('adds tool block', () => {
+      const { addTextBlock, addToolBlock, getStreamingContentBlocks } =
+        useChatStore.getState()
+
+      addTextBlock('session-1', 'Hello')
+      addToolBlock('session-1', 'tool-1')
+
+      const blocks = getStreamingContentBlocks('session-1')
+      expect(blocks).toHaveLength(2)
+      expect(blocks[1]).toEqual({ type: 'tool_use', tool_call_id: 'tool-1' })
+    })
+
+    it('keeps non-plan tools stable so messages stay between tool calls', () => {
+      const { addTextBlock, addToolBlock, getStreamingContentBlocks } =
+        useChatStore.getState()
+
+      addToolBlock('session-1', 'bash-1')
+      addTextBlock('session-1', 'status update between tools')
+      // tool_call_update re-emits the same tool id — must not jump past the text
+      addToolBlock('session-1', 'bash-1')
+
+      const blocks = getStreamingContentBlocks('session-1')
+      expect(blocks).toEqual([
+        { type: 'tool_use', tool_call_id: 'bash-1' },
+        { type: 'text', text: 'status update between tools' },
+      ])
+    })
+
+    it('re-appends plan tool blocks so the plan always trails research', () => {
+      const {
+        addToolCall,
+        addTextBlock,
+        addToolBlock,
+        getStreamingContentBlocks,
+      } = useChatStore.getState()
+
+      addToolCall('session-1', {
+        id: 'plan-1',
+        name: 'ExitPlanMode',
+        input: { plan: '# Plan\n\n- step one' },
+      })
+      addToolBlock('session-1', 'plan-1')
+      addTextBlock('session-1', 'after research')
+      // Enriched plan re-emit moves plan tool to end (richest body last)
+      addToolBlock('session-1', 'plan-1')
+
+      const blocks = getStreamingContentBlocks('session-1')
+      expect(blocks).toEqual([
+        { type: 'text', text: 'after research' },
+        { type: 'tool_use', tool_call_id: 'plan-1' },
+      ])
+    })
+
+    it('adds thinking block', () => {
+      const { addThinkingBlock, getStreamingContentBlocks } =
+        useChatStore.getState()
+
+      addThinkingBlock('session-1', 'Thinking...')
+
+      const blocks = getStreamingContentBlocks('session-1')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0]).toEqual({ type: 'thinking', thinking: 'Thinking...' })
+    })
+
+    it('clears content blocks', () => {
+      const {
+        addTextBlock,
+        clearStreamingContentBlocks,
+        getStreamingContentBlocks,
+      } = useChatStore.getState()
+
+      addTextBlock('session-1', 'Hello')
+      clearStreamingContentBlocks('session-1')
+
+      expect(getStreamingContentBlocks('session-1')).toHaveLength(0)
+    })
+  })
+
+  describe('streaming replay dedupe', () => {
+    const replayBlocks: ContentBlock[] = [
+      { type: 'text', text: 'Before tool. ' },
+      { type: 'tool_use', tool_call_id: 'tool-1' },
+      { type: 'text', text: 'After tool.' },
+    ]
+
+    it('consumes replayed text and tool blocks without changing rendered order', () => {
+      const store = useChatStore.getState()
+
+      store.addTextBlock('session-1', 'Before tool. ')
+      store.addToolBlock('session-1', 'tool-1')
+      store.addTextBlock('session-1', 'After tool.')
+      store.setStreamingReplayContentBlocks('session-1', replayBlocks)
+
+      expect(
+        store.consumeStreamingReplayText('session-1', 'Before tool. ')
+      ).toBe('')
+      expect(store.consumeStreamingReplayToolBlock('session-1', 'tool-1')).toBe(
+        true
+      )
+      expect(store.consumeStreamingReplayText('session-1', 'After tool.')).toBe(
+        ''
+      )
+
+      expect(
+        useChatStore.getState().getStreamingContentBlocks('session-1')
+      ).toEqual(replayBlocks)
+      expect(
+        useChatStore.getState().streamingReplayContentBlocks['session-1']
+      ).toBeUndefined()
+    })
+
+    it('clears replay dedupe and keeps new text when incoming text does not match', () => {
+      const store = useChatStore.getState()
+
+      store.setStreamingReplayContentBlocks('session-1', replayBlocks)
+
+      expect(store.consumeStreamingReplayText('session-1', 'New output')).toBe(
+        'New output'
+      )
+      expect(
+        useChatStore.getState().streamingReplayContentBlocks['session-1']
+      ).toBeUndefined()
+    })
+
+    it('returns the non-replayed suffix when a text chunk crosses the replay boundary', () => {
+      const store = useChatStore.getState()
+
+      store.setStreamingReplayContentBlocks('session-1', [
+        { type: 'text', text: 'Old' },
+      ])
+
+      expect(store.consumeStreamingReplayText('session-1', 'OldNew')).toBe(
+        'New'
+      )
+      expect(
+        useChatStore.getState().streamingReplayContentBlocks['session-1']
+      ).toBeUndefined()
+    })
+
+    it('resynchronizes when capped replay starts at a later tool block', () => {
+      const store = useChatStore.getState()
+
+      store.setStreamingReplayContentBlocks('session-1', replayBlocks)
+
+      expect(
+        store.consumeStreamingReplayToolBlock('session-1', 'tool-1')
+      ).toBe(true)
+      expect(store.consumeStreamingReplayText('session-1', 'After tool.')).toBe(
+        ''
+      )
+      expect(
+        useChatStore.getState().streamingReplayContentBlocks['session-1']
+      ).toBeUndefined()
+    })
+
+    it('resynchronizes when capped replay starts inside a later text block', () => {
+      const store = useChatStore.getState()
+
+      store.setStreamingReplayContentBlocks('session-1', replayBlocks)
+
+      expect(store.consumeStreamingReplayText('session-1', 'After ')).toBe('')
+      expect(store.consumeStreamingReplayText('session-1', 'tool.')).toBe('')
+      expect(
+        useChatStore.getState().streamingReplayContentBlocks['session-1']
+      ).toBeUndefined()
+    })
+
+    it('keeps snapshot dedupe when a tool is re-emitted after already being consumed', () => {
+      // Grok ACP emits tool_use/tool_block again on tool_call_update. The
+      // second emission must not abandon remaining snapshot dedupe.
+      const store = useChatStore.getState()
+
+      store.addTextBlock('session-1', 'Before tool. ')
+      store.addToolBlock('session-1', 'tool-1')
+      store.addTextBlock('session-1', 'After tool.')
+      store.setStreamingReplayContentBlocks('session-1', replayBlocks)
+
+      expect(store.consumeStreamingReplayText('session-1', 'Before tool. ')).toBe(
+        ''
+      )
+      expect(store.consumeStreamingReplayToolBlock('session-1', 'tool-1')).toBe(
+        true
+      )
+      // Re-emitted tool_block for the same id (already past in the cursor).
+      expect(store.consumeStreamingReplayToolBlock('session-1', 'tool-1')).toBe(
+        true
+      )
+      expect(store.consumeStreamingReplayText('session-1', 'After tool.')).toBe(
+        ''
+      )
+      expect(
+        useChatStore.getState().getStreamingContentBlocks('session-1')
+      ).toEqual(replayBlocks)
+      expect(
+        useChatStore.getState().streamingReplayContentBlocks['session-1']
+      ).toBeUndefined()
+    })
+  })
+
+  describe('execution mode', () => {
+    it('cycles execution mode', () => {
+      const { cycleExecutionMode, getExecutionMode } = useChatStore.getState()
+
+      expect(getExecutionMode('session-1')).toBe('plan')
+
+      cycleExecutionMode('session-1')
+      expect(getExecutionMode('session-1')).toBe('build')
+
+      cycleExecutionMode('session-1')
+      expect(getExecutionMode('session-1')).toBe('yolo')
+
+      cycleExecutionMode('session-1')
+      expect(getExecutionMode('session-1')).toBe('plan')
+    })
+
+    it('sets execution mode directly', () => {
+      const { setExecutionMode, getExecutionMode } = useChatStore.getState()
+
+      setExecutionMode('session-1', 'yolo')
+      expect(getExecutionMode('session-1')).toBe('yolo')
+    })
+
+    it('clears pending denials when switching to yolo', () => {
+      const { setPendingDenials, setExecutionMode, getPendingDenials } =
+        useChatStore.getState()
+
+      const denials: PermissionDenial[] = [
+        { tool_name: 'Bash', tool_use_id: 'toolu_123', tool_input: {} },
+      ]
+      setPendingDenials('session-1', denials)
+
+      setExecutionMode('session-1', 'yolo')
+
+      expect(getPendingDenials('session-1')).toHaveLength(0)
+    })
+  })
+
+  describe('thinking level', () => {
+    it('sets and gets thinking level', () => {
+      const { setThinkingLevel, getThinkingLevel } = useChatStore.getState()
+
+      expect(getThinkingLevel('session-1')).toBe('off')
+
+      setThinkingLevel('session-1', 'think')
+      expect(getThinkingLevel('session-1')).toBe('think')
+    })
+  })
+
+  describe('question answering', () => {
+    it('marks question as answered', () => {
+      const { markQuestionAnswered, isQuestionAnswered, getSubmittedAnswers } =
+        useChatStore.getState()
+
+      const answers: QuestionAnswer[] = [
+        { questionIndex: 0, selectedOptions: [0] },
+      ]
+      markQuestionAnswered('session-1', 'tool-1', answers)
+
+      expect(isQuestionAnswered('session-1', 'tool-1')).toBe(true)
+      expect(getSubmittedAnswers('session-1', 'tool-1')).toEqual(answers)
+    })
+
+    it('returns false for unanswered question', () => {
+      const { isQuestionAnswered } = useChatStore.getState()
+
+      expect(isQuestionAnswered('session-1', 'tool-1')).toBe(false)
+    })
+
+    it('rolls back an answered question when submitting the backend response fails', () => {
+      const store = useChatStore.getState()
+      store.markQuestionAnswered('session-1', 'tool-1', [
+        { questionIndex: 0, selectedOptions: [1] },
+      ])
+
+      store.clearQuestionAnswer('session-1', 'tool-1')
+
+      expect(store.isQuestionAnswered('session-1', 'tool-1')).toBe(false)
+      expect(store.getSubmittedAnswers('session-1', 'tool-1')).toBeUndefined()
+    })
+
+    it('tracks question skipping', () => {
+      const { setQuestionsSkipped, areQuestionsSkipped } =
+        useChatStore.getState()
+
+      expect(areQuestionsSkipped('session-1')).toBe(false)
+
+      setQuestionsSkipped('session-1', true)
+      expect(areQuestionsSkipped('session-1')).toBe(true)
+
+      setQuestionsSkipped('session-1', false)
+      expect(areQuestionsSkipped('session-1')).toBe(false)
+    })
+  })
+
+  describe('message queue', () => {
+    const createMockMessage = (id: string, message: string): QueuedMessage => ({
+      id,
+      message,
+      pendingImages: [],
+      pendingFiles: [],
+      pendingSkills: [],
+      pendingTextFiles: [],
+      model: 'sonnet',
+      provider: null,
+      executionMode: 'plan',
+      thinkingLevel: 'off',
+      queuedAt: Date.now(),
+    })
+
+    const mockMessage = createMockMessage('msg-1', 'Hello')
+
+    it('enqueues message', () => {
+      const { enqueueMessage, getQueueLength, getQueuedMessages } =
+        useChatStore.getState()
+
+      enqueueMessage('session-1', mockMessage)
+
+      expect(getQueueLength('session-1')).toBe(1)
+      expect(getQueuedMessages('session-1')[0]?.id).toBe(mockMessage.id)
+    })
+
+    it('dequeues message (FIFO)', () => {
+      const { enqueueMessage, dequeueMessage } = useChatStore.getState()
+
+      const msg1 = createMockMessage('msg-1', 'First')
+      const msg2 = createMockMessage('msg-2', 'Second')
+
+      enqueueMessage('session-1', msg1)
+      enqueueMessage('session-1', msg2)
+
+      const dequeued = dequeueMessage('session-1')
+      expect(dequeued?.id).toBe(msg1.id)
+      expect(useChatStore.getState().getQueueLength('session-1')).toBe(1)
+    })
+
+    it('returns undefined when dequeuing empty queue', () => {
+      const { dequeueMessage } = useChatStore.getState()
+
+      expect(dequeueMessage('session-1')).toBeUndefined()
+    })
+
+    it('removes specific queued message', () => {
+      const { enqueueMessage, removeQueuedMessage, getQueuedMessages } =
+        useChatStore.getState()
+
+      const msg1 = createMockMessage('msg-1', 'First')
+      const msg2 = createMockMessage('msg-2', 'Second')
+
+      enqueueMessage('session-1', msg1)
+      enqueueMessage('session-1', msg2)
+
+      removeQueuedMessage('session-1', 'msg-1')
+
+      const messages = getQueuedMessages('session-1')
+      expect(messages).toHaveLength(1)
+      expect(messages[0]?.id).toBe('msg-2')
+    })
+
+    it('clears queue', () => {
+      const { enqueueMessage, clearQueue, getQueueLength } =
+        useChatStore.getState()
+
+      enqueueMessage('session-1', mockMessage)
+      clearQueue('session-1')
+
+      expect(getQueueLength('session-1')).toBe(0)
+    })
+
+    it('moves middle message to front', () => {
+      const { enqueueMessage, moveQueuedMessageFront, getQueuedMessages } =
+        useChatStore.getState()
+
+      enqueueMessage('session-1', createMockMessage('msg-1', 'First'))
+      enqueueMessage('session-1', createMockMessage('msg-2', 'Second'))
+      enqueueMessage('session-1', createMockMessage('msg-3', 'Third'))
+
+      moveQueuedMessageFront('session-1', 'msg-2')
+
+      expect(getQueuedMessages('session-1').map(m => m.id)).toEqual([
+        'msg-2',
+        'msg-1',
+        'msg-3',
+      ])
+    })
+
+    it('moves last message to front', () => {
+      const { enqueueMessage, moveQueuedMessageFront, getQueuedMessages } =
+        useChatStore.getState()
+
+      enqueueMessage('session-1', createMockMessage('msg-1', 'First'))
+      enqueueMessage('session-1', createMockMessage('msg-2', 'Second'))
+
+      moveQueuedMessageFront('session-1', 'msg-2')
+
+      expect(getQueuedMessages('session-1').map(m => m.id)).toEqual([
+        'msg-2',
+        'msg-1',
+      ])
+    })
+
+    it('move-to-front is a no-op for unknown id or already-first message', () => {
+      const { enqueueMessage, moveQueuedMessageFront } = useChatStore.getState()
+
+      enqueueMessage('session-1', createMockMessage('msg-1', 'First'))
+      enqueueMessage('session-1', createMockMessage('msg-2', 'Second'))
+
+      const before = useChatStore.getState().messageQueues['session-1']
+      moveQueuedMessageFront('session-1', 'unknown-id')
+      // Same reference — no subscribers notified
+      expect(useChatStore.getState().messageQueues['session-1']).toBe(before)
+
+      moveQueuedMessageFront('session-1', 'msg-1')
+      expect(useChatStore.getState().messageQueues['session-1']).toBe(before)
+    })
+
+    it('updates a queued message text by id', () => {
+      const { enqueueMessage, updateQueuedMessage, getQueuedMessages } =
+        useChatStore.getState()
+
+      enqueueMessage('session-1', createMockMessage('msg-1', 'First'))
+      enqueueMessage('session-1', createMockMessage('msg-2', 'Second'))
+
+      updateQueuedMessage('session-1', 'msg-2', 'Updated second')
+
+      expect(getQueuedMessages('session-1').map(m => m.message)).toEqual([
+        'First',
+        'Updated second',
+      ])
+    })
+
+    it('queued message update is a no-op for unknown id or unchanged text', () => {
+      const { enqueueMessage, updateQueuedMessage } = useChatStore.getState()
+
+      enqueueMessage('session-1', createMockMessage('msg-1', 'First'))
+
+      const before = useChatStore.getState().messageQueues['session-1']
+      updateQueuedMessage('session-1', 'unknown-id', 'Updated')
+      expect(useChatStore.getState().messageQueues['session-1']).toBe(before)
+
+      updateQueuedMessage('session-1', 'msg-1', 'First')
+      expect(useChatStore.getState().messageQueues['session-1']).toBe(before)
+    })
+  })
+
+  describe('permission approvals', () => {
+    it('adds approved tool', () => {
+      const { addApprovedTool, getApprovedTools } = useChatStore.getState()
+
+      addApprovedTool('session-1', 'Bash(bun test)')
+
+      expect(getApprovedTools('session-1')).toContain('Bash(bun test)')
+    })
+
+    it('clears approved tools', () => {
+      const { addApprovedTool, clearApprovedTools, getApprovedTools } =
+        useChatStore.getState()
+
+      addApprovedTool('session-1', 'Bash(bun test)')
+      clearApprovedTools('session-1')
+
+      expect(getApprovedTools('session-1')).toHaveLength(0)
+    })
+  })
+
+  describe('pending denials', () => {
+    const denials: PermissionDenial[] = [
+      {
+        tool_name: 'Bash',
+        tool_use_id: 'toolu_123',
+        tool_input: { command: 'rm -rf /' },
+      },
+    ]
+
+    it('sets and gets pending denials', () => {
+      const { setPendingDenials, getPendingDenials } = useChatStore.getState()
+
+      setPendingDenials('session-1', denials)
+
+      expect(getPendingDenials('session-1')).toEqual(denials)
+    })
+
+    it('clears pending denials', () => {
+      const { setPendingDenials, clearPendingDenials, getPendingDenials } =
+        useChatStore.getState()
+
+      setPendingDenials('session-1', denials)
+      clearPendingDenials('session-1')
+
+      expect(getPendingDenials('session-1')).toHaveLength(0)
+    })
+
+    it('preserves pending denials and context when a session completes', () => {
+      const deniedContext = {
+        message: 'run tests',
+        model: 'opus',
+        executionMode: 'plan' as const,
+        thinkingLevel: 'off' as const,
+      }
+
+      useChatStore.setState({
+        pendingPermissionDenials: { 'session-1': denials },
+        deniedMessageContext: { 'session-1': deniedContext },
+        sendingSessionIds: { 'session-1': true },
+        streamingContents: { 'session-1': 'Permission required' },
+      })
+
+      useChatStore.getState().completeSession('session-1')
+
+      const state = useChatStore.getState()
+      expect(state.pendingPermissionDenials['session-1']).toEqual(denials)
+      expect(state.deniedMessageContext['session-1']).toEqual(deniedContext)
+      expect(state.sendingSessionIds['session-1']).toBeUndefined()
+    })
+
+    it('preserves pending denials and context when a session fails', () => {
+      const deniedContext = {
+        message: 'run tests',
+        model: 'opus',
+        executionMode: 'plan' as const,
+        thinkingLevel: 'off' as const,
+      }
+
+      useChatStore.setState({
+        pendingPermissionDenials: { 'session-1': denials },
+        deniedMessageContext: { 'session-1': deniedContext },
+        sendingSessionIds: { 'session-1': true },
+        streamingContents: { 'session-1': 'Permission required' },
+      })
+
+      useChatStore.getState().failSession('session-1')
+
+      const state = useChatStore.getState()
+      expect(state.pendingPermissionDenials['session-1']).toEqual(denials)
+      expect(state.deniedMessageContext['session-1']).toEqual(deniedContext)
+      expect(state.sendingSessionIds['session-1']).toBeUndefined()
+    })
+  })
+
+  describe('pending Codex command approval requests', () => {
+    const requests: CodexCommandApprovalRequest[] = [
+      {
+        rpc_id: 1,
+        item_id: 'item-1',
+        thread_id: 'thread-1',
+        turn_id: 'turn-1',
+        command: 'npm test',
+      },
+    ]
+
+    it('sets and gets pending command approval requests', () => {
+      const {
+        setPendingCodexCommandApprovalRequests,
+        getPendingCodexCommandApprovalRequests,
+      } = useChatStore.getState()
+
+      setPendingCodexCommandApprovalRequests('session-1', requests)
+
+      expect(getPendingCodexCommandApprovalRequests('session-1')).toEqual(
+        requests
+      )
+    })
+
+    it('clears pending command approval requests', () => {
+      const {
+        setPendingCodexCommandApprovalRequests,
+        clearPendingCodexCommandApprovalRequests,
+        getPendingCodexCommandApprovalRequests,
+      } = useChatStore.getState()
+
+      setPendingCodexCommandApprovalRequests('session-1', requests)
+      clearPendingCodexCommandApprovalRequests('session-1')
+
+      expect(getPendingCodexCommandApprovalRequests('session-1')).toHaveLength(
+        0
+      )
+    })
+  })
+
+  describe('denied message context', () => {
+    const context = {
+      message: 'test message',
+      model: 'sonnet',
+      executionMode: 'plan' as const,
+    }
+
+    it('sets and gets denied message context', () => {
+      const { setDeniedMessageContext, getDeniedMessageContext } =
+        useChatStore.getState()
+
+      setDeniedMessageContext('session-1', context)
+
+      expect(getDeniedMessageContext('session-1')).toEqual(context)
+    })
+
+    it('clears denied message context', () => {
+      const {
+        setDeniedMessageContext,
+        clearDeniedMessageContext,
+        getDeniedMessageContext,
+      } = useChatStore.getState()
+
+      setDeniedMessageContext('session-1', context)
+      clearDeniedMessageContext('session-1')
+
+      expect(getDeniedMessageContext('session-1')).toBeUndefined()
+    })
+  })
+
+  describe('clearSessionState', () => {
+    it('clears all session-specific state', () => {
+      const store = useChatStore.getState()
+
+      // Set up various session state
+      store.addApprovedTool('session-1', 'Bash')
+      store.setPendingDenials('session-1', [
+        { tool_name: 'Write', tool_use_id: 'toolu_456', tool_input: {} },
+      ])
+      store.setDeniedMessageContext('session-1', { message: 'test' })
+      store.setSessionReviewing('session-1', true)
+      store.setWaitingForInput('session-1', true)
+      store.markQuestionAnswered('session-1', 'q1', [
+        { questionIndex: 0, selectedOptions: [0] },
+      ])
+      store.markFindingFixed('session-1', 'finding-1')
+
+      store.clearSessionState('session-1')
+
+      expect(store.getApprovedTools('session-1')).toHaveLength(0)
+      expect(store.getPendingDenials('session-1')).toHaveLength(0)
+      expect(store.getDeniedMessageContext('session-1')).toBeUndefined()
+      expect(store.isSessionReviewing('session-1')).toBe(false)
+      expect(store.isWaitingForInput('session-1')).toBe(false)
+      expect(store.isQuestionAnswered('session-1', 'q1')).toBe(false)
+      expect(store.isFindingFixed('session-1', 'finding-1')).toBe(false)
+    })
+  })
+
+  describe('input drafts', () => {
+    it('sets and clears input draft', () => {
+      const { setInputDraft, clearInputDraft } = useChatStore.getState()
+
+      setInputDraft('session-1', 'Hello world')
+      expect(useChatStore.getState().inputDrafts['session-1']).toBe(
+        'Hello world'
+      )
+
+      clearInputDraft('session-1')
+      expect(useChatStore.getState().inputDrafts['session-1']).toBeUndefined()
+    })
+  })
+
+  describe('error handling', () => {
+    it('sets and clears error', () => {
+      const { setError } = useChatStore.getState()
+
+      setError('session-1', 'Something went wrong')
+      expect(useChatStore.getState().errors['session-1']).toBe(
+        'Something went wrong'
+      )
+
+      setError('session-1', null)
+      expect(useChatStore.getState().errors['session-1']).toBeNull()
+    })
+
+    it('sets and clears last sent message', () => {
+      const { setLastSentMessage, clearLastSentMessage } =
+        useChatStore.getState()
+
+      setLastSentMessage('session-1', 'Hello')
+      expect(useChatStore.getState().lastSentMessages['session-1']).toBe(
+        'Hello'
+      )
+
+      clearLastSentMessage('session-1')
+      expect(
+        useChatStore.getState().lastSentMessages['session-1']
+      ).toBeUndefined()
+    })
+  })
+
+  describe('pending images', () => {
+    const mockImage: PendingImage = {
+      id: 'img-1',
+      path: '/test.png',
+      filename: 'test.png',
+    }
+
+    it('adds pending image', () => {
+      const { addPendingImage, getPendingImages } = useChatStore.getState()
+
+      addPendingImage('session-1', mockImage)
+
+      expect(getPendingImages('session-1')).toContainEqual(mockImage)
+    })
+
+    it('removes pending image', () => {
+      const { addPendingImage, removePendingImage, getPendingImages } =
+        useChatStore.getState()
+
+      addPendingImage('session-1', mockImage)
+      removePendingImage('session-1', 'img-1')
+
+      expect(getPendingImages('session-1')).toHaveLength(0)
+    })
+
+    it('clears pending images', () => {
+      const { addPendingImage, clearPendingImages, getPendingImages } =
+        useChatStore.getState()
+
+      addPendingImage('session-1', mockImage)
+      clearPendingImages('session-1')
+
+      expect(getPendingImages('session-1')).toHaveLength(0)
+    })
+  })
+
+  describe('pending text files', () => {
+    const mockTextFile: PendingTextFile = {
+      id: 'text-1',
+      path: '/tmp/pasted-texts/paste-123.txt',
+      filename: 'paste-123.txt',
+      size: 1024,
+      content: 'Hello world',
+    }
+
+    it('adds pending text file', () => {
+      const { addPendingTextFile, getPendingTextFiles } =
+        useChatStore.getState()
+
+      addPendingTextFile('session-1', mockTextFile)
+
+      expect(getPendingTextFiles('session-1')).toContainEqual(mockTextFile)
+    })
+
+    it('updates pending text file content and size', () => {
+      const { addPendingTextFile, updatePendingTextFile, getPendingTextFiles } =
+        useChatStore.getState()
+
+      addPendingTextFile('session-1', mockTextFile)
+      updatePendingTextFile('session-1', 'text-1', 'Updated content', 15)
+
+      const files = getPendingTextFiles('session-1')
+      expect(files).toHaveLength(1)
+      expect(files[0]?.content).toBe('Updated content')
+      expect(files[0]?.size).toBe(15)
+    })
+
+    it('does not affect other text files when updating', () => {
+      const { addPendingTextFile, updatePendingTextFile, getPendingTextFiles } =
+        useChatStore.getState()
+
+      const otherFile: PendingTextFile = {
+        id: 'text-2',
+        path: '/tmp/pasted-texts/paste-456.txt',
+        filename: 'paste-456.txt',
+        size: 512,
+        content: 'Other content',
+      }
+
+      addPendingTextFile('session-1', mockTextFile)
+      addPendingTextFile('session-1', otherFile)
+      updatePendingTextFile('session-1', 'text-1', 'Updated', 7)
+
+      const files = getPendingTextFiles('session-1')
+      expect(files).toHaveLength(2)
+      expect(files.find(f => f.id === 'text-2')?.content).toBe('Other content')
+    })
+
+    it('handles update for non-existent text file gracefully', () => {
+      const { addPendingTextFile, updatePendingTextFile, getPendingTextFiles } =
+        useChatStore.getState()
+
+      addPendingTextFile('session-1', mockTextFile)
+      updatePendingTextFile('session-1', 'non-existent', 'New content', 11)
+
+      const files = getPendingTextFiles('session-1')
+      expect(files).toHaveLength(1)
+      expect(files[0]?.content).toBe('Hello world')
+    })
+
+    it('removes pending text file', () => {
+      const { addPendingTextFile, removePendingTextFile, getPendingTextFiles } =
+        useChatStore.getState()
+
+      addPendingTextFile('session-1', mockTextFile)
+      removePendingTextFile('session-1', 'text-1')
+
+      expect(getPendingTextFiles('session-1')).toHaveLength(0)
+    })
+
+    it('clears pending text files', () => {
+      const { addPendingTextFile, clearPendingTextFiles, getPendingTextFiles } =
+        useChatStore.getState()
+
+      addPendingTextFile('session-1', mockTextFile)
+      clearPendingTextFiles('session-1')
+
+      expect(getPendingTextFiles('session-1')).toHaveLength(0)
+    })
+  })
+
+  describe('active todos', () => {
+    const mockTodos = [
+      {
+        content: 'Task 1',
+        status: 'pending' as const,
+        activeForm: 'Doing task 1',
+      },
+      {
+        content: 'Task 2',
+        status: 'completed' as const,
+        activeForm: 'Doing task 2',
+      },
+    ]
+
+    it('sets and gets active todos', () => {
+      const { setActiveTodos, getActiveTodos } = useChatStore.getState()
+
+      setActiveTodos('session-1', mockTodos)
+
+      expect(getActiveTodos('session-1')).toEqual(mockTodos)
+    })
+
+    it('clears active todos', () => {
+      const { setActiveTodos, clearActiveTodos, getActiveTodos } =
+        useChatStore.getState()
+
+      setActiveTodos('session-1', mockTodos)
+      clearActiveTodos('session-1')
+
+      expect(getActiveTodos('session-1')).toHaveLength(0)
+    })
+  })
+
+  describe('fixed findings', () => {
+    it('marks finding as fixed', () => {
+      const { markFindingFixed, isFindingFixed } = useChatStore.getState()
+
+      markFindingFixed('session-1', 'finding-1')
+
+      expect(isFindingFixed('session-1', 'finding-1')).toBe(true)
+      expect(isFindingFixed('session-1', 'finding-2')).toBe(false)
+    })
+
+    it('clears fixed findings', () => {
+      const { markFindingFixed, clearFixedFindings, isFindingFixed } =
+        useChatStore.getState()
+
+      markFindingFixed('session-1', 'finding-1')
+      clearFixedFindings('session-1')
+
+      expect(isFindingFixed('session-1', 'finding-1')).toBe(false)
+    })
+  })
+
+  describe('streaming plan approval', () => {
+    it('sets and checks streaming plan approval', () => {
+      const { setStreamingPlanApproved, isStreamingPlanApproved } =
+        useChatStore.getState()
+
+      expect(isStreamingPlanApproved('session-1')).toBe(false)
+
+      setStreamingPlanApproved('session-1', true)
+      expect(isStreamingPlanApproved('session-1')).toBe(true)
+    })
+
+    it('clears streaming plan approval', () => {
+      const {
+        setStreamingPlanApproved,
+        clearStreamingPlanApproval,
+        isStreamingPlanApproved,
+      } = useChatStore.getState()
+
+      setStreamingPlanApproved('session-1', true)
+      clearStreamingPlanApproval('session-1')
+
+      expect(isStreamingPlanApproved('session-1')).toBe(false)
+    })
+  })
+
+  describe('executing mode', () => {
+    it('sets and gets executing mode', () => {
+      const { setExecutingMode, getExecutingMode } = useChatStore.getState()
+
+      expect(getExecutingMode('session-1')).toBeUndefined()
+
+      setExecutingMode('session-1', 'build')
+      expect(getExecutingMode('session-1')).toBe('build')
+    })
+
+    it('clears executing mode', () => {
+      const { setExecutingMode, clearExecutingMode, getExecutingMode } =
+        useChatStore.getState()
+
+      setExecutingMode('session-1', 'build')
+      clearExecutingMode('session-1')
+
+      expect(getExecutingMode('session-1')).toBeUndefined()
+    })
+  })
+
+  describe('compaction tracking', () => {
+    it('sets and gets last compaction', () => {
+      const { setLastCompaction, getLastCompaction } = useChatStore.getState()
+
+      setLastCompaction('session-1', 'auto')
+
+      const compaction = getLastCompaction('session-1')
+      expect(compaction?.trigger).toBe('auto')
+      expect(compaction?.timestamp).toBeGreaterThan(0)
+    })
+
+    it('clears last compaction', () => {
+      const { setLastCompaction, clearLastCompaction, getLastCompaction } =
+        useChatStore.getState()
+
+      setLastCompaction('session-1', 'auto')
+      clearLastCompaction('session-1')
+
+      expect(getLastCompaction('session-1')).toBeUndefined()
+    })
+  })
+
+  describe('save context tracking', () => {
+    it('sets and checks saving context', () => {
+      const { setSavingContext, isSavingContext } = useChatStore.getState()
+
+      expect(isSavingContext('session-1')).toBe(false)
+
+      setSavingContext('session-1', true)
+      expect(isSavingContext('session-1')).toBe(true)
+
+      setSavingContext('session-1', false)
+      expect(isSavingContext('session-1')).toBe(false)
+    })
+  })
+
+  describe('review results', () => {
+    const mockResults: ReviewResponse = {
+      summary: 'No issues found',
+      findings: [],
+      approval_status: 'approved',
+    }
+
+    it('sets review results and opens sidebar', () => {
+      const { setReviewResults } = useChatStore.getState()
+
+      setReviewResults('session-1', mockResults)
+
+      expect(useChatStore.getState().reviewResults['session-1']).toEqual(
+        mockResults
+      )
+      expect(useChatStore.getState().reviewSidebarVisible).toBe(true)
+    })
+
+    it('clears review results', () => {
+      const { setReviewResults, clearReviewResults } = useChatStore.getState()
+
+      setReviewResults('session-1', mockResults)
+      clearReviewResults('session-1')
+
+      expect(useChatStore.getState().reviewResults['session-1']).toBeUndefined()
+    })
+
+    it('toggles review sidebar visibility', () => {
+      const { setReviewSidebarVisible, toggleReviewSidebar } =
+        useChatStore.getState()
+
+      setReviewSidebarVisible(true)
+      expect(useChatStore.getState().reviewSidebarVisible).toBe(true)
+
+      toggleReviewSidebar()
+      expect(useChatStore.getState().reviewSidebarVisible).toBe(false)
+    })
+  })
+
+  describe('review fixed findings (session-based)', () => {
+    it('marks and checks review finding fixed', () => {
+      const { markReviewFindingFixed, isReviewFindingFixed } =
+        useChatStore.getState()
+
+      markReviewFindingFixed('worktree-1', 'finding-1')
+
+      expect(isReviewFindingFixed('worktree-1', 'finding-1')).toBe(true)
+      expect(isReviewFindingFixed('worktree-1', 'finding-2')).toBe(false)
+    })
+
+    it('clears fixed review findings', () => {
+      const {
+        markReviewFindingFixed,
+        clearFixedReviewFindings,
+        isReviewFindingFixed,
+      } = useChatStore.getState()
+
+      markReviewFindingFixed('worktree-1', 'finding-1')
+      clearFixedReviewFindings('worktree-1')
+
+      expect(isReviewFindingFixed('worktree-1', 'finding-1')).toBe(false)
+    })
+  })
+
+  describe('session reviewing status', () => {
+    it('sets and checks session reviewing', () => {
+      const { setSessionReviewing, isSessionReviewing } =
+        useChatStore.getState()
+
+      expect(isSessionReviewing('session-1')).toBe(false)
+
+      setSessionReviewing('session-1', true)
+      expect(isSessionReviewing('session-1')).toBe(true)
+
+      setSessionReviewing('session-1', false)
+      expect(isSessionReviewing('session-1')).toBe(false)
+    })
+  })
+
+  describe('session status override', () => {
+    it('sets manual status overrides and keeps review flag in sync', () => {
+      const {
+        setSessionStatusOverride,
+        getSessionStatusOverride,
+        isSessionReviewing,
+      } = useChatStore.getState()
+
+      expect(getSessionStatusOverride('session-1')).toBeNull()
+
+      setSessionStatusOverride('session-1', 'review')
+      expect(getSessionStatusOverride('session-1')).toBe('review')
+      expect(isSessionReviewing('session-1')).toBe(true)
+
+      setSessionStatusOverride('session-1', 'completed')
+      expect(getSessionStatusOverride('session-1')).toBe('completed')
+      expect(isSessionReviewing('session-1')).toBe(false)
+
+      setSessionStatusOverride('session-1', null)
+      expect(getSessionStatusOverride('session-1')).toBeNull()
+    })
+
+    it('is a no-op when setting the same override again', () => {
+      const { setSessionStatusOverride } = useChatStore.getState()
+      setSessionStatusOverride('session-1', 'idle')
+      const first = useChatStore.getState().sessionStatusOverrides
+
+      setSessionStatusOverride('session-1', 'idle')
+      expect(useChatStore.getState().sessionStatusOverrides).toBe(first)
+    })
+  })
+
+  describe('pending files', () => {
+    it('deduplicates pending files by source scope and relative path', () => {
+      const { addPendingFile } = useChatStore.getState()
+
+      addPendingFile('session-1', {
+        id: 'file-current',
+        relativePath: 'src/App.tsx',
+        extension: 'tsx',
+        isDirectory: false,
+      })
+      addPendingFile('session-1', {
+        id: 'file-current-dupe',
+        relativePath: 'src/App.tsx',
+        extension: 'tsx',
+        isDirectory: false,
+      })
+      addPendingFile('session-1', {
+        id: 'file-linked',
+        relativePath: 'src/App.tsx',
+        sourceRootPath: '/tmp/linked',
+        sourceProjectId: 'linked',
+        sourceProjectName: 'Linked',
+        extension: 'tsx',
+        isDirectory: false,
+      })
+
+      expect(useChatStore.getState().pendingFiles['session-1']).toHaveLength(2)
+      expect(
+        useChatStore.getState().pendingFiles['session-1']?.map(file => file.id)
+      ).toEqual(['file-current', 'file-linked'])
+    })
+  })
+})

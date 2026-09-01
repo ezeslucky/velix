@@ -1,0 +1,633 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@/test/test-utils'
+import userEvent from '@testing-library/user-event'
+import { MessageItem } from './MessageItem'
+import type {
+  ChatMessage,
+  ReviewFinding,
+  QuestionAnswer,
+  Question,
+} from '@/types/chat'
+import { useUIStore } from '@/store/ui-store'
+
+const mocks = vi.hoisted(() => ({
+  copyToClipboard: vi.fn(),
+  toastSuccess: vi.fn(),
+  toastError: vi.fn(),
+}))
+
+vi.mock('@/lib/clipboard', () => ({
+  copyToClipboard: mocks.copyToClipboard,
+}))
+
+vi.mock('sonner', () => ({
+  toast: {
+    success: mocks.toastSuccess,
+    error: mocks.toastError,
+  },
+}))
+
+describe('MessageItem', () => {
+  beforeEach(() => {
+    useUIStore.setState({ zenMode: false })
+  })
+  const noopQuestionAnswer = (
+    _toolCallId: string,
+    _answers: QuestionAnswer[],
+    _questions: Question[]
+  ) => undefined
+
+  const noopFixFinding = async (
+    _finding: ReviewFinding,
+    _suggestion?: string
+  ) => undefined
+
+  const noopFixAllFindings = async (
+    _findings: { finding: ReviewFinding; suggestion?: string }[]
+  ) => undefined
+
+  const baseMessage: ChatMessage = {
+    id: 'assistant-1',
+    session_id: 'session-1',
+    role: 'assistant',
+    content: '',
+    timestamp: 1,
+    tool_calls: [
+      {
+        id: 'plan-1',
+        name: 'CodexPlan',
+        input: { plan_preview: 'Persisted preview plan' },
+      },
+    ],
+    content_blocks: [
+      { type: 'text', text: 'Intro text' },
+      { type: 'tool_use', tool_call_id: 'plan-1' },
+      { type: 'text', text: 'Text after tool' },
+    ],
+  }
+
+  const baseProps = {
+    message: baseMessage,
+    messageIndex: 0,
+    totalMessages: 1,
+    lastPlanMessageIndex: 0,
+    hasFollowUpMessage: false,
+    sessionId: 'session-1',
+    worktreePath: '/tmp/worktree',
+    approveShortcut: 'Cmd+Enter',
+    isSending: false,
+    onPlanApproval: vi.fn(),
+    onQuestionAnswer: noopQuestionAnswer,
+    onQuestionSkip: vi.fn(),
+    onFileClick: vi.fn(),
+    onFixFinding: noopFixFinding,
+    onFixAllFindings: noopFixAllFindings,
+    isQuestionAnswered: vi.fn(() => false),
+    getSubmittedAnswers: vi.fn(() => undefined),
+    areQuestionsSkipped: vi.fn(() => false),
+    isFindingFixed: vi.fn(() => false),
+  }
+
+  it('renders user prompts without a collapsed prompt-sent indicator', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          id: 'user-1',
+          session_id: 'session-1',
+          role: 'user',
+          content: 'Keep this prompt visible',
+          timestamp: 1,
+          tool_calls: [],
+        }}
+      />
+    )
+
+    expect(screen.getByText('Keep this prompt visible')).toBeVisible()
+    expect(screen.queryByText('Prompt sent')).not.toBeInTheDocument()
+  })
+
+  it('hides prompt metadata and message actions in zen mode', () => {
+    useUIStore.setState({ zenMode: true })
+    render(
+      <MessageItem
+        {...baseProps}
+        onCopyToInput={vi.fn()}
+        message={{
+          id: 'user-1',
+          session_id: 'session-1',
+          role: 'user',
+          content: 'Keep only this prompt',
+          timestamp: 1,
+          tool_calls: [],
+          model: 'codex/gpt-5.6',
+          execution_mode: 'yolo',
+          effort_level: 'medium',
+        }}
+      />
+    )
+
+    expect(screen.getByText('Keep only this prompt')).toBeVisible()
+    expect(screen.queryByText(/GPT 5.6/i)).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Copy message to input' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides assistant copy actions in zen mode', () => {
+    useUIStore.setState({ zenMode: true })
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'Zen response',
+          content_blocks: [{ type: 'text', text: 'Zen response' }],
+          tool_calls: [],
+        }}
+      />
+    )
+
+    expect(screen.getByText('Zen response')).toBeVisible()
+    expect(
+      screen.queryByRole('button', { name: 'Copy response to clipboard' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('renders assistant text blocks even when a Codex plan is present', () => {
+    render(<MessageItem {...baseProps} />)
+
+    expect(screen.getByText('Intro text')).toBeVisible()
+    expect(screen.getByText('Text after tool')).toBeVisible()
+    expect(screen.getByText('Persisted preview plan')).toBeVisible()
+  })
+
+  it('renders explanation-only Codex plans from persisted messages', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          tool_calls: [
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                explanation: 'Repo inspected. Native plan had no prose body.',
+                steps: [{ step: 'Clarify scope', status: 'in_progress' }],
+              },
+            },
+          ],
+        }}
+      />
+    )
+
+    expect(
+      screen.getByText('Repo inspected. Native plan had no prose body.')
+    ).toBeVisible()
+    expect(screen.getByText('Clarify scope')).toBeVisible()
+    expect(screen.getByText('In progress:')).toBeVisible()
+  })
+
+  it('prefers final plan text over explanation-only fallback and hides duplicate text block', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: '',
+          tool_calls: [
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                explanation: 'Repo inspected. Native plan had no prose body.',
+                steps: [{ step: 'Clarify scope', status: 'in_progress' }],
+              },
+            },
+          ],
+          content_blocks: [
+            { type: 'tool_use', tool_call_id: 'plan-1' },
+            {
+              type: 'text',
+              text: 'Repo inspected.\n\nPlan:\n- Implement changes\n- Add tests',
+            },
+          ],
+        }}
+      />
+    )
+
+    expect(
+      screen.queryByText('Repo inspected. Native plan had no prose body.')
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('Plan:')).toBeVisible()
+    expect(screen.getAllByText('Implement changes')).toHaveLength(1)
+    expect(screen.getAllByText('Add tests')).toHaveLength(1)
+  })
+
+  it('renders fragmented persisted Codex plan text instead of explanation fallback', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: '',
+          tool_calls: [
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                plan: [{ step: 'Wrong runtime shape' }],
+                explanation: 'Summary only',
+                steps: [{ step: 'Clarify scope', status: 'in_progress' }],
+              },
+            },
+          ],
+          content_blocks: [
+            { type: 'tool_use', tool_call_id: 'plan-1' },
+            { type: 'text', text: 'Repo inspected.\n\n' },
+            { type: 'text', text: 'Plan:\n- Remove auto-continue' },
+            { type: 'text', text: '\n- Add tests' },
+          ],
+        }}
+      />
+    )
+
+    expect(screen.queryByText('Summary only')).not.toBeInTheDocument()
+    expect(screen.getByText('Plan:')).toBeVisible()
+    expect(screen.getAllByText('Remove auto-continue')).toHaveLength(1)
+    expect(screen.getAllByText('Add tests')).toHaveLength(1)
+  })
+
+  it('renders fallback PlanDisplay for old-format assistant messages', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'Repo inspected.\n\nPlan:\n- Implement changes\n- Add tests',
+          tool_calls: [
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                explanation: 'Repo inspected. Native plan had no prose body.',
+                steps: [{ step: 'Clarify scope', status: 'in_progress' }],
+              },
+            },
+          ],
+          content_blocks: [],
+        }}
+      />
+    )
+
+    expect(screen.getByText('Plan:')).toBeVisible()
+    expect(screen.getAllByText('Implement changes')).toHaveLength(1)
+    expect(screen.getAllByText('Add tests')).toHaveLength(1)
+    expect(
+      screen.queryByText('Repo inspected. Native plan had no prose body.')
+    ).not.toBeInTheDocument()
+  })
+
+  it('renders fallback PlanDisplay when Codex plan text exists but timeline lacks a plan tool block', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'Repo inspected.\n\nPlan:\n- Implement changes\n- Add tests',
+          tool_calls: [
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                explanation: 'Fallback explanation',
+              },
+            },
+          ],
+          content_blocks: [{ type: 'text', text: 'Repo inspected.' }],
+        }}
+      />
+    )
+
+    expect(screen.getByText('Plan:')).toBeVisible()
+    expect(screen.getAllByText('Implement changes')).toHaveLength(1)
+    expect(screen.getAllByText('Add tests')).toHaveLength(1)
+  })
+
+  it('renders intro text from message content when persisted content blocks only contain plan tools', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'I’ll draft a concise, actionable plan.',
+          tool_calls: [
+            {
+              id: 'enter-plan-1',
+              name: 'EnterPlanMode',
+              input: { title: 'Plan mode instructions', instructions: [] },
+            },
+            {
+              id: 'plan-1',
+              name: 'ExitPlanMode',
+              input: { plan: 'Plan:\n- Inspect birds' },
+            },
+          ],
+          content_blocks: [
+            { type: 'tool_use', tool_call_id: 'enter-plan-1' },
+            { type: 'tool_use', tool_call_id: 'plan-1' },
+          ],
+        }}
+      />
+    )
+
+    expect(
+      screen.getByText('I’ll draft a concise, actionable plan.')
+    ).toBeVisible()
+    expect(screen.getByText('Inspect birds')).toBeVisible()
+  })
+
+  it('does not render message content as intro when it exactly matches the Codex plan', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'Short answer: goal is separate from plan mode.',
+          tool_calls: [
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                plan: 'Short answer: goal is separate from plan mode.',
+              },
+            },
+          ],
+          content_blocks: [{ type: 'tool_use', tool_call_id: 'plan-1' }],
+        }}
+      />
+    )
+
+    expect(
+      screen.getAllByText('Short answer: goal is separate from plan mode.')
+    ).toHaveLength(1)
+  })
+
+  it('renders prose before the fallback plan above tool calls', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        durationMs={23_000}
+        message={{
+          ...baseMessage,
+          content: 'Repo inspected.\n\nPlan:\n- Implement changes\n- Add tests',
+          tool_calls: [
+            {
+              id: 'tool-1',
+              name: 'Read',
+              input: { file_path: '/tmp/demo.ts' },
+              output: 'done',
+            },
+            {
+              id: 'plan-1',
+              name: 'CodexPlan',
+              input: {
+                explanation: 'Repo inspected. Native plan had no prose body.',
+                steps: [{ step: 'Clarify scope', status: 'in_progress' }],
+              },
+            },
+          ],
+          content_blocks: [],
+        }}
+      />
+    )
+
+    const prose = screen.getByText('Repo inspected.')
+    const duration = screen.getByText('23s')
+    const toolsToggle = screen.getByRole('button', { name: /1 tool used/i })
+    expect(prose.compareDocumentPosition(toolsToggle)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    )
+    expect(duration.compareDocumentPosition(toolsToggle)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    )
+    expect(screen.getByText('Plan:')).toBeVisible()
+  })
+
+  it('renders answered OpenCode questions with the same persisted summary styling', () => {
+    render(
+      <MessageItem
+        {...baseProps}
+        hasFollowUpMessage={false}
+        isQuestionAnswered={vi.fn(() => true)}
+        message={{
+          ...baseMessage,
+          tool_calls: [
+            {
+              id: 'question-1',
+              name: 'question',
+              input: {
+                questions: [
+                  {
+                    header: 'Bird Type',
+                    question: 'What is your favorite type of bird?',
+                    multiple: false,
+                    options: [
+                      {
+                        label: 'Raptors',
+                        description: 'Eagles, hawks, falcons',
+                      },
+                      {
+                        label: 'Songbirds',
+                        description: 'Robins, sparrows, warblers',
+                      },
+                    ],
+                  },
+                ],
+              },
+              output: JSON.stringify([
+                { questionIndex: 0, selectedOptions: [0] },
+              ]),
+            },
+          ],
+          content_blocks: [{ type: 'tool_use', tool_call_id: 'question-1' }],
+        }}
+      />
+    )
+
+    expect(screen.getByText('Raptors')).toBeVisible()
+  })
+
+  it('renders assistant duration in mm:ss format when minutes are non-zero', () => {
+    render(<MessageItem {...baseProps} durationMs={145_000} />)
+
+    expect(screen.getByText('02:25')).toBeVisible()
+  })
+
+  it('renders assistant duration as seconds only when under a minute', () => {
+    render(<MessageItem {...baseProps} durationMs={23_000} />)
+
+    expect(screen.getByText('23s')).toBeVisible()
+  })
+
+  it('copies an assistant response to the clipboard', async () => {
+    mocks.copyToClipboard.mockResolvedValue(undefined)
+
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'This is the assistant response.',
+          tool_calls: [],
+          content_blocks: [],
+        }}
+      />
+    )
+
+    screen.getByRole('button', { name: 'Copy response to clipboard' }).click()
+
+    await waitFor(() => {
+      expect(mocks.copyToClipboard).toHaveBeenCalledWith(
+        'This is the assistant response.'
+      )
+      expect(mocks.toastSuccess).toHaveBeenCalledWith(
+        'Response copied to clipboard'
+      )
+    })
+  })
+
+  it('copies text from content blocks when the persisted response is empty', async () => {
+    mocks.copyToClipboard.mockResolvedValue(undefined)
+
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: '',
+          tool_calls: [],
+          content_blocks: [
+            { type: 'text', text: 'First response block.' },
+            { type: 'text', text: 'Second response block.' },
+          ],
+        }}
+      />
+    )
+
+    screen.getByRole('button', { name: 'Copy response to clipboard' }).click()
+
+    await waitFor(() => {
+      expect(mocks.copyToClipboard).toHaveBeenCalledWith(
+        'First response block.\nSecond response block.'
+      )
+    })
+  })
+
+  it('copies steered prompts rendered in full native messages', () => {
+    const onCopyToInput = vi.fn()
+
+    render(
+      <MessageItem
+        {...baseProps}
+        onCopyToInput={onCopyToInput}
+        message={{
+          ...baseMessage,
+          id: 'assistant-steered',
+          content: '',
+          tool_calls: [],
+          content_blocks: [
+            { type: 'text', text: 'Before steer' },
+            { type: 'user_input', text: 'copy this steered prompt' },
+            { type: 'text', text: 'After steer' },
+          ],
+        }}
+      />
+    )
+
+    screen.getByRole('button', { name: 'Copy steered prompt' }).click()
+
+    expect(onCopyToInput).toHaveBeenCalledTimes(1)
+    expect(onCopyToInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        role: 'user',
+        content: 'copy this steered prompt',
+      })
+    )
+  })
+
+  it('constrains long user prompts so mobile viewports do not clip the left edge', () => {
+    const longUrl =
+      'https://github.com/coollabsio/jean/actions/runs/30667035760'
+    const content = [
+      'Investigate the failed GitHub Actions workflow run for "CI Build"',
+      `- Run URL: ${longUrl}`,
+      '1. Use the GitHub CLI to fetch the workflow run logs',
+    ].join('\n')
+
+    const { container } = render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          id: 'user-1',
+          role: 'user',
+          content,
+          tool_calls: [],
+          content_blocks: [],
+        }}
+      />
+    )
+
+    const bubble = container.querySelector(
+      '.max-w-\\[85\\%\\].min-w-0'
+    ) as HTMLElement | null
+    expect(bubble).toBeTruthy()
+    expect(bubble?.className).toContain('min-w-0')
+
+    const text = screen.getByText(/Investigate the failed GitHub Actions/)
+    expect(text.className).toContain('overflow-wrap:anywhere')
+    expect(text.className).toContain('break-words')
+    expect(text.className).toContain('min-w-0')
+    expect(screen.getByText(new RegExp(longUrl))).toBeInTheDocument()
+  })
+
+  it('shows a custom context menu on right-click instead of browser defaults', async () => {
+    const user = userEvent.setup()
+    const original = window.getSelection
+    window.getSelection = () =>
+      ({
+        toString: () => '',
+      }) as Selection
+
+    mocks.copyToClipboard.mockResolvedValue(undefined)
+
+    render(
+      <MessageItem
+        {...baseProps}
+        message={{
+          ...baseMessage,
+          content: 'Right-click me for a custom menu.',
+          tool_calls: [],
+          content_blocks: [],
+        }}
+      />
+    )
+
+    fireEvent.contextMenu(screen.getByText('Right-click me for a custom menu.'))
+
+    const item = await screen.findByRole('menuitem', {
+      name: /copy response/i,
+    })
+    await user.click(item)
+
+    await waitFor(() => {
+      expect(mocks.copyToClipboard).toHaveBeenCalledWith(
+        'Right-click me for a custom menu.'
+      )
+    })
+
+    window.getSelection = original
+  })
+})

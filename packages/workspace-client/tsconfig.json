@@ -1,7 +1,0 @@
-{
-	"extends": "@velix/typescript/base.json",
-	"compilerOptions": {
-		"jsx": "react-jsx"
-	},
-	"include": ["src"]
-}

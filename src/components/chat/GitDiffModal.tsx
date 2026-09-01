@@ -1,0 +1,1824 @@
+import {
+  useState,
+  useEffect,
+  useEffectEvent,
+  useCallback,
+  useRef,
+  useMemo,
+  memo,
+  useTransition,
+} from 'react'
+import {
+  FileText,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+  Columns2,
+  Rows3,
+  GitBranch,
+  GitCommitHorizontal,
+  History,
+  MessageSquarePlus,
+  Pencil,
+  X,
+  Search,
+  Undo2,
+  ChevronsUpDown,
+  PanelLeft,
+  Check,
+} from 'lucide-react'
+import {
+  parsePatchFiles,
+  type SelectedLineRange,
+  type DiffLineAnnotation,
+  type FileDiffMetadata,
+} from '@pierre/diffs'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Kbd } from '@/components/ui/kbd'
+import { ModalCloseButton } from '@/components/ui/modal-close-button'
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from '@/components/ui/resizable'
+import { cn } from '@/lib/utils'
+import { generateId } from '@/lib/uuid'
+import { getFilename } from '@/lib/path-utils'
+import { getFileLineStats } from '@/lib/diff-stats'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'
+import {
+  getGitDiff,
+  revertFile,
+  triggerImmediateGitPoll,
+} from '@/services/git-status'
+import { startCommitJob } from '@/services/commit-jobs'
+import { dismissibleToast } from '@/lib/dismissible-toast'
+import { resolveMagicPromptProvider } from '@/types/preferences'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+} from '@/components/ui/context-menu'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog'
+import { useTheme } from '@/hooks/use-theme'
+import { useUIStore } from '@/store/ui-store'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { usePreferences } from '@/services/preferences'
+import { CommitsTabView } from './CommitsTabView'
+import { CheckpointsTabView } from './CheckpointsTabView'
+import {
+  MemoizedFileDiff,
+  getStatusColor,
+  type DiffComment,
+} from './MemoizedFileDiff'
+import type { GitDiff, DiffRequest } from '@/types/git-diff'
+import { DEFAULT_KEYBINDINGS, eventMatchesShortcut } from '@/types/keybindings'
+
+// PERFORMANCE: Stable empty array reference for files without comments
+// This prevents unnecessary re-renders since the reference never changes
+const EMPTY_ANNOTATIONS: DiffLineAnnotation<DiffComment>[] = []
+
+// Re-export for consumers that imported from this file
+export type { DiffComment, MemoizedFileDiffProps } from './MemoizedFileDiff'
+
+/** Props for the isolated comment input bar */
+interface CommentInputBarProps {
+  activeFileName: string | null
+  selectedRange: SelectedLineRange | null
+  onAddComment: (comment: string) => void
+  onCancel: () => void
+}
+
+/**
+ * Isolated comment input component to prevent re-renders of the entire modal
+ * when the user types in the input field
+ */
+const CommentInputBar = memo(function CommentInputBar({
+  activeFileName,
+  selectedRange,
+  onAddComment,
+  onCancel,
+}: CommentInputBarProps) {
+  const [inputValue, setInputValue] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Focus input when mounted
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true })
+  }, [])
+
+  const handleSubmit = useCallback(() => {
+    if (inputValue.trim()) {
+      onAddComment(inputValue.trim())
+      setInputValue('')
+    }
+  }, [inputValue, onAddComment])
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && inputValue.trim()) {
+        handleSubmit()
+      } else if (e.key === 'Escape') {
+        e.stopPropagation()
+        onCancel()
+      }
+    },
+    [inputValue, handleSubmit, onCancel]
+  )
+
+  if (!selectedRange) return null
+
+  return (
+    <div className="flex items-center gap-2 px-3 h-10 bg-muted rounded-md border border-border">
+      <MessageSquarePlus className="h-4 w-4 text-muted-foreground shrink-0" />
+      <span className="text-xs text-muted-foreground shrink-0">
+        {activeFileName ? getFilename(activeFileName) : ''}:
+        {selectedRange.start}
+        {selectedRange.end !== selectedRange.start && `-${selectedRange.end}`}
+      </span>
+      <input
+        ref={inputRef}
+        type="text"
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="What should I do with this code?"
+        aria-label="What should I do with this code?"
+        className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground md:text-sm"
+      />
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={!inputValue.trim()}
+        className="px-2 py-1 bg-black text-white dark:bg-yellow-500 dark:text-black hover:bg-black/80 dark:hover:bg-yellow-400 rounded text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Add
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        aria-label="Cancel"
+        className="p-1 text-muted-foreground hover:text-foreground"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  )
+})
+
+interface DiffStats {
+  added: number
+  removed: number
+}
+
+interface GitDiffModalProps {
+  /** Diff request parameters, or null to close the modal */
+  diffRequest: DiffRequest | null
+  /** Callback when modal is closed */
+  onClose: () => void
+  /** Callback when user wants to add comments to input for editing */
+  onAddToPrompt?: (reference: string) => void
+  /** Uncommitted change stats (for switcher) */
+  uncommittedStats?: DiffStats
+  /** Branch diff stats (for switcher) */
+  branchStats?: DiffStats
+}
+
+type DiffStyle = 'split' | 'unified'
+type DiffType = 'uncommitted' | 'branch' | 'commits' | 'checkpoints'
+
+const DIFF_TYPE_SHORTCUTS: Record<DiffType, string> = {
+  uncommitted: '1',
+  branch: '2',
+  commits: '3',
+  checkpoints: '4',
+}
+
+const COMMIT_SHORTCUT_LABEL = '⌘↵'
+
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  return (
+    target.tagName === 'INPUT' ||
+    target.tagName === 'TEXTAREA' ||
+    target.isContentEditable
+  )
+}
+
+function hasSelectedText(): boolean {
+  return (window.getSelection()?.toString().trim().length ?? 0) > 0
+}
+
+/**
+ * Modal dialog for viewing GitHub-style git diffs using @pierre/diffs
+ */
+export function GitDiffModal({
+  diffRequest,
+  onClose,
+  onAddToPrompt,
+  uncommittedStats,
+  branchStats,
+}: GitDiffModalProps) {
+  const [diff, setDiff] = useState<GitDiff | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [cachedBranchStats, setCachedBranchStats] = useState<DiffStats | null>(
+    null
+  )
+  const [cachedUncommittedStats, setCachedUncommittedStats] =
+    useState<DiffStats | null>(null)
+  const [diffStyle, setDiffStyle] = useState<DiffStyle>(
+    window.innerWidth < 768 ? 'unified' : 'split'
+  )
+  const [activeDiffType, setActiveDiffType] = useState<DiffType>(() => {
+    if (diffRequest?.type === 'checkpoints') return 'checkpoints'
+    if (diffRequest?.type === 'branch') return 'branch'
+    return 'uncommitted'
+  })
+  const dialogContentRef = useRef<HTMLDivElement>(null)
+  const { theme } = useTheme()
+  const isMobile = useIsMobile()
+  const { data: preferences } = usePreferences()
+  const gitDiffSelectedFiles = useUIStore(state => state.gitDiffSelectedFiles)
+
+  // On mobile, show file sidebar as an overlay panel toggled by a button
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false)
+
+  // Comment/selection state
+  const [comments, setComments] = useState<DiffComment[]>([])
+  const [selectedRange, setSelectedRange] = useState<SelectedLineRange | null>(
+    null
+  )
+  const [activeFileName, setActiveFileName] = useState<string | null>(null)
+  const [showCommentInput, setShowCommentInput] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  // Sidebar file selection state
+  const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0)
+  const [fileFilter, setFileFilter] = useState('')
+  const fileListRef = useRef<HTMLDivElement>(null)
+  const fileFilterInputRef = useRef<HTMLInputElement>(null)
+
+  // Use transition for file switching to keep UI responsive during heavy diff rendering
+  const [, startTransition] = useTransition()
+
+  // Manual switching state for consistent visual feedback
+  // (useTransition's isPending is too fast for small diffs)
+  const [isSwitching, setIsSwitching] = useState(false)
+  const switchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Revert file state
+  const [revertTarget, setRevertTarget] = useState<{
+    fileName: string
+    fileStatus: string
+  } | null>(null)
+  const [isReverting, setIsReverting] = useState(false)
+
+  const scrollDiffViewer = useCallback((direction: 'up' | 'down') => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const delta = container.clientHeight * 0.5
+    const top =
+      direction === 'up'
+        ? Math.max(0, container.scrollTop - delta)
+        : container.scrollTop + delta
+
+    container.scrollTo({ top, behavior: 'smooth' })
+  }, [])
+
+  // Resolve theme to actual dark/light value
+  const resolvedThemeType = useMemo((): 'dark' | 'light' => {
+    if (theme === 'system') {
+      // Check system preference
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    return theme
+  }, [theme])
+
+  const loadDiff = useCallback(
+    async (request: DiffRequest, isRefresh = false) => {
+      if (request.type !== 'uncommitted' && request.type !== 'branch') {
+        return
+      }
+      setIsLoading(true)
+      setError(null)
+      // Only clear diff on initial load, not on refresh
+      if (!isRefresh) {
+        setDiff(null)
+      }
+
+      try {
+        const result = await getGitDiff(
+          request.worktreePath,
+          request.type,
+          request.baseBranch,
+          request.baseRemote
+        )
+        setDiff(result)
+        // Cache stats with the load so tab switches don't need a chained effect
+        const stats: DiffStats = {
+          added: result.total_additions,
+          removed: result.total_deletions,
+        }
+        if (request.type === 'branch') setCachedBranchStats(stats)
+        else if (request.type === 'uncommitted') setCachedUncommittedStats(stats)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err))
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    []
+  )
+
+  // Commit selected (or all) files directly from the diff view
+  const [isCommitting, setIsCommitting] = useState(false)
+  const handleCommitFromDiff = useCallback(async () => {
+    if (!diffRequest || isCommitting) return
+    const { gitDiffSelectedFiles, clearGitDiffSelectedFiles } =
+      useUIStore.getState()
+    const specificFiles =
+      gitDiffSelectedFiles.size > 0 ? Array.from(gitDiffSelectedFiles) : null
+
+    setIsCommitting(true)
+    const opToast = dismissibleToast.loading(
+      specificFiles
+        ? `Committing ${specificFiles.length} file${specificFiles.length !== 1 ? 's' : ''}...`
+        : 'Committing all changes...'
+    )
+
+    try {
+      await startCommitJob(
+        {
+          worktreePath: diffRequest.worktreePath,
+          customPrompt: preferences?.magic_prompts?.commit_message,
+          push: false,
+          model: preferences?.magic_prompt_models?.commit_message_model,
+          customProfileName: resolveMagicPromptProvider(
+            preferences?.magic_prompt_providers,
+            'commit_message_provider',
+            preferences?.default_provider
+          ),
+          reasoningEffort:
+            preferences?.magic_prompt_efforts?.commit_message_effort ?? null,
+          specificFiles,
+        },
+        job => {
+          setIsCommitting(false)
+          if (job.status === 'failed' || !job.response) {
+            opToast.error(`Failed to commit: ${job.error}`)
+            return
+          }
+
+          clearGitDiffSelectedFiles()
+          triggerImmediateGitPoll()
+          setSelectedFileIndex(0)
+          loadDiff({ ...diffRequest, type: 'uncommitted' }, true)
+          opToast.success(job.response.message.split('\n')[0])
+        }
+      )
+    } catch (error) {
+      setIsCommitting(false)
+      opToast.error(`Failed to commit: ${error}`)
+    }
+  }, [diffRequest, isCommitting, preferences, loadDiff])
+
+  /** Map @pierre/diffs file type back to backend git status */
+  const diffTypeToStatus = useCallback((type: string): string => {
+    switch (type) {
+      case 'new':
+        return 'added'
+      case 'deleted':
+        return 'deleted'
+      case 'rename-pure':
+      case 'rename-changed':
+        return 'renamed'
+      default:
+        return 'modified'
+    }
+  }, [])
+
+  const handleRevertFile = useCallback(async () => {
+    if (!revertTarget || !diffRequest) return
+    setIsReverting(true)
+    try {
+      await revertFile(
+        diffRequest.worktreePath,
+        revertTarget.fileName,
+        revertTarget.fileStatus
+      )
+      // Refresh diff to reflect reverted file (revert only available in diff tabs)
+      if (activeDiffType === 'uncommitted' || activeDiffType === 'branch') {
+        await loadDiff({ ...diffRequest, type: activeDiffType }, true)
+      }
+    } catch (err) {
+      setError(
+        `Failed to revert: ${err instanceof Error ? err.message : String(err)}`
+      )
+    } finally {
+      setIsReverting(false)
+      setRevertTarget(null)
+    }
+  }, [revertTarget, diffRequest, activeDiffType, loadDiff])
+
+  useEffect(() => {
+    if (diffRequest) {
+      const nextType: DiffType =
+        diffRequest.type === 'checkpoints'
+          ? 'checkpoints'
+          : diffRequest.type === 'branch'
+            ? 'branch'
+            : 'uncommitted'
+      setActiveDiffType(nextType)
+      if (nextType !== 'checkpoints') {
+        loadDiff({ ...diffRequest, type: nextType })
+      }
+      // Reset to first file when opening/reloading
+      setSelectedFileIndex(0)
+    } else {
+      // Reset state when modal closes
+      setDiff(null)
+      setError(null)
+      setIsLoading(false)
+      // Also reset comment state
+      setComments([])
+      setSelectedRange(null)
+      setActiveFileName(null)
+      setShowCommentInput(false)
+      setSelectedFileIndex(0)
+      setFileFilter('')
+      useUIStore.getState().clearGitDiffSelectedFiles()
+      setIsSwitching(false)
+      setShowMobileSidebar(false)
+      setCachedBranchStats(null)
+      setCachedUncommittedStats(null)
+      if (switchTimeoutRef.current) {
+        clearTimeout(switchTimeoutRef.current)
+      }
+    }
+  }, [diffRequest, loadDiff])
+
+  // Store line selection callbacks per file to maintain stable references
+  const lineSelectedCallbacksRef = useRef(
+    new Map<string, (range: SelectedLineRange | null) => void>()
+  )
+
+  // Get or create a stable callback for a specific file
+  const getLineSelectedCallback = useCallback((fileName: string) => {
+    let callback = lineSelectedCallbacksRef.current.get(fileName)
+    if (!callback) {
+      callback = (range: SelectedLineRange | null) => {
+        setSelectedRange(range)
+        setActiveFileName(range ? fileName : null)
+        if (range) {
+          setShowCommentInput(true)
+        }
+      }
+      lineSelectedCallbacksRef.current.set(fileName, callback)
+    }
+    return callback
+  }, [])
+
+  // Add a comment for the current selection (receives comment text from isolated input)
+  const handleAddComment = useCallback(
+    (commentText: string) => {
+      if (!selectedRange || !activeFileName || !commentText) return
+
+      const newComment: DiffComment = {
+        id: generateId(),
+        fileName: activeFileName,
+        side: selectedRange.side ?? 'additions',
+        startLine: Math.min(selectedRange.start, selectedRange.end),
+        endLine: Math.max(selectedRange.start, selectedRange.end),
+        comment: commentText,
+      }
+
+      setComments(prev => [...prev, newComment])
+      setSelectedRange(null)
+      setShowCommentInput(false)
+    },
+    [selectedRange, activeFileName]
+  )
+
+  // Remove a comment
+  const handleRemoveComment = useCallback((commentId: string) => {
+    setComments(prev => prev.filter(c => c.id !== commentId))
+  }, [])
+
+  // Cancel comment input
+  const handleCancelComment = useCallback(() => {
+    setShowCommentInput(false)
+    setSelectedRange(null)
+  }, [])
+
+  // Format comments for sending
+  const formatComments = useCallback(() => {
+    return comments
+      .map(c => {
+        const lineRange =
+          c.startLine === c.endLine
+            ? `line ${c.startLine}`
+            : `lines ${c.startLine}-${c.endLine}`
+        return `In ${c.fileName} (${lineRange}, ${c.side === 'deletions' ? 'old code' : 'new code'}): "${c.comment}"`
+      })
+      .join('\n\n')
+  }, [comments])
+
+  // Add comments to input for editing
+  const handleAddToPrompt = useCallback(() => {
+    if (comments.length === 0 || !onAddToPrompt) return
+    onAddToPrompt(formatComments())
+    setComments([])
+    onClose()
+  }, [comments, onAddToPrompt, formatComments, onClose])
+
+  // PERFORMANCE: Pre-compute annotations map for stable references
+  // This ensures that files without comment changes don't re-render
+  const annotationsByFile = useMemo(() => {
+    const map = new Map<string, DiffLineAnnotation<DiffComment>[]>()
+
+    for (const comment of comments) {
+      const existing = map.get(comment.fileName) ?? []
+      const newAnnotations = Array.from(
+        { length: comment.endLine - comment.startLine + 1 },
+        (_, i) => ({
+          side: comment.side,
+          lineNumber: comment.startLine + i,
+          metadata: comment,
+        })
+      )
+      map.set(comment.fileName, [...existing, ...newAnnotations])
+    }
+
+    return map
+  }, [comments])
+
+  // Getter returns stable references from the map
+  const getAnnotationsForFile = useCallback(
+    (fileName: string): DiffLineAnnotation<DiffComment>[] =>
+      annotationsByFile.get(fileName) ?? EMPTY_ANNOTATIONS,
+    [annotationsByFile]
+  )
+
+  // Parse the raw patch into individual file diffs
+  const parsedFiles = useMemo(() => {
+    if (!diff?.raw_patch) return []
+    try {
+      return parsePatchFiles(diff.raw_patch)
+    } catch (e) {
+      console.error('Failed to parse patch:', e)
+      return []
+    }
+  }, [diff?.raw_patch])
+
+  // Flatten files into stable array for sidebar and selection
+  // Pre-compute stats to avoid calculation during render
+  // Also merge any files from the backend that the patch parser missed (e.g., deleted/binary files)
+  const flattenedFiles = useMemo(() => {
+    const fromPatch = parsedFiles.flatMap((patch, patchIndex) =>
+      patch.files.map((fileDiff, fileIndex) => {
+        const { additions, deletions } = getFileLineStats(fileDiff, diff?.files)
+        return {
+          fileDiff,
+          fileName: fileDiff.name || fileDiff.prevName || 'unknown',
+          key: `${patchIndex}-${fileIndex}`,
+          additions,
+          deletions,
+          isBinary:
+            diff?.files?.find(backendFile =>
+              [fileDiff.name, fileDiff.prevName].includes(backendFile.path)
+            )?.is_binary ?? false,
+        }
+      })
+    )
+
+    // Add files from backend that the patch parser missed (deleted, binary, etc.)
+    if (diff?.files) {
+      const parsedPaths = new Set(fromPatch.map(f => f.fileName))
+      const statusToType: Record<string, string> = {
+        deleted: 'deleted',
+        added: 'new',
+        untracked: 'new',
+        renamed: 'rename-changed',
+        modified: 'change',
+      }
+      for (const backendFile of diff.files) {
+        if (!parsedPaths.has(backendFile.path)) {
+          fromPatch.push({
+            fileDiff: {
+              name: backendFile.path,
+              prevName: backendFile.old_path ?? undefined,
+              type: (statusToType[backendFile.status] ??
+                'change') as FileDiffMetadata['type'],
+              hunks: [],
+              splitLineCount: 0,
+              unifiedLineCount: 0,
+              isPartial: true,
+              deletionLines: [],
+              additionLines: [],
+            },
+            fileName: backendFile.path,
+            key: `backend-${backendFile.path}`,
+            additions: backendFile.additions,
+            deletions: backendFile.deletions,
+            isBinary: backendFile.is_binary,
+          })
+        }
+      }
+    }
+
+    return fromPatch
+  }, [parsedFiles, diff?.files])
+
+  // Filter files by search pattern
+  const filteredFiles = useMemo(() => {
+    if (!fileFilter) return flattenedFiles
+    const lower = fileFilter.toLowerCase()
+    return flattenedFiles.filter(f => f.fileName.toLowerCase().includes(lower))
+  }, [flattenedFiles, fileFilter])
+
+  // Compute display names: show minimal disambiguating path for duplicate basenames
+  const displayNameMap = useMemo(() => {
+    const map = new Map<string, string>()
+    // Group by basename
+    const groups = new Map<string, typeof filteredFiles>()
+    for (const file of filteredFiles) {
+      const base = getFilename(file.fileName)
+      const group = groups.get(base)
+      if (group) group.push(file)
+      else groups.set(base, [file])
+    }
+    for (const [base, group] of groups) {
+      if (group.length === 1) {
+        const onlyFile = group[0]
+        if (onlyFile) {
+          map.set(onlyFile.key, base)
+        }
+      } else {
+        // Add parent segments until all names are unique
+        const segments = group.map(f =>
+          f.fileName.replace(/\\/g, '/').split('/')
+        )
+        let depth = 1
+        while (depth < 10) {
+          depth++
+          const names = segments.map(s =>
+            s.slice(Math.max(0, s.length - depth)).join('/')
+          )
+          if (new Set(names).size === names.length) {
+            group.forEach((f, i) => {
+              const name = names[i]
+              if (!name) return
+              const isPartial = name !== f.fileName.replace(/\\/g, '/')
+              map.set(f.key, isPartial ? `\u2026/${name}` : name)
+            })
+            break
+          }
+        }
+        // Fallback: full path
+        const firstFile = group[0]
+        if (firstFile && !map.has(firstFile.key)) {
+          group.forEach(f => map.set(f.key, f.fileName))
+        }
+      }
+    }
+    return map
+  }, [filteredFiles])
+
+  // Get currently selected file
+  const selectedFile =
+    filteredFiles.length > 0 && selectedFileIndex < filteredFiles.length
+      ? filteredFiles[selectedFileIndex]
+      : null
+
+  // Check if there are any files to display
+  const hasFiles = flattenedFiles.length > 0
+
+  const canCommitFromDiff =
+    activeDiffType === 'uncommitted' &&
+    !!diff &&
+    filteredFiles.length > 0 &&
+    !isCommitting
+
+  // Vim-style quick focus for the file filter. Keep it scoped to the diff
+  // modal and preserve normal typing/selection behavior.
+  useEffect(() => {
+    if (!diffRequest) return
+
+    const focusFileFilter = () => {
+      if (isMobile) {
+        setShowMobileSidebar(true)
+      }
+
+      requestAnimationFrame(() => {
+        fileFilterInputRef.current?.focus({ preventScroll: true })
+        fileFilterInputRef.current?.select()
+      })
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key !== '/' ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.altKey ||
+        e.shiftKey ||
+        isEditableKeyboardTarget(e.target) ||
+        hasSelectedText()
+      ) {
+        return
+      }
+
+      e.preventDefault()
+      e.stopPropagation()
+      focusFileFilter()
+    }
+
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => document.removeEventListener('keydown', handleKeyDown, true)
+  }, [diffRequest, isMobile])
+
+  // Commit selected (or all) uncommitted files with Cmd+Enter from the diff modal.
+  // Preserve normal copy behavior while typing or when any text is selected.
+  const onCommitFromDiffKey = useEffectEvent(() => {
+    handleCommitFromDiff()
+  })
+
+  useEffect(() => {
+    if (!diffRequest || !canCommitFromDiff) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        !e.metaKey ||
+        e.ctrlKey ||
+        e.altKey ||
+        e.shiftKey ||
+        e.key !== 'Enter' ||
+        isEditableKeyboardTarget(e.target) ||
+        hasSelectedText()
+      ) {
+        return
+      }
+
+      e.preventDefault()
+      e.stopPropagation()
+      onCommitFromDiffKey()
+    }
+
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => document.removeEventListener('keydown', handleKeyDown, true)
+  }, [diffRequest, canCommitFromDiff])
+
+  // Scroll the active file diff while the full-screen diff modal owns focus.
+  // The global chat-scroll shortcuts are blocked by open dialogs, so handle
+  // the same bindings locally for the diff viewer.
+  useEffect(() => {
+    if (!diffRequest) return
+
+    const scrollUpShortcut =
+      preferences?.keybindings?.scroll_chat_up ??
+      DEFAULT_KEYBINDINGS.scroll_chat_up ??
+      'mod+arrowup'
+    const scrollDownShortcut =
+      preferences?.keybindings?.scroll_chat_down ??
+      DEFAULT_KEYBINDINGS.scroll_chat_down ??
+      'mod+arrowdown'
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isEditableKeyboardTarget(e.target) || hasSelectedText()) return
+
+      const direction = eventMatchesShortcut(e, scrollUpShortcut)
+        ? 'up'
+        : eventMatchesShortcut(e, scrollDownShortcut)
+          ? 'down'
+          : null
+      if (!direction) return
+
+      e.preventDefault()
+      e.stopPropagation()
+      scrollDiffViewer(direction)
+    }
+
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => document.removeEventListener('keydown', handleKeyDown, true)
+  }, [
+    diffRequest,
+    preferences?.keybindings?.scroll_chat_down,
+    preferences?.keybindings?.scroll_chat_up,
+    scrollDiffViewer,
+  ])
+
+  // Handle file selection from sidebar
+  // Use transition to keep sidebar responsive while diff renders
+  const handleSelectFile = useCallback((index: number) => {
+    // Clear any pending timeout
+    if (switchTimeoutRef.current) {
+      clearTimeout(switchTimeoutRef.current)
+    }
+
+    setSelectedRange(null)
+    setShowCommentInput(false)
+    setIsSwitching(true)
+    setShowMobileSidebar(false)
+
+    startTransition(() => {
+      setSelectedFileIndex(index)
+    })
+
+    // Ensure minimum visible duration of 150ms for visual feedback
+    switchTimeoutRef.current = setTimeout(() => {
+      setIsSwitching(false)
+    }, 150)
+  }, [])
+
+  // Keyboard navigation for file list
+  useEffect(() => {
+    if (!diffRequest || filteredFiles.length === 0) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle if user is typing in an input
+      const target = e.target as HTMLElement
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return
+      }
+
+      if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault()
+        if (switchTimeoutRef.current) clearTimeout(switchTimeoutRef.current)
+        setSelectedRange(null)
+        setShowCommentInput(false)
+        setIsSwitching(true)
+        startTransition(() => {
+          setSelectedFileIndex(i => Math.min(i + 1, filteredFiles.length - 1))
+        })
+        switchTimeoutRef.current = setTimeout(() => setIsSwitching(false), 150)
+      } else if (e.key === 'Backspace' && activeDiffType === 'uncommitted') {
+        e.preventDefault()
+        const file = filteredFiles[selectedFileIndex]
+        if (file) {
+          setRevertTarget({
+            fileName: file.fileName,
+            fileStatus: diffTypeToStatus(file.fileDiff.type),
+          })
+        }
+      } else if (e.key === ' ' && activeDiffType === 'uncommitted') {
+        e.preventDefault()
+        const file = filteredFiles[selectedFileIndex]
+        if (file) {
+          useUIStore.getState().toggleGitDiffSelectedFile(file.fileName)
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault()
+        if (switchTimeoutRef.current) clearTimeout(switchTimeoutRef.current)
+        setSelectedRange(null)
+        setShowCommentInput(false)
+        setIsSwitching(true)
+        startTransition(() => {
+          setSelectedFileIndex(i => Math.max(i - 1, 0))
+        })
+        switchTimeoutRef.current = setTimeout(() => setIsSwitching(false), 150)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [
+    diffRequest,
+    filteredFiles,
+    selectedFileIndex,
+    activeDiffType,
+    diffTypeToStatus,
+  ])
+
+  // Scroll selected file into view in sidebar
+  useEffect(() => {
+    const list = fileListRef.current
+    if (!list) return
+
+    const selectedItem = list.querySelector(
+      `[data-index="${selectedFileIndex}"]`
+    )
+    selectedItem?.scrollIntoView({ block: 'nearest' })
+  }, [selectedFileIndex])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (switchTimeoutRef.current) {
+        clearTimeout(switchTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Refresh diff view after a commit completes (for selective file commits)
+  useEffect(() => {
+    if (!diffRequest || activeDiffType !== 'uncommitted') return
+
+    const handleCommitCompleted = () => {
+      setSelectedFileIndex(0)
+      loadDiff({ ...diffRequest, type: 'uncommitted' }, true)
+    }
+
+    window.addEventListener('git-commit-completed', handleCommitCompleted)
+    return () =>
+      window.removeEventListener('git-commit-completed', handleCommitCompleted)
+  }, [diffRequest, activeDiffType, loadDiff])
+
+  // Show switcher whenever both diff contexts are available, even when counts are zero.
+  // Always show the tab switcher so Commits / AI Checkpoints remain reachable.
+  const showSwitcher = !!diffRequest
+  // Prefer cached stats (from loaded diff) over polling stats for consistency across tab switches
+  const uncommittedAdded =
+    cachedUncommittedStats?.added ?? uncommittedStats?.added ?? 0
+  const uncommittedRemoved =
+    cachedUncommittedStats?.removed ?? uncommittedStats?.removed ?? 0
+  const branchAdded = cachedBranchStats?.added ?? branchStats?.added ?? 0
+  const branchRemoved = cachedBranchStats?.removed ?? branchStats?.removed ?? 0
+
+  // Handle switching between diff types
+  const handleSwitchDiffType = useCallback(
+    (type: DiffType) => {
+      if (!diffRequest || type === activeDiffType) return
+      setActiveDiffType(type)
+      setSelectedFileIndex(0)
+      setFileFilter('')
+      setSelectedRange(null)
+      setShowCommentInput(false)
+      useUIStore.getState().clearGitDiffSelectedFiles()
+      // Commits / checkpoints tabs manage their own data — only loadDiff for git tabs
+      if (type !== 'commits' && type !== 'checkpoints') {
+        loadDiff({ ...diffRequest, type }, false)
+      }
+    },
+    [diffRequest, activeDiffType, loadDiff]
+  )
+
+  // Keyboard shortcuts for switching diff tabs
+  const onSwitchDiffTypeKey = useEffectEvent(
+    (shortcutType: 'uncommitted' | 'branch' | 'commits' | 'checkpoints') => {
+      handleSwitchDiffType(shortcutType)
+    }
+  )
+
+  useEffect(() => {
+    if (!diffRequest || !showSwitcher) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.altKey ||
+        e.shiftKey
+      ) {
+        return
+      }
+
+      const shortcutType =
+        e.code === 'Digit1' || e.code === 'Numpad1'
+          ? 'uncommitted'
+          : e.code === 'Digit2' || e.code === 'Numpad2'
+            ? 'branch'
+            : e.code === 'Digit3' || e.code === 'Numpad3'
+              ? 'commits'
+              : e.code === 'Digit4' || e.code === 'Numpad4'
+                ? 'checkpoints'
+                : null
+
+      if (!shortcutType) return
+
+      e.preventDefault()
+      e.stopPropagation()
+      onSwitchDiffTypeKey(shortcutType)
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [diffRequest, showSwitcher])
+
+  const title =
+    activeDiffType === 'uncommitted'
+      ? 'Uncommitted Changes'
+      : `Changes vs ${
+          diffRequest?.baseRemote
+            ? `${diffRequest.baseRemote}/${diffRequest.baseBranch}`
+            : (diffRequest?.baseBranch ?? 'main')
+        }`
+  const selectedFileCount = gitDiffSelectedFiles.size
+  const commitButtonLabel = isCommitting
+    ? 'Committing…'
+    : selectedFileCount > 0
+      ? `Commit (${selectedFileCount})`
+      : 'Commit'
+
+  return (
+    <>
+      <Dialog open={!!diffRequest} onOpenChange={open => !open && onClose()}>
+        <DialogContent
+          ref={dialogContentRef}
+          showCloseButton={false}
+          className="!w-screen !h-dvh !max-w-screen !max-h-none !rounded-none p-0 sm:!w-[calc(100vw-4rem)] sm:!max-w-[calc(100vw-4rem)] sm:!h-[85vh] sm:!rounded-lg sm:p-4 bg-background/95 overflow-hidden flex flex-col"
+          style={{ fontSize: 'var(--ui-font-size)' }}
+          onOpenAutoFocus={e => {
+            // Prevent Radix from focusing the first focusable element (a tooltip trigger button),
+            // which would cause the tooltip to open immediately on modal open
+            e.preventDefault()
+            dialogContentRef.current?.focus()
+          }}
+          onKeyDown={e => {
+            // Only stop Enter from propagating to canvas behind the modal
+            // (which would open a worktree/session). Other keys must propagate
+            // to reach the document-level keyboard navigation handler.
+            if (e.key === 'Enter') e.stopPropagation()
+          }}
+          onEscapeKeyDown={e => {
+            if (showCommentInput) {
+              e.preventDefault()
+              handleCancelComment()
+            } else {
+              e.preventDefault()
+              onClose()
+            }
+          }}
+        >
+          <DialogTitle className="flex shrink-0 flex-col gap-2 px-3 pt-3 sm:flex-row sm:items-center sm:px-0 sm:pt-0">
+            <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto">
+              {showSwitcher ? (
+                <div className="flex w-full min-w-0 items-center bg-muted rounded-lg p-1 sm:w-auto sm:shrink">
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchDiffType('uncommitted')}
+                    className={cn(
+                      'flex flex-1 items-center justify-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3',
+                      activeDiffType === 'uncommitted'
+                        ? 'bg-background shadow-sm text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <Pencil className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">Uncommitted</span>
+                    <Kbd className="hidden h-4 min-w-4 px-1 text-[10px] opacity-70 sm:inline-flex">
+                      {DIFF_TYPE_SHORTCUTS.uncommitted}
+                    </Kbd>
+                    <span className="text-green-500">+{uncommittedAdded}</span>
+                    <span className="text-red-500">-{uncommittedRemoved}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchDiffType('branch')}
+                    className={cn(
+                      'flex flex-1 items-center justify-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3',
+                      activeDiffType === 'branch'
+                        ? 'bg-background shadow-sm text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <GitBranch className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">Branch</span>
+                    <Kbd className="hidden h-4 min-w-4 px-1 text-[10px] opacity-70 sm:inline-flex">
+                      {DIFF_TYPE_SHORTCUTS.branch}
+                    </Kbd>
+                    <span className="text-green-500">+{branchAdded}</span>
+                    <span className="text-red-500">-{branchRemoved}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchDiffType('commits')}
+                    className={cn(
+                      'flex flex-1 items-center justify-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3',
+                      activeDiffType === 'commits'
+                        ? 'bg-background shadow-sm text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <GitCommitHorizontal className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">Commits</span>
+                    <Kbd className="hidden h-4 min-w-4 px-1 text-[10px] opacity-70 sm:inline-flex">
+                      {DIFF_TYPE_SHORTCUTS.commits}
+                    </Kbd>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchDiffType('checkpoints')}
+                    className={cn(
+                      'flex flex-1 items-center justify-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3',
+                      activeDiffType === 'checkpoints'
+                        ? 'bg-background shadow-sm text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <History className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">Checkpoints</span>
+                    <Kbd className="hidden h-4 min-w-4 px-1 text-[10px] opacity-70 sm:inline-flex">
+                      {DIFF_TYPE_SHORTCUTS.checkpoints}
+                    </Kbd>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <FileText className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{title}</span>
+                </>
+              )}
+            </div>
+
+            <div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-1.5 pb-0.5 sm:ml-auto sm:w-auto sm:flex-nowrap sm:justify-start sm:overflow-visible sm:pb-0">
+              {activeDiffType === 'uncommitted' && selectedFileCount > 0 && (
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {selectedFileCount} selected
+                </span>
+              )}
+              {/* View mode toggle */}
+              <div className="flex min-w-0 flex-1 items-center bg-muted rounded-lg p-1 sm:flex-none sm:shrink-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setDiffStyle('split')}
+                      className={cn(
+                        'flex flex-1 items-center justify-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3',
+                        diffStyle === 'split'
+                          ? 'bg-background shadow-sm text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      <Columns2 className="h-3.5 w-3.5 shrink-0" />
+                      <span className="hidden sm:inline">Split</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Side-by-side view</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setDiffStyle('unified')}
+                      className={cn(
+                        'flex flex-1 items-center justify-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3',
+                        diffStyle === 'unified'
+                          ? 'bg-background shadow-sm text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      <Rows3 className="h-3.5 w-3.5 shrink-0" />
+                      <span className="hidden sm:inline">Stacked</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Unified view</TooltipContent>
+                </Tooltip>
+              </div>
+              {/* Add selected comments to a new prompt session */}
+              {comments.length > 0 && onAddToPrompt && (
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={handleAddToPrompt}
+                    className="flex h-7 shrink-0 items-center gap-1.5 px-2 sm:px-3 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-xs font-medium transition-colors"
+                  >
+                    <Pencil className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">Add to prompt</span>
+                  </button>
+                </div>
+              )}
+              {activeDiffType === 'uncommitted' &&
+                diff &&
+                filteredFiles.length > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        disabled={isCommitting}
+                        onClick={handleCommitFromDiff}
+                        className="flex h-7 flex-1 items-center justify-center gap-1.5 px-2.5 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 rounded-md text-xs font-medium transition-colors sm:flex-none sm:shrink-0 sm:px-3"
+                      >
+                        {isCommitting ? (
+                          <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+                        ) : (
+                          <GitCommitHorizontal className="h-3.5 w-3.5 shrink-0" />
+                        )}
+                        <span>{commitButtonLabel}</span>
+                        <Kbd className="hidden h-4 min-w-4 bg-primary-foreground/15 px-1 text-[10px] text-primary-foreground/80 sm:inline-flex">
+                          {COMMIT_SHORTCUT_LABEL}
+                        </Kbd>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="flex items-center gap-2">
+                        <span>
+                          {selectedFileCount > 0
+                            ? `Commit ${selectedFileCount} selected file${selectedFileCount !== 1 ? 's' : ''}`
+                            : 'Commit all changes'}
+                        </span>
+                        <Kbd>{COMMIT_SHORTCUT_LABEL}</Kbd>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              {/* Mobile sidebar toggle */}
+              {isMobile && hasFiles && activeDiffType !== 'commits' && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0 p-0"
+                      onClick={() => setShowMobileSidebar(v => !v)}
+                    >
+                      <PanelLeft className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Toggle file list</TooltipContent>
+                </Tooltip>
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 shrink-0 p-0"
+                    onClick={() => {
+                      if (
+                        !diffRequest ||
+                        activeDiffType === 'commits' ||
+                        activeDiffType === 'checkpoints'
+                      )
+                        return
+                      loadDiff({ ...diffRequest, type: activeDiffType }, true)
+                    }}
+                    disabled={
+                      isLoading ||
+                      activeDiffType === 'commits' ||
+                      activeDiffType === 'checkpoints'
+                    }
+                  >
+                    <RefreshCw
+                      className={cn('h-4 w-4', isLoading && 'animate-spin')}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Refresh diff</TooltipContent>
+              </Tooltip>
+              <ModalCloseButton onClick={onClose} />
+            </div>
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Review repository diffs, switch view modes, and add line comments.
+          </DialogDescription>
+
+          {/* Commits tab — separate component with its own data */}
+          {activeDiffType === 'commits' && diffRequest && (
+            <CommitsTabView
+              worktreePath={diffRequest.worktreePath}
+              baseBranch={diffRequest.baseBranch}
+              diffStyle={diffStyle}
+              onAddToPrompt={onAddToPrompt}
+              onClose={onClose}
+            />
+          )}
+
+          {/* AI Checkpoints tab */}
+          {activeDiffType === 'checkpoints' &&
+            diffRequest?.worktreeId && (
+              <CheckpointsTabView
+                worktreeId={diffRequest.worktreeId}
+                worktreePath={diffRequest.worktreePath}
+                diffStyle={diffStyle}
+                initialCheckpointId={diffRequest.checkpointId}
+              />
+            )}
+          {activeDiffType === 'checkpoints' &&
+            diffRequest &&
+            !diffRequest.worktreeId && (
+              <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+                Worktree id unavailable — open diffs from a worktree session.
+              </div>
+            )}
+
+          {/* Diff tabs body (Uncommitted / Branch) */}
+          {activeDiffType !== 'commits' &&
+            activeDiffType !== 'checkpoints' && (
+            <>
+              {/* Comment bar - above sidebar and main content */}
+              {hasFiles && (
+                <div className="mt-2 shrink-0">
+                  {/* Hint when no selection */}
+                  {!selectedRange && comments.length === 0 && (
+                    <div className="flex items-center gap-2 px-3 h-10 text-muted-foreground">
+                      <MessageSquarePlus className="h-4 w-4 shrink-0" />
+                      <span className="text-sm">
+                        Click on line numbers to select code and add comments
+                      </span>
+                    </div>
+                  )}
+                  {/* Comment input bar */}
+                  {showCommentInput && (
+                    <CommentInputBar
+                      activeFileName={activeFileName}
+                      selectedRange={selectedRange}
+                      onAddComment={handleAddComment}
+                      onCancel={handleCancelComment}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Empty state - centered across full modal */}
+              {diff && !hasFiles && !isLoading && !error && (
+                <div className="flex flex-1 items-center justify-center text-muted-foreground">
+                  No changes to display
+                </div>
+              )}
+
+              {/* Loading state - centered across full modal */}
+              {isLoading && !hasFiles && (
+                <div className="flex flex-1 items-center justify-center text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  Loading diff...
+                </div>
+              )}
+
+              {/* Error state - centered across full modal */}
+              {error && !isLoading && (
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="flex items-center gap-2 py-4 px-3 bg-destructive/10 text-destructive rounded-md">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span className="text-sm">{error}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Flex container fills remaining space - only render when we have files */}
+              {hasFiles && (
+                <div className="flex-1 min-h-0 mt-2 relative flex">
+                  {/* Mobile: file selector overlay */}
+                  {isMobile && showMobileSidebar && (
+                    <div className="absolute inset-0 z-20 bg-background flex min-h-0 flex-col">
+                      <div
+                        ref={fileListRef}
+                        className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
+                      >
+                        {flattenedFiles.length > 0 && (
+                          <div className="sticky top-0 z-10 bg-background border-b border-border pb-2">
+                            <div className="relative">
+                              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-[1em] w-[1em] text-muted-foreground pointer-events-none" />
+                              <input
+                                ref={fileFilterInputRef}
+                                type="text"
+                                value={fileFilter}
+                                onChange={e => {
+                                  setFileFilter(e.target.value)
+                                  setSelectedFileIndex(0)
+                                }}
+                                placeholder="Filter files..."
+                                aria-label="Filter files"
+                                className="w-full bg-muted text-base outline-none border border-border pl-7 pr-2 py-2.5 placeholder:text-muted-foreground focus:border-ring md:text-sm"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        <div>
+                          {filteredFiles.map((file, index) => {
+                            const isSelected = index === selectedFileIndex
+                            const displayName =
+                              displayNameMap.get(file.key) ??
+                              getFilename(file.fileName)
+                            const isCheckedForCommit =
+                              activeDiffType === 'uncommitted' &&
+                              gitDiffSelectedFiles.has(file.fileName)
+                            return (
+                              <div
+                                key={file.key}
+                                data-index={index}
+                                onClick={() => handleSelectFile(index)}
+                                className={cn(
+                                  'w-full flex items-center gap-2 px-3 py-2.5 text-left transition-colors cursor-pointer',
+                                  'hover:bg-muted/50',
+                                  isSelected && 'bg-accent',
+                                  isCheckedForCommit &&
+                                    !isSelected &&
+                                    'bg-primary/10'
+                                )}
+                              >
+                                {activeDiffType === 'uncommitted' && (
+                                  <button
+                                    type="button"
+                                    role="checkbox"
+                                    aria-checked={isCheckedForCommit}
+                                    aria-label={`Select ${file.fileName} for commit`}
+                                    onClick={e => {
+                                      e.stopPropagation()
+                                      useUIStore
+                                        .getState()
+                                        .toggleGitDiffSelectedFile(
+                                          file.fileName
+                                        )
+                                    }}
+                                    className={cn(
+                                      'h-3.5 w-3.5 shrink-0 rounded-sm border flex items-center justify-center transition-colors cursor-pointer',
+                                      isCheckedForCommit
+                                        ? 'bg-primary border-primary text-primary-foreground'
+                                        : 'border-muted-foreground/40 hover:border-muted-foreground'
+                                    )}
+                                  >
+                                    {isCheckedForCommit && (
+                                      <Check className="h-2.5 w-2.5" />
+                                    )}
+                                  </button>
+                                )}
+                                <FileText
+                                  className={cn(
+                                    'h-[1em] w-[1em] shrink-0',
+                                    getStatusColor(file.fileDiff.type)
+                                  )}
+                                />
+                                <span className="truncate flex-1 text-sm">
+                                  {displayName}
+                                </span>
+                                <div className="flex items-center gap-1 shrink-0 text-xs">
+                                  {file.additions > 0 && (
+                                    <span className="text-green-500">
+                                      +{file.additions}
+                                    </span>
+                                  )}
+                                  {file.deletions > 0 && (
+                                    <span className="text-red-500">
+                                      -{file.deletions}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mobile: file name bar + full-width diff */}
+                  {isMobile && (
+                    <div className="flex flex-1 min-h-0 min-w-0 flex-col overflow-hidden">
+                      {/* Current file indicator */}
+                      {selectedFile && (
+                        <button
+                          type="button"
+                          onClick={() => setShowMobileSidebar(v => !v)}
+                          className="flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground border-b border-border shrink-0"
+                        >
+                          <FileText
+                            className={cn(
+                              'h-3.5 w-3.5 shrink-0',
+                              getStatusColor(selectedFile.fileDiff.type)
+                            )}
+                          />
+                          <span className="truncate">
+                            {displayNameMap.get(selectedFile.key) ??
+                              getFilename(selectedFile.fileName)}
+                          </span>
+                          <span className="text-muted-foreground/60">
+                            {selectedFileIndex + 1}/{filteredFiles.length}
+                          </span>
+                          <ChevronsUpDown className="h-3 w-3 ml-auto shrink-0" />
+                        </button>
+                      )}
+                      <div
+                        ref={scrollContainerRef}
+                        className={cn(
+                          'flex-1 min-h-0 overflow-y-auto overscroll-y-contain touch-pan-y transition-opacity duration-150 [-webkit-overflow-scrolling:touch]',
+                          (isSwitching || isLoading) && 'opacity-60'
+                        )}
+                      >
+                        {selectedFile ? (
+                          <div className="px-1">
+                            <MemoizedFileDiff
+                              key={selectedFile.key}
+                              fileDiff={selectedFile.fileDiff}
+                              fileName={selectedFile.fileName}
+                              rootPath={diffRequest?.worktreePath}
+                              isBinary={selectedFile.isBinary}
+                              annotations={getAnnotationsForFile(
+                                selectedFile.fileName
+                              )}
+                              selectedLines={
+                                activeFileName === selectedFile.fileName
+                                  ? selectedRange
+                                  : null
+                              }
+                              themeType={resolvedThemeType}
+                              syntaxThemeDark={
+                                preferences?.syntax_theme_dark ??
+                                'vitesse-black'
+                              }
+                              syntaxThemeLight={
+                                preferences?.syntax_theme_light ??
+                                'github-light'
+                              }
+                              diffStyle={diffStyle}
+                              onLineSelected={getLineSelectedCallback(
+                                selectedFile.fileName
+                              )}
+                              onRemoveComment={handleRemoveComment}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center h-full text-muted-foreground">
+                            Select a file to view its diff
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Desktop: resizable sidebar + diff panels */}
+                  {!isMobile && (
+                    <ResizablePanelGroup
+                      direction="horizontal"
+                      className="flex-1 min-h-0"
+                    >
+                      {/* File sidebar */}
+                      <ResizablePanel
+                        defaultSize={25}
+                        minSize={15}
+                        maxSize={50}
+                      >
+                        <div
+                          ref={fileListRef}
+                          className={cn(
+                            'h-full overflow-y-auto transition-opacity duration-150',
+                            (isSwitching || isLoading) && 'opacity-60'
+                          )}
+                        >
+                          {flattenedFiles.length > 0 && (
+                            <div className="sticky top-0 z-10 bg-background border-b border-border pb-2">
+                              <div className="relative">
+                                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-[1em] w-[1em] text-muted-foreground pointer-events-none" />
+                                <input
+                                  ref={fileFilterInputRef}
+                                  type="text"
+                                  value={fileFilter}
+                                  onChange={e => {
+                                    setFileFilter(e.target.value)
+                                    setSelectedFileIndex(0)
+                                  }}
+                                  placeholder="Filter files..."
+                                  aria-label="Filter files"
+                                  className="w-full bg-muted text-base outline-none border border-border pl-7 pr-2 py-2.5 placeholder:text-muted-foreground focus:border-ring md:text-sm"
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <div>
+                            {filteredFiles.map((file, index) => {
+                              const isSelected = index === selectedFileIndex
+                              const displayName =
+                                displayNameMap.get(file.key) ??
+                                getFilename(file.fileName)
+
+                              const isCheckedForCommit =
+                                activeDiffType === 'uncommitted' &&
+                                gitDiffSelectedFiles.has(file.fileName)
+
+                              const fileButton = (
+                                <div
+                                  data-index={index}
+                                  onClick={() => handleSelectFile(index)}
+                                  className={cn(
+                                    'w-full flex items-center gap-2 px-3 py-2 text-left transition-colors cursor-pointer',
+                                    'hover:bg-muted/50',
+                                    isSelected && 'bg-accent',
+                                    isCheckedForCommit &&
+                                      !isSelected &&
+                                      'bg-primary/10'
+                                  )}
+                                >
+                                  {activeDiffType === 'uncommitted' && (
+                                    <button
+                                      type="button"
+                                      role="checkbox"
+                                      aria-checked={isCheckedForCommit}
+                                      aria-label={`Select ${file.fileName} for commit`}
+                                      onClick={e => {
+                                        e.stopPropagation()
+                                        useUIStore
+                                          .getState()
+                                          .toggleGitDiffSelectedFile(
+                                            file.fileName
+                                          )
+                                      }}
+                                      className={cn(
+                                        'h-3.5 w-3.5 shrink-0 rounded-sm border flex items-center justify-center transition-colors cursor-pointer',
+                                        isCheckedForCommit
+                                          ? 'bg-primary border-primary text-primary-foreground'
+                                          : 'border-muted-foreground/40 hover:border-muted-foreground'
+                                      )}
+                                    >
+                                      {isCheckedForCommit && (
+                                        <Check className="h-2.5 w-2.5" />
+                                      )}
+                                    </button>
+                                  )}
+                                  <FileText
+                                    className={cn(
+                                      'h-[1em] w-[1em] shrink-0',
+                                      getStatusColor(file.fileDiff.type)
+                                    )}
+                                  />
+                                  <span className="truncate flex-1">
+                                    {displayName}
+                                  </span>
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    {file.additions > 0 && (
+                                      <span className="text-green-500">
+                                        +{file.additions}
+                                      </span>
+                                    )}
+                                    {file.deletions > 0 && (
+                                      <span className="text-red-500">
+                                        -{file.deletions}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )
+
+                              return activeDiffType === 'uncommitted' ? (
+                                <ContextMenu key={file.key}>
+                                  <Tooltip>
+                                    <ContextMenuTrigger asChild>
+                                      <TooltipTrigger asChild>
+                                        {fileButton}
+                                      </TooltipTrigger>
+                                    </ContextMenuTrigger>
+                                    <TooltipContent>
+                                      {file.fileName}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                  <ContextMenuContent className="w-48">
+                                    <ContextMenuItem
+                                      variant="destructive"
+                                      onSelect={() =>
+                                        setRevertTarget({
+                                          fileName: file.fileName,
+                                          fileStatus: diffTypeToStatus(
+                                            file.fileDiff.type
+                                          ),
+                                        })
+                                      }
+                                    >
+                                      <Undo2 className="mr-2 h-4 w-4" />
+                                      Revert File
+                                    </ContextMenuItem>
+                                  </ContextMenuContent>
+                                </ContextMenu>
+                              ) : (
+                                <Tooltip key={file.key}>
+                                  <TooltipTrigger asChild>
+                                    {fileButton}
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    {file.fileName}
+                                  </TooltipContent>
+                                </Tooltip>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </ResizablePanel>
+
+                      <ResizableHandle />
+
+                      {/* Main content area */}
+                      <ResizablePanel defaultSize={75} minSize={50}>
+                        <div
+                          ref={scrollContainerRef}
+                          className={cn(
+                            'h-full min-w-0 overflow-y-auto transition-opacity duration-150',
+                            (isSwitching || isLoading) && 'opacity-60'
+                          )}
+                        >
+                          {selectedFile ? (
+                            <div className="px-2">
+                              <MemoizedFileDiff
+                                key={selectedFile.key}
+                                fileDiff={selectedFile.fileDiff}
+                                fileName={selectedFile.fileName}
+                                rootPath={diffRequest?.worktreePath}
+                                isBinary={selectedFile.isBinary}
+                                annotations={getAnnotationsForFile(
+                                  selectedFile.fileName
+                                )}
+                                selectedLines={
+                                  activeFileName === selectedFile.fileName
+                                    ? selectedRange
+                                    : null
+                                }
+                                themeType={resolvedThemeType}
+                                syntaxThemeDark={
+                                  preferences?.syntax_theme_dark ??
+                                  'vitesse-black'
+                                }
+                                syntaxThemeLight={
+                                  preferences?.syntax_theme_light ??
+                                  'github-light'
+                                }
+                                diffStyle={diffStyle}
+                                onLineSelected={getLineSelectedCallback(
+                                  selectedFile.fileName
+                                )}
+                                onRemoveComment={handleRemoveComment}
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-muted-foreground">
+                              Select a file to view its diff
+                            </div>
+                          )}
+                        </div>
+                      </ResizablePanel>
+                    </ResizablePanelGroup>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={!!revertTarget}
+        onOpenChange={open => !open && setRevertTarget(null)}
+      >
+        <AlertDialogContent
+          onKeyDown={e => e.stopPropagation()}
+          onOpenAutoFocus={e => {
+            e.preventDefault()
+            // Focus the Revert button instead of Cancel
+            const container = e.target as HTMLElement | null
+            const action = container?.querySelector<HTMLButtonElement>(
+              '[data-revert-action]'
+            )
+            action?.focus()
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revert file?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will discard all changes to{' '}
+              <span className="break-all font-mono font-semibold">
+                {revertTarget?.fileName}
+              </span>
+              . This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isReverting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              data-revert-action
+              className="bg-destructive text-white hover:bg-destructive/90"
+              disabled={isReverting}
+              onClick={handleRevertFile}
+            >
+              {isReverting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Reverting...
+                </>
+              ) : (
+                'Revert'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  )
+}

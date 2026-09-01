@@ -1,0 +1,2998 @@
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react'
+import {
+  ArrowDownToLine,
+  ArrowDownUp,
+  ArrowUpToLine,
+  GitCommitHorizontal,
+  GitBranchPlus,
+  GitMerge,
+  GitPullRequest,
+  GitPullRequestArrow,
+  Eye,
+  FileText,
+  MessageSquare,
+  Wand2,
+  BookmarkPlus,
+  FolderOpen,
+  Bug,
+  RefreshCw,
+  Undo2,
+  Link2,
+  ShieldAlert,
+  Loader2,
+  FlaskConical,
+} from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useUIStore } from '@/store/ui-store'
+import { useProjectsStore } from '@/store/projects-store'
+import { useChatStore } from '@/store/chat-store'
+import { useWorktree, useProjects } from '@/services/projects'
+import {
+  useLoadedIssueContexts,
+  useLoadedPRContexts,
+  useLoadedAdvisoryContexts,
+} from '@/services/github'
+import { usePreferences } from '@/services/preferences'
+import { useLoadedSentryContexts } from '@/services/sentry'
+import { useAvailableOpencodeModels } from '@/services/opencode-cli'
+import { useAvailableGrokModels } from '@/services/grok-cli'
+import { useAvailableKimiModels } from '@/services/kimi-cli'
+import { useAvailableAntigravityModels } from '@/services/antigravity-cli'
+import { startCommitJob } from '@/services/commit-jobs'
+import { invoke, listen } from '@/lib/transport'
+import { dismissibleToast } from '@/lib/dismissible-toast'
+import { generateId } from '@/lib/uuid'
+import { openExternal } from '@/lib/platform'
+import { notify } from '@/lib/notifications'
+import { cn } from '@/lib/utils'
+import { toastActionLabel } from '@/lib/toast-action-label'
+import { toast } from 'sonner'
+import {
+  gitPush,
+  triggerImmediateGitPoll,
+  fetchWorktreesStatus,
+  performGitPull,
+  performGitSync,
+} from '@/services/git-status'
+import type {
+  RevertCommitResponse,
+  CreatePrResponse,
+  DetectPrResponse,
+  MergeConflictsResponse,
+  MergePrResponse,
+  ReviewJob,
+  StartReviewJobResponse,
+} from '@/types/projects'
+import type { Session } from '@/types/chat'
+import {
+  type CliBackend,
+  DEFAULT_RESOLVE_CONFLICTS_PROMPT,
+  PREDEFINED_CLI_PROFILES,
+  resolveMagicPromptBackend,
+  resolveMagicPromptProvider,
+} from '@/types/preferences'
+import { useRemotePicker } from '@/hooks/useRemotePicker'
+import { useInstalledBackends } from '@/hooks/useInstalledBackends'
+import { chatQueryKeys, refreshWorktreeSessionsCaches } from '@/services/chat'
+import {
+  clearWorktreePr,
+  linkWorktreePr,
+  saveWorktreePr,
+  projectsQueryKeys,
+} from '@/services/projects'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  CODEX_MODEL_OPTIONS,
+  OPENCODE_MODEL_OPTIONS,
+  GROK_MODEL_OPTIONS,
+  ANTIGRAVITY_MODEL_OPTIONS,
+} from '@/components/chat/toolbar/toolbar-options'
+import { formatOpencodeModelLabel } from '@/components/chat/toolbar/toolbar-utils'
+import {
+  getCatalogModelOptions,
+  useModelCatalog,
+} from '@/services/model-catalog'
+import { BackendLabel } from '@/components/ui/backend-label'
+import { ReviewMethodModal } from '@/components/chat/ReviewMethodModal'
+import {
+  resolveCodeReviewConfigs,
+  startCodeReviewsSequentially,
+} from '@/lib/code-review-configs'
+import { resolveMcpConfigForSend } from '@/services/mcp'
+
+type MagicOption =
+  | 'save-context'
+  | 'load-context'
+  | 'inject-session'
+  | 'linked-projects'
+  | 'fork-session'
+  | 'commit'
+  | 'commit-and-push'
+  | 'pull'
+  | 'push'
+  | 'sync'
+  | 'open-pr'
+  | 'link-pr'
+  | 'update-pr'
+  | 'review'
+  | 'merge'
+  | 'resolve-conflicts'
+  | 'release-notes'
+  | 'investigate-issue'
+  | 'investigate-pr'
+  | 'investigate-advisory'
+  | 'merge-pr'
+  | 'review-comments'
+  | 'revert-last-commit'
+  | 'smoke-test'
+
+interface TriggerCodeRabbitPrReviewResponse {
+  pr_number: number
+  pr_url: string
+  comment_body: string
+}
+
+/** Options that work on canvas without an open session (git-only operations) */
+const CANVAS_ALLOWED_OPTIONS = new Set<MagicOption>([
+  'commit',
+  'commit-and-push',
+  'revert-last-commit',
+  'pull',
+  'push',
+  'sync',
+  'open-pr',
+  'link-pr',
+  'update-pr',
+  'review',
+  'review-comments',
+  'release-notes',
+  'merge',
+  'merge-pr',
+  'resolve-conflicts',
+  'linked-projects',
+  'smoke-test',
+])
+
+/** Canvas options that navigate to worktree chat and dispatch a magic-command event */
+const CANVAS_NAVIGATE_AND_DISPATCH_OPTIONS = new Set<MagicOption>([
+  'merge',
+  'smoke-test',
+])
+
+/** Git-only actions should not depend on a mounted ChatWindow event listener. */
+const DIRECT_MAGIC_GIT_OPTIONS = new Set<MagicOption>([
+  'commit',
+  'commit-and-push',
+  'push',
+  'sync',
+])
+
+interface MagicOptionItem {
+  id: MagicOption
+  label: string
+  icon: typeof GitCommitHorizontal
+  key: string
+}
+
+interface MagicSection {
+  header: string
+  options: MagicOptionItem[]
+}
+
+interface MagicColumns {
+  left: MagicSection[]
+  right: MagicSection[]
+  all: MagicSection[]
+}
+
+type InvestigateType = 'issue' | 'pr' | 'advisory' | 'sentry-issue'
+type InvestigateSelectionMode = 'settings-default' | 'custom'
+type ResolveSelectionMode = 'settings-default' | 'custom'
+
+const INVESTIGATE_MODEL_KEYS = {
+  issue: 'investigate_issue_model',
+  pr: 'investigate_pr_model',
+  advisory: 'investigate_advisory_model',
+  'sentry-issue': 'investigate_sentry_issue_model',
+} as const
+
+const INVESTIGATE_PROVIDER_KEYS = {
+  issue: 'investigate_issue_provider',
+  pr: 'investigate_pr_provider',
+  advisory: 'investigate_advisory_provider',
+  'sentry-issue': 'investigate_sentry_issue_provider',
+} as const
+
+const INVESTIGATE_BACKEND_KEYS = {
+  issue: 'investigate_issue_backend',
+  pr: 'investigate_pr_backend',
+  advisory: 'investigate_advisory_backend',
+  'sentry-issue': 'investigate_sentry_issue_backend',
+} as const
+
+const RESOLVE_CONFLICTS_MODEL_KEY = 'resolve_conflicts_model'
+const RESOLVE_CONFLICTS_PROVIDER_KEY = 'resolve_conflicts_provider'
+const RESOLVE_CONFLICTS_BACKEND_KEY = 'resolve_conflicts_backend'
+
+function formatMagicModalOpencodeLabel(value: string): string {
+  const formatted = formatOpencodeModelLabel(value)
+  return value.startsWith('opencode/')
+    ? formatted.replace(/\s+\(OpenCode\)$/, '')
+    : formatted
+}
+
+function buildMagicColumns(hasOpenPr: boolean): MagicColumns {
+  const left: MagicSection[] = [
+    {
+      header: 'Context',
+      options: [
+        {
+          id: 'save-context',
+          label: 'Save Context',
+          icon: BookmarkPlus,
+          key: 'S',
+        },
+        {
+          id: 'load-context',
+          label: 'Load Context',
+          icon: FolderOpen,
+          key: 'L',
+        },
+        {
+          id: 'inject-session',
+          label: 'Inject Session',
+          icon: MessageSquare,
+          key: 'J',
+        },
+        {
+          id: 'linked-projects',
+          label: 'Linked Projects',
+          icon: Link2,
+          key: 'K',
+        },
+        {
+          id: 'fork-session',
+          label: 'Fork Session',
+          icon: GitBranchPlus,
+          key: 'W',
+        },
+      ],
+    },
+    {
+      header: 'Commit',
+      options: [
+        { id: 'commit', label: 'Commit', icon: GitCommitHorizontal, key: 'C' },
+        {
+          id: 'commit-and-push',
+          label: 'Commit & Push',
+          icon: GitCommitHorizontal,
+          key: 'P',
+        },
+        {
+          id: 'revert-last-commit',
+          label: 'Revert Commit',
+          icon: Undo2,
+          key: 'Z',
+        },
+      ],
+    },
+    {
+      header: 'Sync',
+      options: [
+        { id: 'sync', label: 'Sync', icon: ArrowDownUp, key: 'T' },
+        { id: 'pull', label: 'Pull', icon: ArrowDownToLine, key: 'D' },
+        { id: 'push', label: 'Push', icon: ArrowUpToLine, key: 'U' },
+      ],
+    },
+  ]
+
+  const right: MagicSection[] = [
+    {
+      header: 'Test',
+      options: [
+        { id: 'smoke-test', label: 'Smoke Test', icon: FlaskConical, key: 'X' },
+      ],
+    },
+    {
+      header: 'Pull Request',
+      options: [
+        {
+          id: 'open-pr',
+          label: hasOpenPr ? 'Open' : 'Create',
+          icon: GitPullRequest,
+          key: 'O',
+        },
+        {
+          id: 'link-pr',
+          label: 'Link PR',
+          icon: Link2,
+          key: 'B',
+        },
+        { id: 'review', label: 'Review', icon: Eye, key: 'R' },
+        {
+          id: 'review-comments',
+          label: 'PR Comments',
+          icon: MessageSquare,
+          key: 'V',
+        },
+        { id: 'merge-pr', label: 'Merge', icon: GitMerge, key: 'N' },
+      ],
+    },
+    {
+      header: 'Release',
+      options: [
+        {
+          id: 'release-notes',
+          label: 'Generate Release Notes',
+          icon: FileText,
+          key: 'G',
+        },
+        {
+          id: 'update-pr',
+          label: 'Generate PR Description',
+          icon: RefreshCw,
+          key: 'E',
+        },
+      ],
+    },
+    {
+      header: 'Investigate',
+      options: [
+        { id: 'investigate-issue', label: 'Issue', icon: Bug, key: 'I' },
+        {
+          id: 'investigate-pr',
+          label: 'PR',
+          icon: GitPullRequestArrow,
+          key: 'A',
+        },
+        {
+          id: 'investigate-advisory',
+          label: 'Advisory',
+          icon: ShieldAlert,
+          key: 'Y',
+        },
+      ],
+    },
+    {
+      header: 'Branch',
+      options: [
+        { id: 'merge', label: 'Merge to Base', icon: GitMerge, key: 'M' },
+        {
+          id: 'resolve-conflicts',
+          label: 'Resolve Conflicts',
+          icon: GitMerge,
+          key: 'F',
+        },
+      ],
+    },
+  ]
+
+  return { left, right, all: [...left, ...right] }
+}
+
+/** Keyboard shortcut to option ID mapping */
+const KEY_TO_OPTION: Record<string, MagicOption> = {
+  s: 'save-context',
+  l: 'load-context',
+  j: 'inject-session',
+  k: 'linked-projects',
+  w: 'fork-session',
+  c: 'commit',
+  p: 'commit-and-push',
+  t: 'sync',
+  d: 'pull',
+  u: 'push',
+  o: 'open-pr',
+  b: 'link-pr',
+  e: 'update-pr',
+  r: 'review',
+  v: 'review-comments',
+  m: 'merge',
+  f: 'resolve-conflicts',
+  g: 'release-notes',
+  i: 'investigate-issue',
+  a: 'investigate-pr',
+  y: 'investigate-advisory',
+  n: 'merge-pr',
+  z: 'revert-last-commit',
+  x: 'smoke-test',
+}
+
+export function MagicModal() {
+  const { magicModalOpen, setMagicModalOpen, sessionChatModalWorktreeId } =
+    useUIStore()
+  const selectedWorktreeIdFromProjects = useProjectsStore(
+    state => state.selectedWorktreeId
+  )
+  const activeWorktreeId = useChatStore(state => state.activeWorktreeId)
+  // Fall back chain: projects store → chat store → session modal worktree
+  // Session modal worktree is set when user opens a session from canvas view
+  const selectedWorktreeId =
+    selectedWorktreeIdFromProjects ??
+    activeWorktreeId ??
+    sessionChatModalWorktreeId
+  const { data: worktree } = useWorktree(selectedWorktreeId)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const investigateContentRef = useRef<HTMLDivElement>(null)
+  const hasInitializedRef = useRef(false)
+  const [selectedOption, setSelectedOption] =
+    useState<MagicOption>('save-context')
+  const [investigateDialogOpen, setInvestigateDialogOpen] = useState(false)
+  const [investigateType, setInvestigateType] =
+    useState<InvestigateType | null>(null)
+  const [investigateSelectionMode, setInvestigateSelectionMode] =
+    useState<InvestigateSelectionMode>('settings-default')
+  const [customInvestigateBackend, setCustomInvestigateBackend] =
+    useState<CliBackend>('claude')
+  const [customInvestigateModel, setCustomInvestigateModel] =
+    useState<string>('sonnet')
+  const [resolveDialogOpen, setResolveDialogOpen] = useState(false)
+  const [reviewMethodDialogOpen, setReviewMethodDialogOpen] = useState(false)
+  const [linkPrDialogOpen, setLinkPrDialogOpen] = useState(false)
+  const [linkPrNumber, setLinkPrNumber] = useState('')
+  const [linkPrError, setLinkPrError] = useState<string | null>(null)
+  const [detectedLinkPr, setDetectedLinkPr] = useState<DetectPrResponse | null>(
+    null
+  )
+  const [isDetectingLinkPr, setIsDetectingLinkPr] = useState(false)
+  const [isLinkingPr, setIsLinkingPr] = useState(false)
+  const [isUnlinkingPr, setIsUnlinkingPr] = useState(false)
+  const [resolveSelectionMode, setResolveSelectionMode] =
+    useState<ResolveSelectionMode>('settings-default')
+  const [customResolveBackend, setCustomResolveBackend] =
+    useState<CliBackend>('claude')
+  const [customResolveModel, setCustomResolveModel] = useState<string>('sonnet')
+  const [revertConfirmOpen, setRevertConfirmOpen] = useState(false)
+
+  // PR checkouts may have pr_number before pr_url is filled; treat either as open.
+  const hasOpenPr = Boolean(worktree?.pr_number || worktree?.pr_url)
+
+  // Check if worktree has loaded issue/PR contexts (for enabling investigate options)
+  // Contexts may be registered under session ID (Load Context) or worktree ID (create_worktree)
+  const activeSessionId = useChatStore(state =>
+    selectedWorktreeId ? state.activeSessionIds[selectedWorktreeId] : undefined
+  )
+  const { data: issueContexts } = useLoadedIssueContexts(
+    activeSessionId ?? selectedWorktreeId,
+    selectedWorktreeId
+  )
+  const { data: prContexts } = useLoadedPRContexts(
+    activeSessionId ?? selectedWorktreeId,
+    selectedWorktreeId
+  )
+  const { data: advisoryContexts } = useLoadedAdvisoryContexts(
+    activeSessionId ?? selectedWorktreeId,
+    selectedWorktreeId
+  )
+  const { data: sentryContexts } = useLoadedSentryContexts(
+    activeSessionId ?? selectedWorktreeId,
+    selectedWorktreeId,
+    worktree?.project_id ?? null
+  )
+  const hasIssueContexts = (issueContexts?.length ?? 0) > 0
+  const hasSentryContexts = (sentryContexts?.length ?? 0) > 0
+  const hasPrContexts = (prContexts?.length ?? 0) > 0
+  const hasAdvisoryContexts = (advisoryContexts?.length ?? 0) > 0
+
+  const sessionModalOpen = useUIStore(state => state.sessionChatModalOpen)
+  // Whether MagicModal was opened from ProjectCanvasView (no active chat session)
+  const isOnCanvas =
+    !useChatStore(state => state.activeWorktreePath) && !sessionModalOpen
+  const pickRemoteOrRun = useRemotePicker(worktree?.path)
+  const { installedBackends } = useInstalledBackends()
+  const { data: availableOpencodeModels } = useAvailableOpencodeModels({
+    enabled: installedBackends.includes('opencode'),
+  })
+  const { data: availableGrokModels } = useAvailableGrokModels({
+    enabled: installedBackends.includes('grok'),
+  })
+  const { data: availableKimiModels } = useAvailableKimiModels({
+    enabled: installedBackends.includes('kimi'),
+  })
+  const { data: availableAntigravityModels } = useAvailableAntigravityModels({
+    enabled: installedBackends.includes('antigravity'),
+  })
+  const { data: modelCatalog } = useModelCatalog()
+
+  // Build columns dynamically based on PR state
+  const magicColumns = useMemo(() => buildMagicColumns(hasOpenPr), [hasOpenPr])
+
+  // Flatten all options for arrow key navigation
+  const allOptions = useMemo(
+    () =>
+      magicColumns.all.flatMap(section => section.options.map(opt => opt.id)),
+    [magicColumns]
+  )
+
+  // Reset selection tracking when modal closes
+  useEffect(() => {
+    if (!magicModalOpen) {
+      hasInitializedRef.current = false
+    }
+  }, [magicModalOpen])
+
+  // Initialize selection when modal opens
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open && !hasInitializedRef.current) {
+        setSelectedOption(isOnCanvas ? 'commit' : 'save-context')
+        hasInitializedRef.current = true
+      }
+      setMagicModalOpen(open)
+    },
+    [setMagicModalOpen, isOnCanvas]
+  )
+
+  const queryClient = useQueryClient()
+  const selectedProjectId = useProjectsStore(state => state.selectedProjectId)
+  const { data: preferences } = usePreferences()
+  const { data: projects } = useProjects()
+  const project = worktree
+    ? projects?.find(p => p.id === worktree.project_id)
+    : null
+  const opencodeModelOptions = useMemo(() => {
+    const models = availableOpencodeModels?.length
+      ? availableOpencodeModels
+      : OPENCODE_MODEL_OPTIONS.map(option => option.value)
+    return models.map(value => ({
+      value,
+      label: formatMagicModalOpencodeLabel(value),
+    }))
+  }, [availableOpencodeModels])
+
+  const grokModelOptions = useMemo(() => {
+    const models = availableGrokModels?.length
+      ? availableGrokModels.map(model => ({
+          value: `grok/${model.id}`,
+          label: model.label || model.id,
+        }))
+      : GROK_MODEL_OPTIONS
+    return models
+  }, [availableGrokModels])
+  const kimiModelOptions = useMemo(() => {
+    if (!availableKimiModels?.length) {
+      return [{ value: 'kimi/default', label: 'Configured default' }]
+    }
+    return availableKimiModels.map(model => ({
+      value: `kimi/${model.id}`,
+      label: model.label,
+    }))
+  }, [availableKimiModels])
+  const antigravityModelOptions = useMemo(() => {
+    if (!availableAntigravityModels?.length) {
+      return ANTIGRAVITY_MODEL_OPTIONS
+    }
+    return availableAntigravityModels.map(model => ({
+      value: `antigravity/${model.id}`,
+      label: model.label || model.id,
+    }))
+  }, [availableAntigravityModels])
+
+  const claudeModelOptions = useMemo(
+    () =>
+      getCatalogModelOptions(modelCatalog, 'claude').map(option => ({
+        ...option,
+        label: option.label.replace(/^Claude\s+/, ''),
+      })),
+    [modelCatalog]
+  )
+
+  const investigateDefaults = useMemo(() => {
+    if (!investigateType) return null
+
+    const modelKey = INVESTIGATE_MODEL_KEYS[investigateType]
+    const providerKey = INVESTIGATE_PROVIDER_KEYS[investigateType]
+    const backendKey = INVESTIGATE_BACKEND_KEYS[investigateType]
+    const defaultBackend =
+      project?.default_backend ?? preferences?.default_backend ?? 'claude'
+    const backend =
+      resolveMagicPromptBackend(
+        preferences?.magic_prompt_backends,
+        backendKey,
+        defaultBackend
+      ) ?? 'claude'
+    const model =
+      preferences?.magic_prompt_models?.[modelKey] ??
+      (backend === 'codex'
+        ? (preferences?.selected_codex_model ?? 'gpt-5.6-sol')
+        : backend === 'opencode'
+          ? (preferences?.selected_opencode_model ?? 'opencode/gpt-5.6-sol')
+          : backend === 'cursor'
+            ? (preferences?.selected_cursor_model ?? 'cursor/auto')
+            : backend === 'commandcode'
+              ? (preferences?.selected_commandcode_model ??
+                'commandcode/default')
+              : backend === 'kimi'
+                ? (preferences?.selected_kimi_model ?? 'kimi/default')
+                : backend === 'grok'
+                  ? (preferences?.selected_grok_model ?? 'grok/grok-4.6')
+                  : backend === 'antigravity'
+                    ? (preferences?.selected_antigravity_model ??
+                      'antigravity/auto')
+                    : (preferences?.selected_model ?? 'sonnet'))
+    const provider = resolveMagicPromptProvider(
+      preferences?.magic_prompt_providers,
+      providerKey,
+      preferences?.default_provider
+    )
+    return { backend, model, provider }
+  }, [investigateType, preferences, project?.default_backend])
+
+  const resolveDefaults = useMemo(() => {
+    const defaultBackend =
+      project?.default_backend ?? preferences?.default_backend ?? 'claude'
+    const backend =
+      resolveMagicPromptBackend(
+        preferences?.magic_prompt_backends,
+        RESOLVE_CONFLICTS_BACKEND_KEY,
+        defaultBackend
+      ) ?? 'claude'
+    const model =
+      preferences?.magic_prompt_models?.[RESOLVE_CONFLICTS_MODEL_KEY] ??
+      (backend === 'codex'
+        ? (preferences?.selected_codex_model ?? 'gpt-5.6-sol')
+        : backend === 'opencode'
+          ? (preferences?.selected_opencode_model ?? 'opencode/gpt-5.6-sol')
+          : backend === 'cursor'
+            ? (preferences?.selected_cursor_model ?? 'cursor/auto')
+            : backend === 'commandcode'
+              ? (preferences?.selected_commandcode_model ??
+                'commandcode/default')
+              : backend === 'kimi'
+                ? (preferences?.selected_kimi_model ?? 'kimi/default')
+                : backend === 'grok'
+                  ? (preferences?.selected_grok_model ?? 'grok/grok-4.6')
+                  : backend === 'antigravity'
+                    ? (preferences?.selected_antigravity_model ??
+                      'antigravity/auto')
+                    : (preferences?.selected_model ?? 'sonnet'))
+    const provider = resolveMagicPromptProvider(
+      preferences?.magic_prompt_providers,
+      RESOLVE_CONFLICTS_PROVIDER_KEY,
+      preferences?.default_provider
+    )
+    return { backend, model, provider }
+  }, [preferences, project?.default_backend])
+
+  const getClaudeModelOptionsForProvider = useCallback(
+    (provider: string | null) => {
+      const profile = [
+        ...PREDEFINED_CLI_PROFILES,
+        ...(preferences?.custom_cli_profiles ?? []),
+      ].find(item => item.name === provider)
+      let opusModel: string | undefined
+      let sonnetModel: string | undefined
+      let haikuModel: string | undefined
+      if (profile?.settings_json) {
+        try {
+          const settings = JSON.parse(profile.settings_json)
+          const env = settings?.env
+          if (env) {
+            opusModel = env.ANTHROPIC_DEFAULT_OPUS_MODEL || env.ANTHROPIC_MODEL
+            sonnetModel =
+              env.ANTHROPIC_DEFAULT_SONNET_MODEL || env.ANTHROPIC_MODEL
+            haikuModel =
+              env.ANTHROPIC_DEFAULT_HAIKU_MODEL || env.ANTHROPIC_MODEL
+          }
+        } catch {
+          // ignore invalid custom profile json
+        }
+      }
+
+      const suffix = (model?: string) => (model ? ` (${model})` : '')
+      return provider
+        ? [
+            { value: 'opus', label: `Opus${suffix(opusModel)}` },
+            { value: 'sonnet', label: `Sonnet${suffix(sonnetModel)}` },
+            { value: 'haiku', label: `Haiku${suffix(haikuModel)}` },
+          ]
+        : claudeModelOptions
+    },
+    [claudeModelOptions, preferences?.custom_cli_profiles]
+  )
+
+  const investigateClaudeProvider =
+    investigateDefaults?.provider &&
+    investigateDefaults.provider !== '__anthropic__'
+      ? investigateDefaults.provider
+      : null
+  const resolveClaudeProvider =
+    resolveDefaults.provider && resolveDefaults.provider !== '__anthropic__'
+      ? resolveDefaults.provider
+      : null
+
+  const investigateClaudeModelOptions = useMemo(
+    () => getClaudeModelOptionsForProvider(investigateClaudeProvider),
+    [getClaudeModelOptionsForProvider, investigateClaudeProvider]
+  )
+  const resolveClaudeModelOptions = useMemo(
+    () => getClaudeModelOptionsForProvider(resolveClaudeProvider),
+    [getClaudeModelOptionsForProvider, resolveClaudeProvider]
+  )
+
+  const getInvestigateModelOptions = useCallback(
+    (backend: CliBackend) => {
+      switch (backend) {
+        case 'codex':
+          return CODEX_MODEL_OPTIONS
+        case 'opencode':
+          return opencodeModelOptions
+        case 'grok':
+          return grokModelOptions
+        case 'kimi':
+          return kimiModelOptions
+        case 'antigravity':
+          return antigravityModelOptions
+        default:
+          return investigateClaudeModelOptions
+      }
+    },
+    [
+      antigravityModelOptions,
+      grokModelOptions,
+      investigateClaudeModelOptions,
+      kimiModelOptions,
+      opencodeModelOptions,
+    ]
+  )
+
+  const customInvestigateModelOptions = useMemo(
+    () => getInvestigateModelOptions(customInvestigateBackend),
+    [customInvestigateBackend, getInvestigateModelOptions]
+  )
+
+  const effectiveCustomInvestigateModel = useMemo(() => {
+    return (
+      customInvestigateModelOptions.find(
+        option => option.value === customInvestigateModel
+      )?.value ??
+      customInvestigateModelOptions[0]?.value ??
+      ''
+    )
+  }, [customInvestigateModel, customInvestigateModelOptions])
+
+  const formatBackendLabel = useCallback((backend: CliBackend) => {
+    switch (backend) {
+      case 'codex':
+        return 'Codex'
+      case 'opencode':
+        return 'OpenCode'
+      case 'cursor':
+        return 'Cursor'
+      case 'grok':
+        return 'Grok'
+      case 'kimi':
+        return 'Kimi Code'
+      case 'antigravity':
+        return 'Antigravity'
+      default:
+        return 'Claude'
+    }
+  }, [])
+
+  const formatModelLabel = useCallback(
+    (backend: CliBackend, model: string) => {
+      const options = getInvestigateModelOptions(backend)
+      return options.find(option => option.value === model)?.label ?? model
+    },
+    [getInvestigateModelOptions]
+  )
+
+  const settingsDefaultSummary = investigateDefaults
+    ? `${formatBackendLabel(investigateDefaults.backend)} · ${formatModelLabel(
+        investigateDefaults.backend,
+        investigateDefaults.model
+      )}`
+    : ''
+  const customSelectionSummary = `${formatBackendLabel(
+    customInvestigateBackend
+  )} · ${formatModelLabel(
+    customInvestigateBackend,
+    effectiveCustomInvestigateModel
+  )}`
+
+  const handleCustomInvestigateBackendChange = useCallback(
+    (backend: string) => {
+      const nextBackend = backend as CliBackend
+      setCustomInvestigateBackend(nextBackend)
+      const nextOptions = getInvestigateModelOptions(nextBackend)
+      setCustomInvestigateModel(nextOptions[0]?.value ?? '')
+    },
+    [getInvestigateModelOptions]
+  )
+
+  const getResolveModelOptions = useCallback(
+    (backend: CliBackend) => {
+      switch (backend) {
+        case 'codex':
+          return CODEX_MODEL_OPTIONS
+        case 'opencode':
+          return opencodeModelOptions
+        case 'grok':
+          return grokModelOptions
+        case 'kimi':
+          return kimiModelOptions
+        case 'antigravity':
+          return antigravityModelOptions
+        default:
+          return resolveClaudeModelOptions
+      }
+    },
+    [
+      antigravityModelOptions,
+      grokModelOptions,
+      kimiModelOptions,
+      opencodeModelOptions,
+      resolveClaudeModelOptions,
+    ]
+  )
+
+  const customResolveModelOptions = useMemo(
+    () => getResolveModelOptions(customResolveBackend),
+    [customResolveBackend, getResolveModelOptions]
+  )
+
+  const effectiveCustomResolveModel = useMemo(() => {
+    return (
+      customResolveModelOptions.find(
+        option => option.value === customResolveModel
+      )?.value ??
+      customResolveModelOptions[0]?.value ??
+      ''
+    )
+  }, [customResolveModel, customResolveModelOptions])
+
+  const resolveSettingsDefaultSummary = `${formatBackendLabel(
+    resolveDefaults.backend
+  )} · ${(() => {
+    const options = getResolveModelOptions(resolveDefaults.backend)
+    return (
+      options.find(option => option.value === resolveDefaults.model)?.label ??
+      resolveDefaults.model
+    )
+  })()}`
+  const resolveCustomSelectionSummary = `${formatBackendLabel(
+    customResolveBackend
+  )} · ${(() => {
+    const options = getResolveModelOptions(customResolveBackend)
+    return (
+      options.find(option => option.value === effectiveCustomResolveModel)
+        ?.label ?? effectiveCustomResolveModel
+    )
+  })()}`
+
+  const handleCustomResolveBackendChange = useCallback(
+    (backend: string) => {
+      const nextBackend = backend as CliBackend
+      setCustomResolveBackend(nextBackend)
+      const nextOptions = getResolveModelOptions(nextBackend)
+      setCustomResolveModel(nextOptions[0]?.value ?? '')
+    },
+    [getResolveModelOptions]
+  )
+
+  const dispatchInvestigateCommand = useCallback(() => {
+    if (!investigateType) return
+    const detail =
+      investigateSelectionMode === 'custom'
+        ? {
+            command: 'investigate',
+            type: investigateType,
+            override: {
+              backend: customInvestigateBackend,
+              model: effectiveCustomInvestigateModel,
+            },
+          }
+        : { command: 'investigate', type: investigateType }
+    window.dispatchEvent(new CustomEvent('magic-command', { detail }))
+    setInvestigateDialogOpen(false)
+  }, [
+    investigateType,
+    investigateSelectionMode,
+    customInvestigateBackend,
+    effectiveCustomInvestigateModel,
+  ])
+
+  useEffect(() => {
+    if (!investigateDialogOpen) {
+      setInvestigateSelectionMode('settings-default')
+      setInvestigateType(null)
+    }
+  }, [investigateDialogOpen])
+
+  useEffect(() => {
+    if (!investigateDefaults) return
+    const nextBackend = installedBackends.includes(investigateDefaults.backend)
+      ? investigateDefaults.backend
+      : (installedBackends[0] ?? 'claude')
+    const nextOptions = getInvestigateModelOptions(nextBackend)
+    const nextModel =
+      nextOptions.find(option => option.value === investigateDefaults.model)
+        ?.value ??
+      nextOptions[0]?.value ??
+      investigateDefaults.model
+    setCustomInvestigateBackend(nextBackend)
+    setCustomInvestigateModel(nextModel)
+  }, [getInvestigateModelOptions, installedBackends, investigateDefaults])
+
+  // Invalid customInvestigateModel is handled by effectiveCustomInvestigateModel
+
+  useEffect(() => {
+    if (!resolveDialogOpen) {
+      setResolveSelectionMode('settings-default')
+    }
+  }, [resolveDialogOpen])
+
+  useEffect(() => {
+    const nextBackend = installedBackends.includes(resolveDefaults.backend)
+      ? resolveDefaults.backend
+      : (installedBackends[0] ?? 'claude')
+    const nextOptions = getResolveModelOptions(nextBackend)
+    const nextModel =
+      nextOptions.find(option => option.value === resolveDefaults.model)
+        ?.value ??
+      nextOptions[0]?.value ??
+      resolveDefaults.model
+    setCustomResolveBackend(nextBackend)
+    setCustomResolveModel(nextModel)
+  }, [getResolveModelOptions, installedBackends, resolveDefaults])
+
+  // Invalid customResolveModel is handled by effectiveCustomResolveModel
+
+  // Direct git execution for when ChatWindow isn't rendered (project canvas)
+  const executeGitDirectly = useCallback(
+    async (
+      option: MagicOption,
+      override?: { backend: CliBackend; model: string },
+      reviewSource: 'ai' | 'coderabbit-cli' | 'coderabbit-pr' = 'ai'
+    ) => {
+      if (!selectedWorktreeId || !worktree?.path) return
+
+      const { setWorktreeLoading, clearWorktreeLoading } =
+        useChatStore.getState()
+
+      const doCommit = async (isPush: boolean, remote?: string) => {
+        setWorktreeLoading(selectedWorktreeId, 'commit')
+        const branch = worktree.branch ?? ''
+        const { gitDiffSelectedFiles, clearGitDiffSelectedFiles } =
+          useUIStore.getState()
+        const specificFiles =
+          gitDiffSelectedFiles.size > 0
+            ? Array.from(gitDiffSelectedFiles)
+            : null
+        const opToast = dismissibleToast.loading(
+          isPush
+            ? `Committing and pushing on ${branch}...`
+            : `Creating commit on ${branch}...`
+        )
+        try {
+          await startCommitJob(
+            {
+              worktreePath: worktree.path,
+              customPrompt: preferences?.magic_prompts?.commit_message,
+              push: isPush,
+              remote: remote ?? null,
+              prNumber: isPush ? (worktree.pr_number ?? null) : null,
+              model: preferences?.magic_prompt_models?.commit_message_model,
+              customProfileName: resolveMagicPromptProvider(
+                preferences?.magic_prompt_providers,
+                'commit_message_provider',
+                preferences?.default_provider
+              ),
+              reasoningEffort:
+                preferences?.magic_prompt_efforts?.commit_message_effort ??
+                null,
+              specificFiles,
+            },
+            job => {
+              clearWorktreeLoading(selectedWorktreeId)
+              if (job.status === 'failed' || !job.response) {
+                opToast.error(`Failed: ${job.error}`)
+                return
+              }
+
+              clearGitDiffSelectedFiles()
+              triggerImmediateGitPoll()
+              window.dispatchEvent(new CustomEvent('git-commit-completed'))
+              if (worktree.project_id) {
+                fetchWorktreesStatus(worktree.project_id)
+              }
+              const result = job.response
+              if (result.push_permission_denied) {
+                opToast.error(
+                  `No permission to push to PR #${worktree.pr_number}. Create a separate PR instead.`,
+                  {
+                    action: {
+                      label: toastActionLabel('Open PR'),
+                      onClick: () => executeGitDirectly('open-pr'),
+                    },
+                  }
+                )
+              } else if (result.push_fell_back) {
+                opToast.warning(
+                  'Could not push to PR branch, pushed to new branch instead'
+                )
+              } else if (result.commit_hash) {
+                const prefix = isPush ? 'Committed and pushed' : 'Committed'
+                opToast.success(`${prefix}: ${result.message.split('\n')[0]}`)
+              } else {
+                opToast.success('Pushed to remote')
+              }
+            }
+          )
+        } catch (error) {
+          clearWorktreeLoading(selectedWorktreeId)
+          opToast.error(`Failed: ${error}`)
+        }
+      }
+
+      switch (option) {
+        case 'commit': {
+          await doCommit(false)
+          break
+        }
+        case 'commit-and-push': {
+          if (worktree.pr_number) {
+            await doCommit(true)
+          } else {
+            await pickRemoteOrRun(remote => doCommit(true, remote))
+          }
+          break
+        }
+        case 'revert-last-commit': {
+          const revertToastId = toast.loading('Reverting last commit...')
+          try {
+            const result = await invoke<RevertCommitResponse>(
+              'revert_last_local_commit',
+              { worktreePath: worktree.path }
+            )
+            triggerImmediateGitPoll()
+            if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+            toast.success(`Reverted: ${result.commit_message}`, {
+              id: revertToastId,
+            })
+          } catch (error) {
+            toast.error(`Failed to revert: ${error}`, { id: revertToastId })
+          }
+          break
+        }
+        case 'pull': {
+          await pickRemoteOrRun(async remote => {
+            await performGitPull({
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              baseBranch:
+                worktree.base_branch ?? project?.default_branch ?? 'main',
+              branchLabel: worktree.branch,
+              projectId: worktree.project_id ?? undefined,
+              remote: remote ?? worktree.base_remote,
+              onMergeConflict: () => executeGitDirectly('resolve-conflicts'),
+            })
+          })
+          break
+        }
+        case 'sync': {
+          // Always pull then push (explicit menu action, not badge-gated by ahead/behind).
+          await pickRemoteOrRun(async remote => {
+            await performGitSync({
+              needsPull: true,
+              needsPush: true,
+              pull: {
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                baseBranch:
+                  worktree.base_branch ?? project?.default_branch ?? 'main',
+                branchLabel: worktree.branch,
+                projectId: worktree.project_id ?? undefined,
+                remote: remote ?? worktree.base_remote,
+                onMergeConflict: () => executeGitDirectly('resolve-conflicts'),
+              },
+              prNumber: worktree.pr_number,
+              pushRemote: remote,
+            })
+          })
+          break
+        }
+        case 'push': {
+          const doPush = async (remote?: string) => {
+            const opToast = dismissibleToast.loading(
+              `Pushing ${worktree.branch}...`
+            )
+            try {
+              const result = await gitPush(
+                worktree.path,
+                worktree.pr_number,
+                remote
+              )
+              triggerImmediateGitPoll()
+              if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+              if (result.permissionDenied) {
+                opToast.error(
+                  `No permission to push to PR #${worktree.pr_number}. Create a separate PR instead.`,
+                  {
+                    duration: Infinity,
+                    description:
+                      result.output.trim() || 'The remote rejected the push.',
+                    action: {
+                      label: toastActionLabel('Open PR'),
+                      onClick: () => executeGitDirectly('open-pr'),
+                    },
+                  }
+                )
+              } else if (result.fellBack) {
+                opToast.warning(
+                  'Could not push to PR branch, pushed to new branch instead'
+                )
+              } else {
+                opToast.success('Changes pushed')
+              }
+            } catch (error) {
+              opToast.error(`Push failed: ${error}`)
+            }
+          }
+          if (worktree.pr_number) {
+            await doPush()
+          } else {
+            await pickRemoteOrRun(doPush)
+          }
+          break
+        }
+        case 'open-pr': {
+          if (worktree.pr_url) {
+            await openExternal(worktree.pr_url)
+            return
+          }
+          // Number without URL (e.g. older checkout_pr): resolve then open
+          if (worktree.pr_number) {
+            try {
+              const linked = await linkWorktreePr(
+                selectedWorktreeId,
+                worktree.path,
+                worktree.pr_number
+              )
+              queryClient.invalidateQueries({
+                queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+              })
+              queryClient.invalidateQueries({
+                queryKey: [
+                  ...projectsQueryKeys.all,
+                  'worktree',
+                  selectedWorktreeId,
+                ],
+              })
+              await openExternal(linked.pr_url)
+            } catch (error) {
+              toast.error(`Failed to open PR #${worktree.pr_number}: ${error}`)
+            }
+            return
+          }
+          setWorktreeLoading(selectedWorktreeId, 'pr')
+          const branch = worktree.branch ?? ''
+          const toastId = toast.loading(`Creating PR for ${branch}...`)
+          try {
+            const result = await invoke<CreatePrResponse>(
+              'create_pr_with_ai_content',
+              {
+                worktreePath: worktree.path,
+                customPrompt: preferences?.magic_prompts?.pr_content,
+                model: preferences?.magic_prompt_models?.pr_content_model,
+                customProfileName: resolveMagicPromptProvider(
+                  preferences?.magic_prompt_providers,
+                  'pr_content_provider',
+                  preferences?.default_provider
+                ),
+                reasoningEffort:
+                  preferences?.magic_prompt_efforts?.pr_content_effort ?? null,
+              }
+            )
+            if (!result.existing) {
+              await saveWorktreePr(
+                selectedWorktreeId,
+                result.pr_number,
+                result.pr_url
+              )
+            }
+            queryClient.invalidateQueries({
+              queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+            })
+            queryClient.invalidateQueries({
+              queryKey: [
+                ...projectsQueryKeys.all,
+                'worktree',
+                selectedWorktreeId,
+              ],
+            })
+            triggerImmediateGitPoll()
+            if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+            toast.success(
+              result.existing
+                ? `PR linked: ${result.title}`
+                : `PR created: ${result.title}`,
+              {
+                id: toastId,
+                action: {
+                  label: toastActionLabel('Open'),
+                  onClick: () => openExternal(result.pr_url),
+                },
+              }
+            )
+          } catch (error) {
+            toast.error(`Failed to create PR: ${error}`, { id: toastId })
+          } finally {
+            clearWorktreeLoading(selectedWorktreeId)
+          }
+          break
+        }
+        case 'merge-pr': {
+          if (!worktree.pr_number) {
+            toast.error('No PR open for this worktree')
+            return
+          }
+          const mergePrToastId = toast.loading('Merging PR...')
+          try {
+            const result = await invoke<MergePrResponse>('merge_github_pr', {
+              worktreePath: worktree.path,
+            })
+            toast.success(result.message, { id: mergePrToastId })
+
+            // Archive or delete the worktree (same as auto-archive on merge)
+            const shouldDelete = preferences?.removal_behavior === 'delete'
+            const action = shouldDelete ? 'Deleting' : 'Archiving'
+            const cleanupToastId = toast.loading(`${action} worktree...`)
+            try {
+              await invoke(
+                shouldDelete ? 'delete_worktree' : 'archive_worktree',
+                {
+                  worktreeId: selectedWorktreeId,
+                }
+              )
+              queryClient.invalidateQueries({
+                queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+              })
+              triggerImmediateGitPoll()
+              if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+              const pastAction = shouldDelete ? 'Deleted' : 'Archived'
+              toast.success(`${pastAction} "${worktree.name}"`, {
+                id: cleanupToastId,
+              })
+            } catch (cleanupError) {
+              toast.error(
+                `Failed to ${action.toLowerCase()} worktree: ${cleanupError}`,
+                {
+                  id: cleanupToastId,
+                }
+              )
+            }
+          } catch (error) {
+            toast.error(`Failed to merge PR: ${error}`, { id: mergePrToastId })
+          }
+          break
+        }
+        case 'resolve-conflicts': {
+          const toastId = toast.loading('Checking for merge conflicts...')
+          try {
+            const result = await invoke<MergeConflictsResponse>(
+              'get_merge_conflicts',
+              { worktreeId: selectedWorktreeId }
+            )
+
+            if (
+              !result.has_conflicts &&
+              (worktree.pr_number || worktree.pr_url)
+            ) {
+              const prResult = await invoke<MergeConflictsResponse>(
+                'fetch_and_merge_base',
+                { worktreeId: selectedWorktreeId }
+              )
+
+              if (!prResult.has_conflicts) {
+                toast.success('No conflicts — base branch merged cleanly', {
+                  id: toastId,
+                })
+                triggerImmediateGitPoll()
+                return
+              }
+
+              toast.warning(
+                `Found conflicts in ${prResult.conflicts.length} file(s)`,
+                {
+                  id: toastId,
+                  description: 'Opening conflict resolution session...',
+                }
+              )
+
+              const {
+                registerWorktreePath,
+                setActiveSession,
+                copySessionSettings,
+                activeSessionIds,
+                setExecutionMode,
+                setExecutingMode,
+                setLastSentMessage,
+                setError,
+                clearInputDraft,
+              } = useChatStore.getState()
+              const currentSessionId = activeSessionIds[selectedWorktreeId]
+
+              const newSession = await invoke<Session>('create_session', {
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                name: 'PR: resolve conflicts',
+              })
+
+              if (currentSessionId)
+                copySessionSettings(currentSessionId, newSession.id)
+
+              const resolvedProvider = resolveMagicPromptProvider(
+                preferences?.magic_prompt_providers,
+                RESOLVE_CONFLICTS_PROVIDER_KEY,
+                preferences?.default_provider
+              )
+              const resolvedBackend =
+                override?.backend ??
+                resolveMagicPromptBackend(
+                  preferences?.magic_prompt_backends,
+                  RESOLVE_CONFLICTS_BACKEND_KEY,
+                  project?.default_backend ??
+                    preferences?.default_backend ??
+                    'claude'
+                ) ??
+                'claude'
+              const resolvedModel =
+                override?.model ??
+                preferences?.magic_prompt_models?.[
+                  RESOLVE_CONFLICTS_MODEL_KEY
+                ] ??
+                (resolvedBackend === 'codex'
+                  ? (preferences?.selected_codex_model ?? 'gpt-5.6-sol')
+                  : resolvedBackend === 'opencode'
+                    ? (preferences?.selected_opencode_model ??
+                      'opencode/gpt-5.6-sol')
+                    : resolvedBackend === 'cursor'
+                      ? (preferences?.selected_cursor_model ?? 'cursor/auto')
+                      : (preferences?.selected_model ?? 'sonnet'))
+              const resolvedSessionProvider =
+                override?.backend && override.backend !== 'claude'
+                  ? null
+                  : resolvedProvider
+
+              useChatStore
+                .getState()
+                .setSelectedBackend(newSession.id, resolvedBackend)
+              useChatStore
+                .getState()
+                .setSelectedModel(newSession.id, resolvedModel)
+              useChatStore
+                .getState()
+                .setSelectedProvider(newSession.id, resolvedSessionProvider)
+
+              invoke('set_session_backend', {
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                sessionId: newSession.id,
+                backend: resolvedBackend,
+              }).catch(() => undefined)
+              invoke('set_session_model', {
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                sessionId: newSession.id,
+                model: resolvedModel,
+              }).catch(() => undefined)
+              invoke('set_session_provider', {
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                sessionId: newSession.id,
+                provider: resolvedSessionProvider,
+              }).catch(() => undefined)
+
+              registerWorktreePath(selectedWorktreeId, worktree.path)
+              setActiveSession(selectedWorktreeId, newSession.id)
+              window.dispatchEvent(
+                new CustomEvent('open-worktree-modal', {
+                  detail: {
+                    worktreeId: selectedWorktreeId,
+                    worktreePath: worktree.path,
+                  },
+                })
+              )
+
+              const conflictFiles = prResult.conflicts.join('\n- ')
+              const diffSection = prResult.conflict_diff
+                ? `\n\nHere is the diff showing the conflict details:\n\n\`\`\`diff\n${prResult.conflict_diff}\n\`\`\``
+                : ''
+              const baseBranch =
+                worktree.base_branch || project?.default_branch || 'main'
+              const baseRemote = worktree.base_remote || 'origin'
+              const resolveInstructions =
+                preferences?.magic_prompts?.resolve_conflicts ??
+                DEFAULT_RESOLVE_CONFLICTS_PROMPT
+
+              const conflictPrompt = `I merged \`${baseRemote}/${baseBranch}\` into this branch to resolve PR conflicts, but there are merge conflicts.
+
+Conflicts in these files:
+- ${conflictFiles}${diffSection}
+
+${resolveInstructions}`
+
+              setLastSentMessage(newSession.id, conflictPrompt)
+              setError(newSession.id, null)
+              setExecutionMode(newSession.id, 'yolo')
+              setExecutingMode(newSession.id, 'yolo')
+              clearInputDraft(newSession.id)
+
+              const {
+                mcpConfig: prConflictMcpConfig,
+                enabledServers: prConflictEnabledMcp,
+              } = await resolveMcpConfigForSend({
+                worktreePath: worktree.path,
+                backend: resolvedBackend as CliBackend,
+                projectEnabled: project?.enabled_mcp_servers,
+                globalEnabled: preferences?.default_enabled_mcp_servers,
+                knownServers:
+                  project?.known_mcp_servers ?? preferences?.known_mcp_servers,
+              })
+              useChatStore
+                .getState()
+                .setEnabledMcpServers(newSession.id, prConflictEnabledMcp)
+
+              invoke('update_session_state', {
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                sessionId: newSession.id,
+                selectedExecutionMode: 'yolo',
+                enabledMcpServers: prConflictEnabledMcp,
+              }).catch(() => undefined)
+
+              await invoke('send_chat_message', {
+                sessionId: newSession.id,
+                worktreeId: selectedWorktreeId,
+                worktreePath: worktree.path,
+                message: conflictPrompt,
+                model: resolvedModel,
+                executionMode: 'yolo',
+                backend:
+                  resolvedBackend !== 'claude' ? resolvedBackend : undefined,
+                customProfileName:
+                  resolvedSessionProvider &&
+                  resolvedSessionProvider !== '__anthropic__'
+                    ? resolvedSessionProvider
+                    : undefined,
+                chromeEnabled: preferences?.chrome_enabled ?? false,
+                aiLanguage: preferences?.ai_language,
+                mcpConfig: prConflictMcpConfig,
+              })
+
+              queryClient.invalidateQueries({
+                queryKey: chatQueryKeys.sessions(selectedWorktreeId),
+              })
+              return
+            }
+
+            if (!result.has_conflicts) {
+              toast.info('No merge conflicts detected', { id: toastId })
+              return
+            }
+
+            toast.warning(
+              `Found conflicts in ${result.conflicts.length} file(s)`,
+              {
+                id: toastId,
+                description: 'Opening conflict resolution session...',
+              }
+            )
+
+            const {
+              registerWorktreePath,
+              setActiveSession,
+              copySessionSettings,
+              activeSessionIds,
+              setExecutionMode,
+              setExecutingMode,
+              setLastSentMessage,
+              setError,
+              clearInputDraft,
+            } = useChatStore.getState()
+            const currentSessionId = activeSessionIds[selectedWorktreeId]
+
+            const newSession = await invoke<Session>('create_session', {
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              name: 'Resolve conflicts',
+            })
+
+            // Inherit model/mode/thinking settings from current session
+            if (currentSessionId)
+              copySessionSettings(currentSessionId, newSession.id)
+
+            const resolvedProvider = resolveMagicPromptProvider(
+              preferences?.magic_prompt_providers,
+              RESOLVE_CONFLICTS_PROVIDER_KEY,
+              preferences?.default_provider
+            )
+            const resolvedBackend =
+              override?.backend ??
+              resolveMagicPromptBackend(
+                preferences?.magic_prompt_backends,
+                RESOLVE_CONFLICTS_BACKEND_KEY,
+                project?.default_backend ??
+                  preferences?.default_backend ??
+                  'claude'
+              ) ??
+              'claude'
+            const resolvedModel =
+              override?.model ??
+              preferences?.magic_prompt_models?.[RESOLVE_CONFLICTS_MODEL_KEY] ??
+              (resolvedBackend === 'codex'
+                ? (preferences?.selected_codex_model ?? 'gpt-5.6-sol')
+                : resolvedBackend === 'opencode'
+                  ? (preferences?.selected_opencode_model ??
+                    'opencode/gpt-5.6-sol')
+                  : resolvedBackend === 'cursor'
+                    ? (preferences?.selected_cursor_model ?? 'cursor/auto')
+                    : (preferences?.selected_model ?? 'sonnet'))
+            const resolvedSessionProvider =
+              override?.backend && override.backend !== 'claude'
+                ? null
+                : resolvedProvider
+
+            useChatStore
+              .getState()
+              .setSelectedBackend(newSession.id, resolvedBackend)
+            useChatStore
+              .getState()
+              .setSelectedModel(newSession.id, resolvedModel)
+            useChatStore
+              .getState()
+              .setSelectedProvider(newSession.id, resolvedSessionProvider)
+            queryClient.setQueryData(
+              chatQueryKeys.session(newSession.id),
+              (old: Session | null | undefined) =>
+                old
+                  ? {
+                      ...old,
+                      backend: resolvedBackend,
+                      selected_model: resolvedModel,
+                      selected_provider: resolvedSessionProvider,
+                    }
+                  : {
+                      id: newSession.id,
+                      name: newSession.name,
+                      order: newSession.order,
+                      created_at: newSession.created_at,
+                      updated_at: newSession.updated_at,
+                      messages: [],
+                      backend: resolvedBackend,
+                      selected_model: resolvedModel,
+                      selected_provider: resolvedSessionProvider,
+                    }
+            )
+
+            // Persist to backend so model survives cache invalidations
+            invoke('set_session_backend', {
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              sessionId: newSession.id,
+              backend: resolvedBackend,
+            }).catch(() => undefined)
+            invoke('set_session_model', {
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              sessionId: newSession.id,
+              model: resolvedModel,
+            }).catch(() => undefined)
+            invoke('set_session_provider', {
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              sessionId: newSession.id,
+              provider: resolvedSessionProvider,
+            }).catch(() => undefined)
+
+            // Open in SessionChatModal on canvas (not full ChatWindow)
+            registerWorktreePath(selectedWorktreeId, worktree.path)
+            setActiveSession(selectedWorktreeId, newSession.id)
+            window.dispatchEvent(
+              new CustomEvent('open-worktree-modal', {
+                detail: {
+                  worktreeId: selectedWorktreeId,
+                  worktreePath: worktree.path,
+                },
+              })
+            )
+
+            // Build conflict resolution prompt
+            const conflictFiles = result.conflicts.join('\n- ')
+            const diffSection = result.conflict_diff
+              ? `\n\nHere is the diff showing the conflict details:\n\n\`\`\`diff\n${result.conflict_diff}\n\`\`\``
+              : ''
+            const resolveInstructions =
+              preferences?.magic_prompts?.resolve_conflicts ??
+              DEFAULT_RESOLVE_CONFLICTS_PROMPT
+
+            const conflictPrompt = `I have merge conflicts that need to be resolved.
+
+Conflicts in these files:
+- ${conflictFiles}${diffSection}
+
+${resolveInstructions}`
+
+            setLastSentMessage(newSession.id, conflictPrompt)
+            setError(newSession.id, null)
+            setExecutionMode(newSession.id, 'yolo')
+            setExecutingMode(newSession.id, 'yolo')
+            clearInputDraft(newSession.id)
+
+            const {
+              mcpConfig: conflictMcpConfig,
+              enabledServers: conflictEnabledMcp,
+            } = await resolveMcpConfigForSend({
+              worktreePath: worktree.path,
+              backend: resolvedBackend as CliBackend,
+              projectEnabled: project?.enabled_mcp_servers,
+              globalEnabled: preferences?.default_enabled_mcp_servers,
+              knownServers:
+                project?.known_mcp_servers ?? preferences?.known_mcp_servers,
+            })
+            useChatStore
+              .getState()
+              .setEnabledMcpServers(newSession.id, conflictEnabledMcp)
+
+            invoke('update_session_state', {
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              sessionId: newSession.id,
+              selectedExecutionMode: 'yolo',
+              enabledMcpServers: conflictEnabledMcp,
+            }).catch(() => undefined)
+
+            await invoke('send_chat_message', {
+              sessionId: newSession.id,
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+              message: conflictPrompt,
+              model: resolvedModel,
+              executionMode: 'yolo',
+              backend:
+                resolvedBackend !== 'claude' ? resolvedBackend : undefined,
+              customProfileName:
+                resolvedSessionProvider &&
+                resolvedSessionProvider !== '__anthropic__'
+                  ? resolvedSessionProvider
+                  : undefined,
+              chromeEnabled: preferences?.chrome_enabled ?? false,
+              aiLanguage: preferences?.ai_language,
+              mcpConfig: conflictMcpConfig,
+            })
+
+            queryClient.invalidateQueries({
+              queryKey: chatQueryKeys.sessions(selectedWorktreeId),
+            })
+          } catch (error) {
+            toast.error(`Failed to check conflicts: ${error}`, { id: toastId })
+          }
+          break
+        }
+        case 'review': {
+          setWorktreeLoading(selectedWorktreeId, 'review')
+          const projectName = project?.name ?? 'project'
+          const worktreeName = worktree.name ?? worktree.branch ?? ''
+          const reviewTarget = `${projectName}/${worktreeName}`
+          if (reviewSource === 'coderabbit-pr') {
+            const toastId = toast.loading(
+              `Triggering CodeRabbit review for ${reviewTarget}...`
+            )
+
+            try {
+              if (!worktree.pr_number) {
+                throw new Error('Open or link a PR in Jean first')
+              }
+
+              const result = await invoke<TriggerCodeRabbitPrReviewResponse>(
+                'trigger_coderabbit_pr_review',
+                {
+                  worktreeId: selectedWorktreeId,
+                  worktreePath: worktree.path,
+                  prNumber: worktree.pr_number,
+                }
+              )
+
+              if (worktree.project_id) {
+                queryClient.invalidateQueries({
+                  queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+                })
+                queryClient.invalidateQueries({
+                  queryKey: [
+                    ...projectsQueryKeys.all,
+                    'worktree',
+                    selectedWorktreeId,
+                  ],
+                })
+              }
+
+              toast.success(
+                `CodeRabbit review triggered on PR #${result.pr_number}`,
+                {
+                  id: toastId,
+                  action: result.pr_url
+                    ? {
+                        label: toastActionLabel('Open'),
+                        onClick: () => openExternal(result.pr_url),
+                      }
+                    : undefined,
+                }
+              )
+            } catch (error) {
+              toast.error(`Failed to trigger CodeRabbit review: ${error}`, {
+                id: toastId,
+              })
+            } finally {
+              clearWorktreeLoading(selectedWorktreeId)
+            }
+            break
+          }
+
+          const reviewConfigs =
+            reviewSource === 'ai'
+              ? resolveCodeReviewConfigs({
+                  configured: preferences?.magic_code_review_configs,
+                  fallbackBackend:
+                    resolveMagicPromptBackend(
+                      preferences?.magic_prompt_backends,
+                      'code_review_backend',
+                      preferences?.default_backend
+                    ) ?? 'claude',
+                  fallbackModel:
+                    preferences?.magic_prompt_models?.code_review_model ??
+                    'sonnet',
+                })
+              : [undefined]
+
+          // Fire-and-forget: detect and link PR if not already linked
+          if (!worktree.pr_number) {
+            invoke<DetectPrResponse | null>('detect_and_link_pr', {
+              worktreeId: selectedWorktreeId,
+              worktreePath: worktree.path,
+            })
+              .then(result => {
+                if (result && worktree.project_id) {
+                  queryClient.invalidateQueries({
+                    queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+                  })
+                  queryClient.invalidateQueries({
+                    queryKey: [
+                      ...projectsQueryKeys.all,
+                      'worktree',
+                      selectedWorktreeId,
+                    ],
+                  })
+                }
+              })
+              .catch(() => {
+                /* noop - PR detection is best-effort */
+              })
+          }
+
+          let reviewSessionId: string | undefined
+          await startCodeReviewsSequentially(
+            reviewConfigs,
+            async reviewConfig => {
+              const reviewRunId = generateId()
+              const reviewLabel =
+                reviewSource === 'coderabbit-cli'
+                  ? 'CodeRabbit CLI review'
+                  : reviewConfig
+                    ? `Review (${reviewConfig.backend} / ${reviewConfig.model})`
+                    : 'Review'
+              const toastId = toast.loading(
+                `Starting ${reviewLabel} for ${reviewTarget}...`
+              )
+
+              try {
+                const { job } = await invoke<StartReviewJobResponse>(
+                  'start_review_job',
+                  {
+                    worktreeId: selectedWorktreeId,
+                    worktreePath: worktree.path,
+                    source: reviewSource,
+                    backend:
+                      reviewConfig?.backend ??
+                      resolveMagicPromptBackend(
+                        preferences?.magic_prompt_backends,
+                        'code_review_backend',
+                        preferences?.default_backend
+                      ),
+                    customPrompt: preferences?.magic_prompts?.code_review,
+                    model:
+                      reviewConfig?.model ??
+                      preferences?.magic_prompt_models?.code_review_model,
+                    customProfileName: resolveMagicPromptProvider(
+                      preferences?.magic_prompt_providers,
+                      'code_review_provider',
+                      preferences?.default_provider
+                    ),
+                    reasoningEffort:
+                      reviewConfig?.reasoning_effort ??
+                      preferences?.magic_prompt_efforts?.code_review_effort ??
+                      null,
+                    reviewRunId,
+                    reviewType:
+                      reviewSource === 'coderabbit-cli' ? 'all' : null,
+                    sessionId: reviewSessionId,
+                  }
+                )
+
+                reviewSessionId ??= job.sessionId
+
+                if (job.sessionId) {
+                  const { setActiveSession, clearActiveWorktree } =
+                    useChatStore.getState()
+                  setActiveSession(selectedWorktreeId, job.sessionId)
+                  useProjectsStore.getState().selectWorktree(selectedWorktreeId)
+                  clearActiveWorktree()
+                  useUIStore
+                    .getState()
+                    .markWorktreeForAutoOpenSession(
+                      selectedWorktreeId,
+                      job.sessionId
+                    )
+                  queryClient.invalidateQueries({
+                    queryKey: chatQueryKeys.sessions(selectedWorktreeId),
+                  })
+                }
+
+                // Sonner ignores `duration` for loading toasts — dismiss explicitly.
+                toast.loading(`${reviewLabel} running for ${reviewTarget}...`, {
+                  id: toastId,
+                  cancel: {
+                    label: 'Cancel',
+                    onClick: () => {
+                      invoke<boolean>('cancel_review_job', {
+                        jobId: job.id,
+                      }).catch(error => {
+                        toast.error(`Failed to cancel review: ${error}`, {
+                          id: toastId,
+                        })
+                      })
+                    },
+                  },
+                })
+                const autoDismissTimer = window.setTimeout(() => {
+                  toast.dismiss(toastId)
+                }, 5000)
+
+                let unlistenReviewJob: (() => void) | null = null
+                let handledTerminalReviewJob = false
+                const handleTerminalReviewJob = (reviewJob: ReviewJob) => {
+                  if (reviewJob.id !== job.id) return
+                  if (reviewJob.status === 'running') return
+                  if (handledTerminalReviewJob) return
+
+                  handledTerminalReviewJob = true
+                  window.clearTimeout(autoDismissTimer)
+                  unlistenReviewJob?.()
+                  if (reviewJob.status === 'completed') {
+                    const completedSessionId = reviewJob.sessionId
+                    void refreshWorktreeSessionsCaches(
+                      queryClient,
+                      selectedWorktreeId,
+                      worktree.path
+                    ).finally(() => {
+                      queryClient.invalidateQueries({
+                        queryKey: chatQueryKeys.sessions(selectedWorktreeId),
+                      })
+                      queryClient.invalidateQueries({
+                        queryKey: ['all-sessions'],
+                      })
+                    })
+                    toast.dismiss(toastId)
+                    toast.success(
+                      `${reviewLabel} done on ${reviewTarget} (${reviewJob.findingCount ?? 0} findings)`,
+                      {
+                        action: completedSessionId
+                          ? {
+                              label: toastActionLabel('Open'),
+                              onClick: () => {
+                                const {
+                                  setActiveSession,
+                                  clearActiveWorktree,
+                                } = useChatStore.getState()
+                                useProjectsStore
+                                  .getState()
+                                  .selectWorktree(selectedWorktreeId)
+                                clearActiveWorktree()
+                                setActiveSession(
+                                  selectedWorktreeId,
+                                  completedSessionId
+                                )
+                                setTimeout(() => {
+                                  window.dispatchEvent(
+                                    new CustomEvent('open-session-modal', {
+                                      detail: {
+                                        sessionId: completedSessionId,
+                                        worktreeId: selectedWorktreeId,
+                                        worktreePath: worktree.path,
+                                      },
+                                    })
+                                  )
+                                }, 50)
+                              },
+                            }
+                          : undefined,
+                      }
+                    )
+                  } else if (reviewJob.status === 'cancelled') {
+                    toast.dismiss(toastId)
+                    toast.info(`Review cancelled for ${reviewTarget}`)
+                  } else {
+                    toast.dismiss(toastId)
+                    toast.error(
+                      `Review failed: ${reviewJob.error ?? 'Unknown error'}`
+                    )
+                  }
+                }
+
+                unlistenReviewJob = await listen<ReviewJob>(
+                  'review-job:updated',
+                  event => handleTerminalReviewJob(event.payload)
+                )
+                if (handledTerminalReviewJob) {
+                  unlistenReviewJob()
+                } else {
+                  const currentJob = await invoke<ReviewJob | null>(
+                    'get_review_job',
+                    { jobId: job.id }
+                  ).catch(() => null)
+                  if (currentJob) handleTerminalReviewJob(currentJob)
+                }
+              } catch (error) {
+                toast.error(`Failed to start review: ${error}`, {
+                  id: toastId,
+                })
+              } finally {
+                clearWorktreeLoading(selectedWorktreeId)
+              }
+            }
+          )
+          break
+        }
+      }
+    },
+    [
+      selectedWorktreeId,
+      worktree,
+      preferences,
+      project,
+      queryClient,
+      pickRemoteOrRun,
+    ]
+  )
+
+  const dispatchResolveConflictsCommand = useCallback(() => {
+    const override =
+      resolveSelectionMode === 'custom'
+        ? {
+            backend: customResolveBackend,
+            model: effectiveCustomResolveModel,
+          }
+        : undefined
+
+    if (
+      CANVAS_ALLOWED_OPTIONS.has('resolve-conflicts') &&
+      !CANVAS_NAVIGATE_AND_DISPATCH_OPTIONS.has('resolve-conflicts') &&
+      !useChatStore.getState().activeWorktreePath
+    ) {
+      setResolveDialogOpen(false)
+      executeGitDirectly('resolve-conflicts', override)
+      return
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('magic-command', {
+        detail: { command: 'resolve-conflicts', override },
+      })
+    )
+    setResolveDialogOpen(false)
+  }, [
+    resolveSelectionMode,
+    customResolveBackend,
+    effectiveCustomResolveModel,
+    executeGitDirectly,
+  ])
+
+  const detectLinkPrForCurrentBranch = useCallback(async () => {
+    if (!selectedWorktreeId || !worktree?.path) return
+
+    setIsDetectingLinkPr(true)
+    try {
+      const result = await invoke<DetectPrResponse | null>(
+        'detect_and_link_pr',
+        {
+          worktreeId: selectedWorktreeId,
+          worktreePath: worktree.path,
+        }
+      )
+
+      if (!result) return
+
+      setDetectedLinkPr(result)
+      setLinkPrNumber(String(result.pr_number))
+      queryClient.invalidateQueries({
+        queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+      })
+      queryClient.invalidateQueries({
+        queryKey: [...projectsQueryKeys.all, 'worktree', selectedWorktreeId],
+      })
+      triggerImmediateGitPoll()
+      if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+    } catch (error) {
+      setLinkPrError(`Failed to search current branch for PR: ${error}`)
+    } finally {
+      setIsDetectingLinkPr(false)
+    }
+  }, [queryClient, selectedWorktreeId, worktree?.path, worktree?.project_id])
+
+  const handleLinkPrSubmit = useCallback(async () => {
+    if (!selectedWorktreeId || !worktree?.path) return
+
+    const prNumber = Number.parseInt(linkPrNumber.trim().replace(/^#/, ''), 10)
+    if (!Number.isInteger(prNumber) || prNumber <= 0) {
+      setLinkPrError('Enter a valid PR number')
+      return
+    }
+
+    setIsLinkingPr(true)
+    setLinkPrError(null)
+    try {
+      const result = await linkWorktreePr(
+        selectedWorktreeId,
+        worktree.path,
+        prNumber
+      )
+
+      queryClient.invalidateQueries({
+        queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+      })
+      queryClient.invalidateQueries({
+        queryKey: [...projectsQueryKeys.all, 'worktree', selectedWorktreeId],
+      })
+      triggerImmediateGitPoll()
+      if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+
+      toast.success(`Linked PR #${result.pr_number}: ${result.title}`, {
+        action: {
+          label: toastActionLabel('Open'),
+          onClick: () => openExternal(result.pr_url),
+        },
+      })
+      setLinkPrDialogOpen(false)
+      setLinkPrNumber('')
+    } catch (error) {
+      const message = `Failed to link PR: ${error}`
+      setLinkPrError(message)
+      toast.error(message)
+    } finally {
+      setIsLinkingPr(false)
+    }
+  }, [
+    linkPrNumber,
+    queryClient,
+    selectedWorktreeId,
+    worktree?.path,
+    worktree?.project_id,
+  ])
+
+  const handleUnlinkPr = useCallback(async () => {
+    if (!selectedWorktreeId || !worktree || !hasOpenPr) return
+
+    const prNumber = worktree.pr_number
+    setIsUnlinkingPr(true)
+    setLinkPrError(null)
+    try {
+      await clearWorktreePr(selectedWorktreeId)
+      queryClient.invalidateQueries({
+        queryKey: projectsQueryKeys.worktrees(worktree.project_id),
+      })
+      queryClient.invalidateQueries({
+        queryKey: [...projectsQueryKeys.all, 'worktree', selectedWorktreeId],
+      })
+      triggerImmediateGitPoll()
+      if (worktree.project_id) fetchWorktreesStatus(worktree.project_id)
+
+      toast.success(prNumber ? `Unlinked PR #${prNumber}` : 'Unlinked PR')
+      setLinkPrDialogOpen(false)
+      setLinkPrNumber('')
+    } catch (error) {
+      const message = `Failed to unlink PR: ${error}`
+      setLinkPrError(message)
+      toast.error(message)
+    } finally {
+      setIsUnlinkingPr(false)
+    }
+  }, [hasOpenPr, queryClient, selectedWorktreeId, worktree])
+
+  const confirmRevertLastCommit = useCallback(() => {
+    setRevertConfirmOpen(false)
+    setMagicModalOpen(false)
+
+    if (!selectedWorktreeId) {
+      notify('No worktree selected', undefined, { type: 'error' })
+      return
+    }
+
+    if (
+      CANVAS_ALLOWED_OPTIONS.has('revert-last-commit') &&
+      !CANVAS_NAVIGATE_AND_DISPATCH_OPTIONS.has('revert-last-commit') &&
+      !useChatStore.getState().activeWorktreePath
+    ) {
+      executeGitDirectly('revert-last-commit')
+      return
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('magic-command', {
+        detail: { command: 'revert-last-commit' },
+      })
+    )
+  }, [executeGitDirectly, selectedWorktreeId, setMagicModalOpen])
+
+  const executeAction = useCallback(
+    async (option: MagicOption) => {
+      // Block disabled options on canvas
+      if (isOnCanvas && !CANVAS_ALLOWED_OPTIONS.has(option)) {
+        return
+      }
+
+      if (option === 'review') {
+        if (!selectedWorktreeId || !worktree?.path) {
+          notify('No worktree selected', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        setMagicModalOpen(false)
+        setReviewMethodDialogOpen(true)
+        return
+      }
+
+      // Release generation only needs a project selected, not a worktree
+      if (option === 'release-notes') {
+        if (!selectedProjectId) {
+          notify('No project selected', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        useUIStore.getState().setReleaseNotesModalOpen(true)
+        setMagicModalOpen(false)
+        return
+      }
+
+      // linked-projects only needs a project selected, not a worktree
+      if (option === 'linked-projects') {
+        if (!selectedProjectId) {
+          notify('No project selected', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        useUIStore.getState().setLinkedProjectsModalOpen(true)
+        setMagicModalOpen(false)
+        return
+      }
+
+      if (!selectedWorktreeId) {
+        notify('No worktree selected', undefined, { type: 'error' })
+        setMagicModalOpen(false)
+        return
+      }
+
+      if (option === 'revert-last-commit') {
+        if (!worktree?.path) {
+          notify('No worktree selected', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        setRevertConfirmOpen(true)
+        return
+      }
+
+      if (option === 'link-pr') {
+        if (!worktree?.path) {
+          notify('No worktree selected', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        setLinkPrNumber(worktree.pr_number ? String(worktree.pr_number) : '')
+        setDetectedLinkPr(null)
+        setLinkPrError(null)
+        setMagicModalOpen(false)
+        setLinkPrDialogOpen(true)
+        if (!worktree.pr_number) {
+          void detectLinkPrForCurrentBranch()
+        }
+        return
+      }
+
+      // Investigate options: guard against missing contexts
+      if (
+        option === 'investigate-issue' ||
+        option === 'investigate-pr' ||
+        option === 'investigate-advisory'
+      ) {
+        const type: InvestigateType =
+          option === 'investigate-issue'
+            ? hasIssueContexts
+              ? 'issue'
+              : 'sentry-issue'
+            : option === 'investigate-pr'
+              ? 'pr'
+              : 'advisory'
+        const hasContexts =
+          type === 'issue' || type === 'sentry-issue'
+            ? hasIssueContexts || hasSentryContexts
+            : type === 'pr'
+              ? hasPrContexts
+              : hasAdvisoryContexts
+        if (!hasContexts) {
+          const label =
+            type === 'pr' ? 'PR' : type === 'advisory' ? 'advisory' : 'issue'
+          notify(`No ${label} context loaded for this worktree`, undefined, {
+            type: 'error',
+          })
+          setMagicModalOpen(false)
+          return
+        }
+        setMagicModalOpen(false)
+        setInvestigateType(type)
+        setInvestigateDialogOpen(true)
+        return
+      }
+
+      if (option === 'resolve-conflicts') {
+        setMagicModalOpen(false)
+        setResolveDialogOpen(true)
+        return
+      }
+
+      // Update PR description: always open the dialog; user can enter any PR number
+      if (option === 'update-pr') {
+        useUIStore.getState().setUpdatePrModalOpen(true)
+        setMagicModalOpen(false)
+        return
+      }
+
+      // Review Comments: open the review comments dialog (requires open PR)
+      if (option === 'review-comments') {
+        if (!worktree?.pr_number) {
+          notify('No PR linked to this worktree', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        useUIStore.getState().setReviewCommentsModalOpen(true)
+        setMagicModalOpen(false)
+        return
+      }
+
+      // Merge PR on GitHub (requires open PR)
+      if (option === 'merge-pr') {
+        if (!worktree?.pr_number) {
+          notify('No PR open for this worktree', undefined, { type: 'error' })
+          setMagicModalOpen(false)
+          return
+        }
+        setMagicModalOpen(false)
+        executeGitDirectly('merge-pr')
+        return
+      }
+
+      // If PR already exists, open it in the browser instead of creating a new one
+      if (option === 'open-pr' && (worktree?.pr_url || worktree?.pr_number)) {
+        setMagicModalOpen(false)
+        void executeGitDirectly('open-pr')
+        return
+      }
+
+      if (DIRECT_MAGIC_GIT_OPTIONS.has(option)) {
+        setMagicModalOpen(false)
+        void executeGitDirectly(option)
+        return
+      }
+
+      // Commands that need ChatWindow: navigate to worktree first, then set pending command
+      if (
+        isOnCanvas &&
+        CANVAS_NAVIGATE_AND_DISPATCH_OPTIONS.has(option) &&
+        worktree?.path
+      ) {
+        setMagicModalOpen(false)
+        const { setActiveWorktree, setPendingMagicCommand } =
+          useChatStore.getState()
+        // Navigate to worktree chat view
+        useProjectsStore.getState().selectWorktree(selectedWorktreeId)
+        setActiveWorktree(selectedWorktreeId, worktree.path)
+        // Store pending command — ChatWindow picks it up on mount/update (no fragile timeout)
+        setPendingMagicCommand({ command: option })
+        return
+      }
+
+      // For canvas-allowed git ops: if no ChatWindow rendered, execute directly
+      // Exclude CANVAS_NAVIGATE_AND_DISPATCH_OPTIONS to prevent silent no-ops
+      if (
+        CANVAS_ALLOWED_OPTIONS.has(option) &&
+        !CANVAS_NAVIGATE_AND_DISPATCH_OPTIONS.has(option) &&
+        !useChatStore.getState().activeWorktreePath
+      ) {
+        setMagicModalOpen(false)
+        executeGitDirectly(option)
+        return
+      }
+
+      // Dispatch magic command for ChatWindow to handle
+      window.dispatchEvent(
+        new CustomEvent('magic-command', { detail: { command: option } })
+      )
+
+      setMagicModalOpen(false)
+    },
+    [
+      selectedWorktreeId,
+      selectedProjectId,
+      setMagicModalOpen,
+      worktree?.pr_url,
+      isOnCanvas,
+      executeGitDirectly,
+      hasIssueContexts,
+      hasPrContexts,
+      hasAdvisoryContexts,
+      activeSessionId,
+      worktree?.path,
+      worktree?.pr_number,
+      detectLinkPrForCurrentBranch,
+    ]
+  )
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const key = e.key.toLowerCase()
+
+      // Check for direct key shortcuts (s, l, c, p, r)
+      const mappedOption = KEY_TO_OPTION[key]
+      if (mappedOption) {
+        e.preventDefault()
+        executeAction(mappedOption)
+        return
+      }
+
+      if (key === 'enter') {
+        e.preventDefault()
+        executeAction(selectedOption)
+      } else if (key === 'arrowdown' || key === 'arrowup') {
+        e.preventDefault()
+        const currentIndex = allOptions.indexOf(selectedOption)
+        const newIndex =
+          key === 'arrowdown'
+            ? (currentIndex + 1) % allOptions.length
+            : (currentIndex - 1 + allOptions.length) % allOptions.length
+        const newOptionId = allOptions[newIndex]
+        if (newOptionId) {
+          setSelectedOption(newOptionId)
+        }
+      }
+    },
+    [executeAction, selectedOption, allOptions]
+  )
+
+  const handleInvestigateKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        dispatchInvestigateCommand()
+      }
+    },
+    [dispatchInvestigateCommand]
+  )
+
+  const handleResolveKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        dispatchResolveConflictsCommand()
+      }
+    },
+    [dispatchResolveConflictsCommand]
+  )
+
+  return (
+    <>
+      <ReviewMethodModal
+        open={reviewMethodDialogOpen}
+        onOpenChange={setReviewMethodDialogOpen}
+        onAiReview={() => executeGitDirectly('review', undefined, 'ai')}
+        onCodeRabbitCliReview={() =>
+          executeGitDirectly('review', undefined, 'coderabbit-cli')
+        }
+        onCodeRabbitPrReview={() =>
+          executeGitDirectly('review', undefined, 'coderabbit-pr')
+        }
+        codeRabbitPrAvailable={Boolean(worktree?.pr_number)}
+      />
+      <AlertDialog open={revertConfirmOpen} onOpenChange={setRevertConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revert last commit?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will undo the latest local commit on{' '}
+              <span className="font-medium text-foreground">
+                {worktree?.branch ?? worktree?.name ?? 'this worktree'}
+              </span>
+              . Your working tree changes from that commit will be restored, but
+              this action can be disruptive.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmRevertLastCommit}>
+              Revert last commit
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <Dialog open={magicModalOpen} onOpenChange={handleOpenChange}>
+        <DialogContent
+          ref={contentRef}
+          tabIndex={-1}
+          className="sm:max-w-[560px] max-h-[min(90vh,760px)] overflow-y-auto p-0 outline-none"
+          onOpenAutoFocus={e => {
+            e.preventDefault()
+            contentRef.current?.focus()
+          }}
+          onKeyDown={handleKeyDown}
+        >
+          <DialogHeader className="px-4 pt-5 pb-2">
+            <DialogTitle className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4" />
+              Magic
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="pb-2 grid grid-cols-2">
+            {[magicColumns.left, magicColumns.right].map(
+              (columnSections, colIndex) => (
+                <div
+                  key={colIndex}
+                  data-testid={
+                    colIndex === 0 ? 'magic-column-left' : 'magic-column-right'
+                  }
+                  className={cn(colIndex === 0 && 'border-r border-border')}
+                >
+                  {columnSections.map((section, sectionIndex) => (
+                    <div key={section.header}>
+                      <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        {section.header}
+                      </div>
+
+                      {section.options.map(option => {
+                        const Icon = option.icon
+                        const isSelected = selectedOption === option.id
+                        const isDisabled =
+                          (isOnCanvas &&
+                            !CANVAS_ALLOWED_OPTIONS.has(option.id)) ||
+                          (option.id === 'investigate-issue' &&
+                            !hasIssueContexts &&
+                            !hasSentryContexts) ||
+                          (option.id === 'investigate-pr' && !hasPrContexts) ||
+                          (option.id === 'investigate-advisory' &&
+                            !hasAdvisoryContexts) ||
+                          (option.id === 'review-comments' && !hasOpenPr) ||
+                          (option.id === 'merge-pr' && !hasOpenPr)
+
+                        return (
+                          <button
+                            type="button"
+                            key={option.id}
+                            onClick={() =>
+                              !isDisabled && executeAction(option.id)
+                            }
+                            onMouseEnter={() => setSelectedOption(option.id)}
+                            className={cn(
+                              'w-full flex items-center justify-between px-4 py-2 text-sm transition-colors',
+                              'focus:outline-none',
+                              isDisabled
+                                ? 'opacity-40 cursor-not-allowed'
+                                : 'hover:bg-accent',
+                              isSelected && !isDisabled && 'bg-accent'
+                            )}
+                          >
+                            <div className="flex items-center gap-3">
+                              <Icon className="h-4 w-4 text-muted-foreground" />
+                              <span>{option.label}</span>
+                            </div>
+                            <kbd className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                              {option.key}
+                            </kbd>
+                          </button>
+                        )
+                      })}
+
+                      {sectionIndex < columnSections.length - 1 && (
+                        <div className="my-1 mx-4 border-t border-border" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={linkPrDialogOpen} onOpenChange={setLinkPrDialogOpen}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle>Link pull request</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="manual-pr-number">PR number</Label>
+              <Input
+                id="manual-pr-number"
+                inputMode="numeric"
+                placeholder="123"
+                value={linkPrNumber}
+                onChange={e => {
+                  setLinkPrNumber(e.target.value)
+                  setDetectedLinkPr(null)
+                  setLinkPrError(null)
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleLinkPrSubmit()
+                  }
+                }}
+                disabled={isDetectingLinkPr || isUnlinkingPr}
+                autoFocus
+              />
+              {isDetectingLinkPr && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Checking current branch for an open PR…</span>
+                </div>
+              )}
+              {detectedLinkPr && (
+                <p className="text-sm text-foreground">
+                  Found PR #{detectedLinkPr.pr_number}: {detectedLinkPr.title}
+                </p>
+              )}
+              {linkPrError && (
+                <p className="text-sm text-destructive">{linkPrError}</p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Jean will validate this PR with GitHub and store the link on the
+                current worktree.
+              </p>
+            </div>
+
+            <div className="flex justify-between gap-2">
+              <div>
+                {hasOpenPr && (
+                  <Button
+                    variant="destructive"
+                    onClick={handleUnlinkPr}
+                    disabled={isLinkingPr || isDetectingLinkPr || isUnlinkingPr}
+                  >
+                    {isUnlinkingPr ? 'Unlinking…' : 'Unlink PR'}
+                  </Button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setLinkPrDialogOpen(false)}
+                  disabled={isLinkingPr || isDetectingLinkPr || isUnlinkingPr}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleLinkPrSubmit}
+                  disabled={isLinkingPr || isDetectingLinkPr || isUnlinkingPr}
+                >
+                  {isDetectingLinkPr
+                    ? 'Checking…'
+                    : isLinkingPr
+                      ? 'Linking…'
+                      : 'Link PR'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={investigateDialogOpen}
+        onOpenChange={setInvestigateDialogOpen}
+      >
+        <DialogContent
+          ref={investigateContentRef}
+          tabIndex={-1}
+          className="sm:max-w-[520px] outline-none"
+          onOpenAutoFocus={e => {
+            e.preventDefault()
+            investigateContentRef.current?.focus()
+          }}
+          onKeyDown={handleInvestigateKeyDown}
+        >
+          <DialogHeader>
+            <DialogTitle>
+              Investigate{' '}
+              {investigateType === 'pr'
+                ? 'PR'
+                : investigateType === 'advisory'
+                  ? 'Advisory'
+                  : investigateType === 'sentry-issue'
+                    ? 'Sentry Issue'
+                    : 'Issue'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <RadioGroup
+              value={investigateSelectionMode}
+              onValueChange={value =>
+                setInvestigateSelectionMode(value as InvestigateSelectionMode)
+              }
+              className="space-y-3"
+            >
+              <div
+                className={cn(
+                  'flex items-start gap-3 rounded-lg border p-3 transition-colors',
+                  investigateSelectionMode === 'settings-default'
+                    ? 'border-primary/40 bg-primary/5'
+                    : 'border-border'
+                )}
+              >
+                <RadioGroupItem
+                  value="settings-default"
+                  id="investigate-settings-default"
+                  className="mt-0.5"
+                />
+                <Label
+                  htmlFor="investigate-settings-default"
+                  className="flex-1 cursor-pointer"
+                >
+                  <div className="text-sm font-medium">
+                    Use Magic Prompt settings
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {settingsDefaultSummary}
+                  </div>
+                </Label>
+              </div>
+
+              <div
+                className={cn(
+                  'space-y-3 rounded-lg border p-3 transition-colors',
+                  investigateSelectionMode === 'custom'
+                    ? 'border-primary/40 bg-primary/5'
+                    : 'border-border'
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  <RadioGroupItem
+                    value="custom"
+                    id="investigate-custom"
+                    className="mt-0.5"
+                  />
+                  <Label
+                    htmlFor="investigate-custom"
+                    className="flex-1 cursor-pointer"
+                  >
+                    <div className="text-sm font-medium">
+                      Choose backend + model
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {customSelectionSummary}
+                    </div>
+                  </Label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pl-7">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      Backend
+                    </Label>
+                    <Select
+                      value={customInvestigateBackend}
+                      onValueChange={handleCustomInvestigateBackendChange}
+                    >
+                      <SelectTrigger
+                        size="sm"
+                        hideIcon={
+                          installedBackends.filter(backend =>
+                            [
+                              'claude',
+                              'codex',
+                              'opencode',
+                              'grok',
+                              'kimi',
+                              'antigravity',
+                            ].includes(backend)
+                          ).length <= 1
+                        }
+                        onClick={() => setInvestigateSelectionMode('custom')}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {installedBackends.includes('claude') && (
+                          <SelectItem value="claude">Claude</SelectItem>
+                        )}
+                        {installedBackends.includes('codex') && (
+                          <SelectItem value="codex">Codex</SelectItem>
+                        )}
+                        {installedBackends.includes('opencode') && (
+                          <SelectItem value="opencode">OpenCode</SelectItem>
+                        )}
+                        {installedBackends.includes('grok') && (
+                          <SelectItem value="grok">
+                            <BackendLabel backend="grok" />
+                          </SelectItem>
+                        )}
+                        {installedBackends.includes('kimi') && (
+                          <SelectItem value="kimi">
+                            <BackendLabel backend="kimi" />
+                          </SelectItem>
+                        )}
+                        {installedBackends.includes('antigravity') && (
+                          <SelectItem value="antigravity">
+                            <BackendLabel backend="antigravity" />
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      Model
+                    </Label>
+                    <Select
+                      value={effectiveCustomInvestigateModel}
+                      onValueChange={value => {
+                        setInvestigateSelectionMode('custom')
+                        setCustomInvestigateModel(value)
+                      }}
+                    >
+                      <SelectTrigger
+                        size="sm"
+                        hideIcon={customInvestigateModelOptions.length <= 1}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customInvestigateModelOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </RadioGroup>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setInvestigateDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={dispatchInvestigateCommand}>Investigate</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={resolveDialogOpen} onOpenChange={setResolveDialogOpen}>
+        <DialogContent
+          tabIndex={-1}
+          className="sm:max-w-[520px] outline-none"
+          onKeyDown={handleResolveKeyDown}
+        >
+          <DialogHeader>
+            <DialogTitle>Resolve conflicts</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <RadioGroup
+              value={resolveSelectionMode}
+              onValueChange={value =>
+                setResolveSelectionMode(value as ResolveSelectionMode)
+              }
+              className="space-y-3"
+            >
+              <div
+                className={cn(
+                  'flex items-start gap-3 rounded-lg border p-3 transition-colors',
+                  resolveSelectionMode === 'settings-default'
+                    ? 'border-primary/40 bg-primary/5'
+                    : 'border-border'
+                )}
+              >
+                <RadioGroupItem
+                  value="settings-default"
+                  id="resolve-settings-default"
+                  className="mt-0.5"
+                />
+                <Label
+                  htmlFor="resolve-settings-default"
+                  className="flex-1 cursor-pointer"
+                >
+                  <div className="text-sm font-medium">
+                    Use Magic Prompt settings
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {resolveSettingsDefaultSummary}
+                  </div>
+                </Label>
+              </div>
+
+              <div
+                className={cn(
+                  'space-y-3 rounded-lg border p-3 transition-colors',
+                  resolveSelectionMode === 'custom'
+                    ? 'border-primary/40 bg-primary/5'
+                    : 'border-border'
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  <RadioGroupItem
+                    value="custom"
+                    id="resolve-custom"
+                    className="mt-0.5"
+                  />
+                  <Label
+                    htmlFor="resolve-custom"
+                    className="flex-1 cursor-pointer"
+                  >
+                    <div className="text-sm font-medium">
+                      Choose backend + model
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {resolveCustomSelectionSummary}
+                    </div>
+                  </Label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pl-7">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      Backend
+                    </Label>
+                    <Select
+                      value={customResolveBackend}
+                      onValueChange={handleCustomResolveBackendChange}
+                    >
+                      <SelectTrigger
+                        size="sm"
+                        hideIcon={
+                          installedBackends.filter(backend =>
+                            [
+                              'claude',
+                              'codex',
+                              'opencode',
+                              'grok',
+                              'kimi',
+                              'antigravity',
+                            ].includes(backend)
+                          ).length <= 1
+                        }
+                        onClick={() => setResolveSelectionMode('custom')}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {installedBackends.includes('claude') && (
+                          <SelectItem value="claude">Claude</SelectItem>
+                        )}
+                        {installedBackends.includes('codex') && (
+                          <SelectItem value="codex">Codex</SelectItem>
+                        )}
+                        {installedBackends.includes('opencode') && (
+                          <SelectItem value="opencode">OpenCode</SelectItem>
+                        )}
+                        {installedBackends.includes('grok') && (
+                          <SelectItem value="grok">
+                            <BackendLabel backend="grok" />
+                          </SelectItem>
+                        )}
+                        {installedBackends.includes('kimi') && (
+                          <SelectItem value="kimi">
+                            <BackendLabel backend="kimi" />
+                          </SelectItem>
+                        )}
+                        {installedBackends.includes('antigravity') && (
+                          <SelectItem value="antigravity">
+                            <BackendLabel backend="antigravity" />
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      Model
+                    </Label>
+                    <Select
+                      value={effectiveCustomResolveModel}
+                      onValueChange={value => {
+                        setResolveSelectionMode('custom')
+                        setCustomResolveModel(value)
+                      }}
+                    >
+                      <SelectTrigger
+                        size="sm"
+                        hideIcon={customResolveModelOptions.length <= 1}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customResolveModelOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </RadioGroup>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setResolveDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={dispatchResolveConflictsCommand}>
+                Resolve conflicts
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+
+export default MagicModal
