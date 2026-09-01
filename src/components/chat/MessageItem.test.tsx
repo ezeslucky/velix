@@ -559,7 +559,7 @@ describe('MessageItem', () => {
 
   it('constrains long user prompts so mobile viewports do not clip the left edge', () => {
     const longUrl =
-      'https://github.com/coollabsio/jean/actions/runs/30667035760'
+      'https://github.com/ezeslucky/velix/actions/runs/30667035760'
     const content = [
       'Investigate the failed GitHub Actions workflow run for "CI Build"',
       `- Run URL: ${longUrl}`,

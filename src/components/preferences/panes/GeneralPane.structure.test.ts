@@ -223,7 +223,7 @@ describe('GeneralPane settings structure', () => {
       'openExternal('
     )
     expect(source.slice(versionSectionIndex, generalSettingsEnd)).toContain(
-      '`https://github.com/coollabsio/jean/commit/${CLIENT_BUILD_INFO.gitSha}`'
+      '`https://github.com/ezeslucky/velix/commit/${CLIENT_BUILD_INFO.gitSha}`'
     )
     expect(source.slice(versionSectionIndex, generalSettingsEnd)).toContain(
       'CLIENT_BUILD_INFO.builtAt'

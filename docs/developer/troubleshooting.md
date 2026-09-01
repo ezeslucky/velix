@@ -5,7 +5,7 @@
 **Symptoms:**
 - Jean window frame remains but content shows the desktop wallpaper (or is blank).
 - Task Manager may show only the Jean host process with no WebView2 child processes.
-- Reported after opening menus/dialogs (e.g. sidebar **New**) and alt-tabbing while connected to a remote Jean (issue [#575](https://github.com/coollabsio/jean/issues/575)).
+- Reported after opening menus/dialogs (e.g. sidebar **New**) and alt-tabbing while connected to a remote Jean (issue [#575](https://github.com/ezeslucky/velix/issues/575)).
 
 **Root cause:**
 WebView2's browser or renderer process crashed. Jean's window was historically transparent on all platforms; when the webview stops painting, the transparent host shows whatever is behind it (wallpaper), which looks like the app went invisible.
@@ -55,7 +55,7 @@ GIO_MODULE_DIR=/dev/null LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:squashfs-roo
 
 Alternatively, install the `.deb` package which uses system libraries directly.
 
-**Related Issues:** [#54](https://github.com/coollabsio/jean/issues/54), [#100](https://github.com/coollabsio/jean/issues/100)
+**Related Issues:** [#54](https://github.com/ezeslucky/velix/issues/54), [#100](https://github.com/ezeslucky/velix/issues/100)
 
 ---
 
@@ -271,7 +271,7 @@ defaults -currentHost write -g AppleFontSmoothing -int 2
 - **Generally Less Affected:** Fewer reported GBM errors
 - **Compositor Support:** Better Wayland compositor compatibility
 - **Transparency:** Usually works without special configuration
-- **Performance:** Keep GPU compositing enabled (default). Full software compositing can peg low-power Intel CPUs during chat streaming (see [#129](https://github.com/coollabsio/jean/issues/129))
+- **Performance:** Keep GPU compositing enabled (default). Full software compositing can peg low-power Intel CPUs during chat streaming (see [#129](https://github.com/ezeslucky/velix/issues/129))
 
 ### Desktop Environments
 

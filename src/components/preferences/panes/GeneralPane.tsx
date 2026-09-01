@@ -5006,7 +5006,7 @@ export const GeneralPane: React.FC<{ scope?: PreferencesPaneScope }> = ({
                       type="button"
                       onClick={() =>
                         openExternal(
-                          `https://github.com/coollabsio/jean/commit/${CLIENT_BUILD_INFO.gitSha}`
+                          `https://github.com/ezeslucky/velix/commit/${CLIENT_BUILD_INFO.gitSha}`
                         )
                       }
                       className="font-mono hover:text-foreground hover:underline"

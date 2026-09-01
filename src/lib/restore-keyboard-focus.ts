@@ -11,7 +11,7 @@
  * 3. Otherwise prefer the chat input (via custom event) when present
  * 4. Fall back to focusing <body> so capture-phase keybindings receive keys
  *
- * @see https://github.com/coollabsio/jean/issues/577
+ * @see https://github.com/ezeslucky/velix/issues/577
  */
 
 const BODY_FOCUSABLE_TAB_INDEX = -1

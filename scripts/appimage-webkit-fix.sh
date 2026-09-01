@@ -27,11 +27,11 @@
 #   (shipped when bundleMediaFramework is enabled) and isolate GIO modules.
 #
 # Related issues:
-# - https://github.com/coollabsio/jean/issues/52
-# - https://github.com/coollabsio/jean/issues/54
-# - https://github.com/coollabsio/jean/issues/55
-# - https://github.com/coollabsio/jean/issues/71
-# - https://github.com/coollabsio/jean/issues/100
+# - https://github.com/ezeslucky/velix/issues/52
+# - https://github.com/ezeslucky/velix/issues/54
+# - https://github.com/ezeslucky/velix/issues/55
+# - https://github.com/ezeslucky/velix/issues/71
+# - https://github.com/ezeslucky/velix/issues/100
 
 set -eu
 

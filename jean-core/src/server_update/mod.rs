@@ -24,9 +24,9 @@ use tauri::AppHandle;
 use crate::http_server::EmitExt;
 
 const MANIFEST_URL: &str =
-    "https://github.com/coollabsio/jean/releases/latest/download/server-latest.json";
+    "https://github.com/ezeslucky/velix/releases/latest/download/server-latest.json";
 const DESKTOP_MANIFEST_URL: &str =
-    "https://github.com/coollabsio/jean/releases/latest/download/latest.json";
+    "https://github.com/ezeslucky/velix/releases/latest/download/latest.json";
 const USER_AGENT: &str = "jean-server-updater";
 const RESTART_GRACE: Duration = Duration::from_secs(1);
 
