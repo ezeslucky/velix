@@ -186,7 +186,7 @@ export function TitleBar({
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() =>
-                      openExternal('https://github.com/coollabsio/jean')
+                      openExternal('https://github.com/ezeslucky/velix')
                     }
                     variant="ghost"
                     size="icon"
@@ -274,7 +274,7 @@ export function TitleBar({
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() =>
-                      openExternal('https://github.com/coollabsio/jean')
+                      openExternal('https://github.com/ezeslucky/velix')
                     }
                     variant="ghost"
                     size="icon"
@@ -294,7 +294,7 @@ export function TitleBar({
                 type="button"
                 onClick={() =>
                   openExternal(
-                    `https://github.com/coollabsio/jean/releases/tag/v${appVersion}`
+                    `https://github.com/ezeslucky/velix/releases/tag/v${appVersion}`
                   )
                 }
                 className="px-1.5 text-[0.625rem] text-foreground/40 transition-colors cursor-pointer hover:text-foreground/60"

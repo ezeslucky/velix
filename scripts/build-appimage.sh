@@ -12,10 +12,10 @@
 # Usage: bash scripts/build-appimage.sh
 #
 # Related issues:
-# - https://github.com/coollabsio/jean/issues/52
-# - https://github.com/coollabsio/jean/issues/55
-# - https://github.com/coollabsio/jean/issues/71
-# - https://github.com/coollabsio/jean/issues/100
+# - https://github.com/ezeslucky/velix/issues/52
+# - https://github.com/ezeslucky/velix/issues/55
+# - https://github.com/ezeslucky/velix/issues/71
+# - https://github.com/ezeslucky/velix/issues/100
 
 set -euo pipefail
 

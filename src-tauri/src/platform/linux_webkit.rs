@@ -6,7 +6,7 @@
 //! prevents common GBM crashes. Full software-compositing mode remains
 //! available via `JEAN_SAFE_GRAPHICS=1` for broken drivers (issue #129).
 //!
-//! Related: https://github.com/coollabsio/jean/issues/100
+//! Related: https://github.com/ezeslucky/velix/issues/100
 
 /// Whether full safe-graphics mode is requested (software compositing path).
 pub fn safe_graphics_requested() -> bool {
