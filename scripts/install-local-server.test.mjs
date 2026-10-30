@@ -14,10 +14,13 @@ test('buildInstallPlan uses the local server defaults', () => {
     ['bun', ['run', 'build']],
     [
       'cargo',
-      ['build', '--release', '--manifest-path', 'src-server/Cargo.toml'],
+      ['build', '--release', '--manifest-path', 'server/Cargo.toml'],
     ],
   ])
-  assert.match(plan.builtBinary, /src-server\/target\/release\/jean-server$/)
+  assert.match(
+    plan.builtBinary,
+    /[\\/]server[\\/]target[\\/]release[\\/]jean-server$/
+  )
   assert.equal(plan.installPath, '/usr/local/bin/jean-server')
   assert.equal(plan.service, 'jean-server.service')
 })

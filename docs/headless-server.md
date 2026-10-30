@@ -1,9 +1,9 @@
 # Jean Headless Server
 
 Jean can run as a browser-accessible Tokio/Axum server with no Tauri, WebView,
-GTK, or display-server dependency. `jean-core` owns shared state, commands,
+GTK, or display-server dependency. `core` owns shared state, commands,
 events, persistence, projects, chat backends, terminals, background work, and
-the HTTP/WebSocket protocol. `src-server` is the standalone server adapter.
+the HTTP/WebSocket protocol. `server` is the standalone server adapter.
 
 ## Agent browser (AI + manual login)
 
@@ -42,11 +42,11 @@ only need the compiled binary.
 
 ```bash
 bun run build
-cargo build --manifest-path src-server/Cargo.toml
+cargo build --manifest-path server/Cargo.toml
 ```
 
 ```bash
-env -u DISPLAY -u WAYLAND_DISPLAY ./src-server/target/debug/jean-server --host 127.0.0.1 --port 3456
+env -u DISPLAY -u WAYLAND_DISPLAY ./server/target/debug/jean-server --host 127.0.0.1 --port 3456
 curl http://127.0.0.1:3456/healthz
 ```
 
@@ -60,8 +60,8 @@ For a production single-binary server:
 
 ```bash
 bun run build
-cargo build --release --manifest-path src-server/Cargo.toml
-./src-server/target/release/jean-server --host 0.0.0.0 --port 3456 --token "$JEAN_TOKEN"
+cargo build --release --manifest-path server/Cargo.toml
+./server/target/release/jean-server --host 0.0.0.0 --port 3456 --token "$JEAN_TOKEN"
 ```
 
 After the release build finishes, `dist/` is no longer needed on the target
@@ -184,7 +184,7 @@ tail -f tmp/install-local-server.log
 ```
 
 The command runs in the background by default. It builds and embeds the current
-frontend, compiles `src-server` in release mode, atomically replaces the binary,
+frontend, compiles `server` in release mode, atomically replaces the binary,
 and queues a systemd restart. The browser connection will briefly disconnect
 while the service restarts. Use `bun run install:local:server:foreground` to
 keep build output in the current terminal.

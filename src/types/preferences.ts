@@ -608,7 +608,7 @@ Instruct each sub-agent to briefly outline its approach before implementing, so 
 
 When specifying subagent_type for Task tool calls, always use the fully qualified name exactly as listed in the system prompt (e.g., "code-simplifier:code-simplifier", not just "code-simplifier"). If the agent type contains a colon, include the full namespace:name string.`
 
-/** Default global system prompt (must match DEFAULT_GLOBAL_SYSTEM_PROMPT in src-tauri) */
+/** Default global system prompt (must match DEFAULT_GLOBAL_SYSTEM_PROMPT in core) */
 export const DEFAULT_GLOBAL_SYSTEM_PROMPT = `Always use ASD-STE100 Simplified Technical English when you talk to me.
 
 ### 1. Planning Guidance

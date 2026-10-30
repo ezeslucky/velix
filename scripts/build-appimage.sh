@@ -22,7 +22,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 MACHINE_ARCH="$(uname -m)"  # "x86_64" or "aarch64"
-BUNDLE_DIR="$PROJECT_DIR/src-tauri/target/release/bundle/appimage"
+BUNDLE_DIR="$PROJECT_DIR/backend/target/release/bundle/appimage"
 APPDIR="$BUNDLE_DIR/Jean.AppDir"
 CUSTOM_APPRUN="$SCRIPT_DIR/appimage-webkit-fix.sh"
 LINUXDEPLOY_BIN="${HOME}/.cache/tauri/linuxdeploy-${MACHINE_ARCH}.AppImage"
@@ -85,7 +85,7 @@ fi
 
 OUTPUT_NAME="Jean-${MACHINE_ARCH}.AppImage"
 if [ -f "$OUTPUT_NAME" ]; then
-    VERSION=$(grep '"version"' "$PROJECT_DIR/src-tauri/tauri.conf.json" | head -1 | sed 's/.*: *"\(.*\)".*/\1/')
+    VERSION=$(grep '"version"' "$PROJECT_DIR/backend/tauri.conf.json" | head -1 | sed 's/.*: *"\(.*\)".*/\1/')
     FINAL_NAME="Jean_${VERSION}_${ARCH_LABEL}.AppImage"
     mv "$OUTPUT_NAME" "$FINAL_NAME"
     echo "==> AppImage built successfully: $BUNDLE_DIR/$FINAL_NAME"

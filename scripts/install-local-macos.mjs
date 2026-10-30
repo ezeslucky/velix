@@ -134,8 +134,8 @@ async function main() {
   const [buildCommand, buildArgs] = plan.buildCommand
   run(buildCommand, buildArgs)
 
-  const dmg = latestDmg(findDmgs(resolve(root, 'src-tauri/target')))
-  if (!dmg) throw new Error('No DMG found under src-tauri/target after build.')
+  const dmg = latestDmg(findDmgs(resolve(root, 'backend/target')))
+  if (!dmg) throw new Error('No DMG found under backend/target after build.')
   console.log(`Using DMG: ${dmg}`)
 
   const attachOutput = run('hdiutil', ['attach', dmg, '-nobrowse'], {

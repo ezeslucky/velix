@@ -13,8 +13,8 @@ describe('removed single session per worktree preference', () => {
       'src/components/preferences/preferences-search.ts',
       'src/components/chat/SessionChatModal.tsx',
       'src/components/titlebar/TitleBar.tsx',
-      'jean-core/src/lib.rs',
-      'jean-core/src/chat/commands.rs',
+      'core/src/lib.rs',
+      'core/src/chat/commands.rs',
       'src/services/preferences.test.ts',
     ]
 

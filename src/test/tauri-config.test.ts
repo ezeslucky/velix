@@ -49,7 +49,7 @@ function mergeJsonConfig(
 }
 
 describe('Tauri drag/drop configuration', () => {
-  it.each(['src-tauri/tauri.conf.json', 'src-tauri/tauri.conf.dev.json'])(
+  it.each(['backend/tauri.conf.json', 'backend/tauri.conf.dev.json'])(
     'disables native webview drag/drop in %s so browser DnD can handle reordering',
     configPath => {
       expect(readMainWindowConfig(configPath)?.dragDropEnabled).toBe(false)
@@ -60,8 +60,8 @@ describe('Tauri drag/drop configuration', () => {
 describe('Tauri Windows configuration', () => {
   it('preserves the complete main-window configuration when applying the Windows override', () => {
     const resolved = mergeJsonConfig(
-      readConfig('src-tauri/tauri.conf.json'),
-      readConfig('src-tauri/tauri.windows.conf.json')
+      readConfig('backend/tauri.conf.json'),
+      readConfig('backend/tauri.windows.conf.json')
     ) as {
       app: { windows: Record<string, unknown>[] }
     }
@@ -88,12 +88,12 @@ describe('Tauri Windows configuration', () => {
 
   it('does not enable transparency in the development configuration', () => {
     expect(
-      readMainWindowConfig('src-tauri/tauri.conf.dev.json')?.transparent
+      readMainWindowConfig('backend/tauri.conf.dev.json')?.transparent
     ).toBe(false)
   })
 
   it('starts the production main window opaque (vibrancy is opt-in)', () => {
-    const main = readMainWindowConfig('src-tauri/tauri.conf.json') as {
+    const main = readMainWindowConfig('backend/tauri.conf.json') as {
       transparent?: boolean
       windowEffects?: { effects?: unknown[] }
     }

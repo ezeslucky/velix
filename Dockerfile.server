@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
-COPY jean-core ./jean-core
-COPY src-server ./src-server
+COPY core ./core
+COPY server ./server
 COPY --from=frontend /app/dist ./dist
-RUN cd src-server && RUSTC_WRAPPER= cargo build --release --locked
+RUN cd server && RUSTC_WRAPPER= cargo build --release --locked
 
 FROM debian:bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && useradd --create-home --shell /bin/bash jean \
     && mkdir -p /home/jean/.cache /home/jean/.config /home/jean/.local/share/com.jean.desktop \
     && chown -R jean:jean /home/jean
-COPY --from=builder /app/src-server/target/release/jean-server /usr/local/bin/jean-server
+COPY --from=builder /app/server/target/release/jean-server /usr/local/bin/jean-server
 COPY scripts/docker-entrypoint.sh /usr/local/bin/jean-server-entrypoint
 RUN chmod +x /usr/local/bin/jean-server-entrypoint
 USER jean

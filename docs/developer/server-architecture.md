@@ -4,9 +4,9 @@ Jean's browser/headless backend is split into a Tauri-free shared core and thin
 runtime adapters:
 
 ```text
-jean-core  -> runtime context, typed state, event bus, domains, dispatcher, Axum
-src-server -> Tokio process bootstrap and shutdown handling
-src-tauri  -> native desktop adapter and desktop-only OS integrations
+core        -> runtime context, typed state, event bus, domains, dispatcher, Axum
+server      -> Tokio process bootstrap and shutdown handling
+backend     -> native desktop adapter and desktop-only OS integrations
 ```
 
 `RuntimeContext` supplies application paths, typed managed state, and local
@@ -29,7 +29,7 @@ tools when the gate above permits it.
 ## Required server gates
 
 ```bash
-cargo tree --manifest-path src-server/Cargo.toml -p jean-server
+cargo tree --manifest-path server/Cargo.toml -p jean-server
 env -u DISPLAY -u WAYLAND_DISPLAY jean-server --host 127.0.0.1 --port 3456
 curl http://127.0.0.1:3456/readyz
 ldd jean-server

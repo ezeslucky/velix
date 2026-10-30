@@ -96,7 +96,7 @@ const handleAction = useCallback(() => {
 - Used for: Data passed between frontend and Tauri commands (e.g., `IssueContext`, `PullRequestContext`)
 - Add `#[serde(rename_all = "camelCase")]` to Rust struct
 - TypeScript uses standard camelCase (e.g., `headRefName`, `baseRefName`)
-- See `src-tauri/src/projects/github_issues.rs` for examples
+- See `core/src/projects/github_issues.rs` for examples
 
 **Common error:** `invalid args for command: missing field 'field_name'`
 
@@ -108,7 +108,7 @@ const handleAction = useCallback(() => {
 Session-specific UI state (e.g., answered questions, fixed review findings) must be persisted via the existing Tauri backend system, not Zustand middleware:
 
 1. **Add fields to** `src/types/ui-state.ts` (TypeScript interface, use `snake_case`)
-2. **Add fields to** `src-tauri/src/lib.rs` (Rust `UIState` struct with `#[serde(default)]`)
+2. **Add fields to** `backend/src/lib.rs` (Rust `UIState` struct with `#[serde(default)]`)
 3. **Update** `src/hooks/useUIStatePersistence.ts`:
    - Extract state in `getCurrentUIState()` (map camelCase store → snake_case UIState, convert Sets to arrays)
    - Restore state in initialization effect (map snake_case UIState → camelCase store, convert arrays back to Sets)
@@ -190,7 +190,7 @@ To diagnose unnecessary re-renders, temporarily install [why-did-you-render](htt
 
 #### PI CLI JSON Output Format
 
-**Read this before changing PI chat parsing** (`src-tauri/src/chat/pi.rs`).
+**Read this before changing PI chat parsing** (`core/src/chat/pi.rs`).
 
 Interactive Jean chat runs PI through Jean's detached PI RPC host on Unix/macOS:
 Jean launches itself with `--jean-pi-rpc-host`; that host owns a `pi --mode rpc`
@@ -258,7 +258,7 @@ re-parse the whole accumulated buffer (avoids O(n²) on long sessions).
 }
 ```
 
-**Extraction pattern** (see `src-tauri/src/chat/commands.rs:extract_text_from_stream_json`):
+**Extraction pattern** (see `core/src/chat/commands.rs:extract_text_from_stream_json`):
 
 ```rust
 for block in content {
@@ -272,9 +272,9 @@ for block in content {
 **Usage in this codebase:**
 
 - Context summarization: `execute_summarization_claude()` uses `--json-schema` to get `{summary, slug}`
-  - Schema constant: `CONTEXT_SUMMARY_SCHEMA` in `src-tauri/src/chat/commands.rs`
+  - Schema constant: `CONTEXT_SUMMARY_SCHEMA` in `core/src/chat/commands.rs`
 - PR content generation: `generate_pr_content()` uses `--json-schema` to get `{title, body}`
-  - Schema constant: `PR_CONTENT_SCHEMA` in `src-tauri/src/projects/commands.rs`
+  - Schema constant: `PR_CONTENT_SCHEMA` in `core/src/projects/commands.rs`
   - Tauri command: `create_pr_with_ai_content` - creates PR with AI-generated title/body
 
 #### Background Operations with Toast Notifications
@@ -362,7 +362,7 @@ let output = Command::new("git")
 
 **For opening URLs in the browser:** use `open_url_in_browser()` (not raw `cmd /c start`). On Windows the shell-association path still uses `cmd /c start`, but only through `silent_command()` so the intermediary console never flashes (issue #588).
 
-The helpers are defined in `jean-core/src/platform/process.rs` and re-exported via `pub use process::*` in `platform/mod.rs` (`open_url_in_browser` is also re-exported from `jean_core`).
+The helpers are defined in `core/src/platform/process.rs` and re-exported via `pub use process::*` in `platform/mod.rs` (`open_url_in_browser` is also re-exported from `velix_core`).
 
 #### Canvas Views Architecture
 
@@ -437,7 +437,7 @@ When adding a backend like Claude, Codex, OpenCode, Cursor, Pi, Command Code, or
 
 **Install, status, auth, and login:**
 
-- [ ] Add CLI module (`src-tauri/src/<backend>_cli/`) with config/status/auth/install/update commands as needed
+- [ ] Add CLI module (`core/src/<backend>_cli/`) with config/status/auth/install/update commands as needed
 - [ ] Avoid binary-name ambiguity; support canonical binary and documented aliases when applicable (e.g. `cmd`, `command-code`)
 - [ ] For npm-distributed CLIs, decide PATH-only vs Jean-managed npm install/update/uninstall before adding Settings controls
 - [ ] Detect whether backend is installed before checking auth
@@ -449,18 +449,18 @@ When adding a backend like Claude, Codex, OpenCode, Cursor, Pi, Command Code, or
 - [ ] Re-fetch auth status after login/relogin
 - [ ] Include backend auth readiness in onboarding; do not mark backend ready unless installed and authenticated
 - [ ] Support both Jean-managed binary and system PATH binary login flows
-- [ ] Register every status/auth/login command in both `src-tauri/src/lib.rs` and `src-tauri/src/http_server/dispatch.rs`
+- [ ] Register every status/auth/login command in both `backend/src/lib.rs` and `core/src/http_server/dispatch.rs`
 - [ ] Add tests/mocks for authenticated, unauthenticated, not installed, login failure, and `jean` vs `path` source
 
 **Main chat execution:**
 
-- [ ] Create execution module (`src-tauri/src/chat/<backend>.rs`) and export it from `chat/mod.rs`
+- [ ] Create execution module (`core/src/chat/<backend>.rs`) and export it from `chat/mod.rs`
 - [ ] Return the common response shape: content, backend resume id, tool calls, content blocks, cancelled flag, usage, and error state if needed
-- [ ] Route backend in `src-tauri/src/chat/commands.rs` send-message match
+- [ ] Route backend in `core/src/chat/commands.rs` send-message match
 - [ ] Store backend resume id on Rust/TS `Session` and persist/restore it
 - [ ] Map backend streaming to common events: `chat:chunk`, `chat:tool-use`, `chat:tool-result`, `chat:tool-block`, `chat:thinking`, `chat:done`, `chat:error`, `chat:cancelled`
 - [ ] Preserve ordered `ContentBlock[]`, normalize tool call IDs/names, and attach outputs to matching tool calls
-- [ ] Add cancellation support in `src-tauri/src/chat/registry.rs` (process kill, interrupt request, or cancel flag)
+- [ ] Add cancellation support in `core/src/chat/registry.rs` (process kill, interrupt request, or cancel flag)
 - [ ] Update run logs, incomplete-run recovery, synthetic plan injection, and session resume behavior
 
 **System prompts, modes, and context:**
@@ -500,9 +500,9 @@ When adding a backend like Claude, Codex, OpenCode, Cursor, Pi, Command Code, or
 
 Projects have an optional `worktrees_dir: Option<String>` field that overrides the default `~/jean` base directory for worktree creation.
 
-- **Rust**: `Project.worktrees_dir` in `src-tauri/src/projects/types.rs`
+- **Rust**: `Project.worktrees_dir` in `core/src/projects/types.rs`
 - **TypeScript**: `Project.worktrees_dir` in `src/types/projects.ts`
-- **Path resolution**: `get_project_worktrees_dir(name, custom_base_dir)` in `src-tauri/src/projects/storage.rs`
+- **Path resolution**: `get_project_worktrees_dir(name, custom_base_dir)` in `core/src/projects/storage.rs`
   - When `Some(dir)` → `<dir>/<project-name>/<worktree-name>`
   - When `None` → `~/jean/<project-name>/<worktree-name>`
   - The `<project-name>` subdirectory is always appended to prevent collisions when multiple projects share the same custom base dir
@@ -515,8 +515,8 @@ Projects have an optional `worktrees_dir: Option<String>` field that overrides t
 
 **Two places to register every command:**
 
-1. **`src-tauri/src/lib.rs`** — `tauri::generate_handler![...]` (native Tauri IPC)
-2. **`src-tauri/src/http_server/dispatch.rs`** — `dispatch_command()` match arms (WebSocket transport)
+1. **`backend/src/lib.rs`** — `tauri::generate_handler![...]` (native Tauri IPC)
+2. **`core/src/http_server/dispatch.rs`** — `dispatch_command()` match arms (WebSocket transport)
 
 **Dispatch pattern:**
 
