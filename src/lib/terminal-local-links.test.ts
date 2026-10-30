@@ -61,7 +61,7 @@ describe('terminal local links', () => {
   it('maps a local path across wrapped terminal rows', () => {
     const rows = [
       {
-        text: '    /Users/me/app/src-tauri/target/release-fast/bundle/dmg/Jean_0.1.52_aarc',
+        text: '    /Users/me/app/backend/target/release-fast/bundle/dmg/Jean_0.1.52_aarc',
         isWrapped: false,
       },
       { text: 'h64.dmg', isWrapped: true },
@@ -71,7 +71,7 @@ describe('terminal local links', () => {
 
     expect(links).toEqual([
       {
-        text: '/Users/me/app/src-tauri/target/release-fast/bundle/dmg/Jean_0.1.52_aarch64.dmg',
+        text: '/Users/me/app/backend/target/release-fast/bundle/dmg/Jean_0.1.52_aarch64.dmg',
         range: {
           start: { x: 5, y: 1 },
           end: { x: 7, y: 2 },

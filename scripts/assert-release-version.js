@@ -35,8 +35,8 @@ function readCargoVersion(path) {
 
 const versions = [
   ['package.json', readJsonVersion('package.json')],
-  ['src-tauri/tauri.conf.json', readJsonVersion('src-tauri/tauri.conf.json')],
-  ['src-tauri/Cargo.toml', readCargoVersion('src-tauri/Cargo.toml')],
+  ['backend/tauri.conf.json', readJsonVersion('backend/tauri.conf.json')],
+  ['backend/Cargo.toml', readCargoVersion('backend/Cargo.toml')],
 ]
 
 let hasMismatch = false

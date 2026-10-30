@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 const rustSource = readFileSync(
-  join(process.cwd(), 'jean-core/src/lib.rs'),
+  join(process.cwd(), 'core/src/lib.rs'),
   'utf8'
 )
 const typescriptSource = readFileSync(

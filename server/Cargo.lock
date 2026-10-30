@@ -1181,49 +1181,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
-name = "jean-core"
-version = "0.1.73"
-dependencies = [
- "axum",
- "base64",
- "chrono",
- "dirs",
- "flate2",
- "futures-util",
- "if-addrs",
- "ignore",
- "image",
- "libc",
- "log",
- "once_cell",
- "portable-pty",
- "rand 0.8.7",
- "regex",
- "reqwest",
- "rust-embed",
- "serde",
- "serde_json",
- "serde_yaml",
- "sha2 0.10.9",
- "tar",
- "tokio",
- "tokio-tungstenite 0.28.0",
- "toml",
- "toml_edit 0.23.10+spec-1.0.0",
- "tower-http",
- "uuid",
- "which",
- "windows-sys 0.59.0",
- "zip",
- "zune-core",
-]
-
-[[package]]
 name = "jean-server"
 version = "0.1.73"
 dependencies = [
- "jean-core",
  "tokio",
+ "velix-core",
 ]
 
 [[package]]
@@ -2636,6 +2598,44 @@ name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
+
+[[package]]
+name = "velix-core"
+version = "0.1.73"
+dependencies = [
+ "axum",
+ "base64",
+ "chrono",
+ "dirs",
+ "flate2",
+ "futures-util",
+ "if-addrs",
+ "ignore",
+ "image",
+ "libc",
+ "log",
+ "once_cell",
+ "portable-pty",
+ "rand 0.8.7",
+ "regex",
+ "reqwest",
+ "rust-embed",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "sha2 0.10.9",
+ "tar",
+ "tokio",
+ "tokio-tungstenite 0.28.0",
+ "toml",
+ "toml_edit 0.23.10+spec-1.0.0",
+ "tower-http",
+ "uuid",
+ "which",
+ "windows-sys 0.59.0",
+ "zip",
+ "zune-core",
+]
 
 [[package]]
 name = "version_check"

@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest'
 
 describe('set_session_last_opened multi-client sync', () => {
   const source = readFileSync(
-    `${process.cwd()}/jean-core/src/chat/commands.rs`,
+    `${process.cwd()}/core/src/chat/commands.rs`,
     'utf8'
   )
 

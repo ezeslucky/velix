@@ -8,7 +8,7 @@ use tauri_plugin_dialog::DialogExt;
 use crate::CoreRuntime;
 
 async fn core_command(runtime: &CoreRuntime, command: &str, args: Value) -> Result<Value, String> {
-    jean_core::http_server::dispatch::dispatch_command(&runtime.0, command, args).await
+    velix_core::http_server::dispatch::dispatch_command(&runtime.0, command, args).await
 }
 
 fn spawn(command: &str, args: &[String]) -> Result<(), String> {
@@ -22,7 +22,7 @@ fn spawn(command: &str, args: &[String]) -> Result<(), String> {
 fn open_url(url: String) -> Result<(), String> {
     // Shared helper applies CREATE_NO_WINDOW on Windows so the cmd.exe
     // intermediary for `start` never flashes a console (issue #588).
-    jean_core::open_url_in_browser(&url)
+    velix_core::open_url_in_browser(&url)
 }
 
 /// Toggle macOS window vibrancy (translucent sidebar material).
@@ -176,7 +176,7 @@ pub async fn save_dropped_image(
     runtime: State<'_, CoreRuntime>,
     source_path: String,
 ) -> Result<Value, String> {
-    jean_core::save_dropped_image_from_path(runtime.0.clone(), source_path).await
+    velix_core::save_dropped_image_from_path(runtime.0.clone(), source_path).await
 }
 
 #[tauri::command]
@@ -188,7 +188,7 @@ pub async fn open_file_in_default_app(
 ) -> Result<(), String> {
     // Delegate to jean-core so VS Code / VSCodium / Cursor get -g goto args,
     // macOS `open -a` fallbacks, and Windows .cmd wrappers (code.cmd / codium.cmd).
-    jean_core::open_file_in_default_app(path, editor, line, column).await
+    velix_core::open_file_in_default_app(path, editor, line, column).await
 }
 
 #[tauri::command]
@@ -223,7 +223,7 @@ pub async fn open_project_worktrees_folder(
     runtime: State<'_, CoreRuntime>,
     project_id: String,
 ) -> Result<(), String> {
-    let path = jean_core::get_project_worktrees_folder(&runtime.0, &project_id)?;
+    let path = velix_core::get_project_worktrees_folder(&runtime.0, &project_id)?;
     open_worktree_in_finder(path.to_string_lossy().into_owned()).await
 }
 
@@ -275,7 +275,7 @@ pub async fn open_worktree_in_editor(
 ) -> Result<(), String> {
     // Use the worktree-specific launcher (jean.json template seed, editor
     // binary mapping including vscodium/`codium`, platform fallbacks).
-    jean_core::open_worktree_in_editor(worktree_path, editor).await
+    velix_core::open_worktree_in_editor(worktree_path, editor).await
 }
 
 #[tauri::command]
@@ -283,7 +283,7 @@ pub async fn open_project_on_github(
     runtime: State<'_, CoreRuntime>,
     project_id: String,
 ) -> Result<(), String> {
-    open_url(jean_core::get_project_github_url(&runtime.0, &project_id)?)
+    open_url(velix_core::get_project_github_url(&runtime.0, &project_id)?)
 }
 
 #[tauri::command]
@@ -319,20 +319,20 @@ pub async fn set_project_avatar(
         .ok_or_else(|| "No file selected".to_string())?
         .into_path()
         .map_err(|error| error.to_string())?;
-    jean_core::set_project_avatar_from_path(runtime.0.clone(), project_id, source_path).await
+    velix_core::set_project_avatar_from_path(runtime.0.clone(), project_id, source_path).await
 }
 
 #[tauri::command]
 pub async fn start_http_server(
     runtime: State<'_, CoreRuntime>,
     port: Option<u16>,
-) -> Result<jean_core::http_server::server::ServerStatus, String> {
-    jean_core::start_http_server(runtime.0.clone(), port).await
+) -> Result<velix_core::http_server::server::ServerStatus, String> {
+    velix_core::start_http_server(runtime.0.clone(), port).await
 }
 
 #[tauri::command]
 pub async fn stop_http_server(runtime: State<'_, CoreRuntime>) -> Result<(), String> {
-    jean_core::stop_http_server(runtime.0.clone()).await
+    velix_core::stop_http_server(runtime.0.clone()).await
 }
 
 /// Install jean-server on a remote Linux host over SSH, verify readiness, and

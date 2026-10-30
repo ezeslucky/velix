@@ -51,7 +51,7 @@ test('appimage-webkit-fix.sh is valid bash', () => {
 
 test('bundleMediaFramework is enabled for AppImage packaging', () => {
   const conf = JSON.parse(
-    readFileSync(join(repoRoot, 'src-tauri/tauri.conf.json'), 'utf8')
+    readFileSync(join(repoRoot, 'backend/tauri.conf.json'), 'utf8')
   )
   assert.equal(conf.bundle?.linux?.appimage?.bundleMediaFramework, true)
 })

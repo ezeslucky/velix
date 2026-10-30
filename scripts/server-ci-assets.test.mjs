@@ -9,7 +9,7 @@ test('server release workflow builds binaries and publishes docker image', () =>
 
   assert.doesNotMatch(workflow, /workflow_id: 'ci-build\.yml'/)
   assert.match(workflow, /needs: metadata/)
-  assert.match(workflow, /cd src-server && cargo build --release/)
+  assert.match(workflow, /cd server && cargo build --release/)
   assert.match(workflow, /jean-server-linux-amd64/)
   assert.match(workflow, /jean-server-linux-arm64/)
   assert.match(workflow, /server-latest\.json/)
@@ -28,11 +28,11 @@ test('Dockerfile builds and runs jean-server headlessly as non-root user', () =>
   const dockerfile = read('Dockerfile.server')
 
   assert.match(dockerfile, /bun run build/)
-  assert.match(dockerfile, /COPY src-server \.\/src-server/)
-  assert.match(dockerfile, /COPY jean-core \.\/jean-core/)
+  assert.match(dockerfile, /COPY server \.\/server/)
+  assert.match(dockerfile, /COPY core \.\/core/)
   assert.match(
     dockerfile,
-    /cd src-server && RUSTC_WRAPPER= cargo build --release/
+    /cd server && RUSTC_WRAPPER= cargo build --release/
   )
   assert.match(dockerfile, /USER jean/)
   assert.match(dockerfile, /chown -R jean:jean \/home\/jean/)
@@ -69,15 +69,15 @@ test('Dockerfile.server-runtime installs GitHub CLI for onboarding and PATH tool
 })
 
 test('jean-server depends only on the Tauri-free shared core', () => {
-  const cargoToml = read('src-tauri/Cargo.toml')
-  const coreCargoToml = read('jean-core/Cargo.toml')
-  const serverCargoToml = read('src-server/Cargo.toml')
+  const cargoToml = read('backend/Cargo.toml')
+  const coreCargoToml = read('core/Cargo.toml')
+  const serverCargoToml = read('server/Cargo.toml')
 
   assert.doesNotMatch(cargoToml, /jean-server/)
-  assert.match(cargoToml, /jean-core = \{ path = "\.\.\/jean-core" \}/)
+  assert.match(cargoToml, /velix-core = \{ path = "\.\.\/core" \}/)
   assert.match(serverCargoToml, /name = "jean-server"/)
-  assert.match(serverCargoToml, /jean-core = \{ path = "\.\.\/jean-core" \}/)
-  assert.doesNotMatch(serverCargoToml, /src-tauri|tauri/i)
+  assert.match(serverCargoToml, /velix-core = \{ path = "\.\.\/core" \}/)
+  assert.doesNotMatch(serverCargoToml, /backend|tauri/i)
   assert.doesNotMatch(coreCargoToml, /tauri|wry|webkit|gtk/i)
 })
 
@@ -93,14 +93,14 @@ test('shared dispatcher is owned by jean-core and used by the desktop adapter', 
   const commands = source =>
     [...source.matchAll(commandPattern)].map(match => match[1]).sort()
 
-  const coreCommands = commands(read('jean-core/src/http_server/dispatch.rs'))
-  const desktopAdapter = read('src-tauri/src/lib.rs')
+  const coreCommands = commands(read('core/src/http_server/dispatch.rs'))
+  const desktopAdapter = read('backend/src/lib.rs')
   const frontendTransport = read('src/lib/transport.ts')
 
   assert.ok(coreCommands.length >= 380)
   assert.match(desktopAdapter, /dispatch_core_command/)
   assert.match(frontendTransport, /dispatch_core_command/)
-  assert.equal(existsSync('src-tauri/src/http_server/dispatch.rs'), false)
-  assert.equal(existsSync('src-tauri/src/chat'), false)
-  assert.equal(existsSync('src-tauri/src/projects'), false)
+  assert.equal(existsSync('backend/src/http_server/dispatch.rs'), false)
+  assert.equal(existsSync('backend/src/chat'), false)
+  assert.equal(existsSync('backend/src/projects'), false)
 })

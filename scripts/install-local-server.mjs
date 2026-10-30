@@ -24,10 +24,10 @@ export function buildInstallPlan({ env = process.env } = {}) {
       ['bun', ['run', 'build']],
       [
         'cargo',
-        ['build', '--release', '--manifest-path', 'src-server/Cargo.toml'],
+        ['build', '--release', '--manifest-path', 'server/Cargo.toml'],
       ],
     ],
-    builtBinary: resolve(root, 'src-server/target/release/jean-server'),
+    builtBinary: resolve(root, 'server/target/release/jean-server'),
     installPath: env.JEAN_SERVER_INSTALL_PATH ?? '/usr/local/bin/jean-server',
     service: env.JEAN_SERVER_SERVICE ?? 'jean-server.service',
   }

@@ -1,6 +1,6 @@
 /**
  * Types for the embedded browser pane (per-worktree multi-tab native webview).
- * Mirror Rust event payload shapes from src-tauri/src/browser/types.rs
+ * Mirror Rust event payload shapes from backend/src/browser/types.rs
  */
 
 export type ModalBrowserDockMode = 'floating' | 'left' | 'right' | 'bottom'

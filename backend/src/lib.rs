@@ -10,7 +10,7 @@ mod http_server;
 mod platform;
 mod remote_install;
 
-pub(crate) struct CoreRuntime(pub jean_core::RuntimeContext);
+pub(crate) struct CoreRuntime(pub velix_core::RuntimeContext);
 
 #[tauri::command]
 async fn dispatch_core_command(
@@ -18,7 +18,7 @@ async fn dispatch_core_command(
     command: String,
     args: Option<Value>,
 ) -> Result<Value, String> {
-    jean_core::http_server::dispatch::dispatch_command(
+    velix_core::http_server::dispatch::dispatch_command(
         &runtime.0,
         &command,
         args.unwrap_or_else(|| Value::Object(Default::default())),
@@ -158,7 +158,7 @@ fn install_menu_events(app: &tauri::App) {
     });
 }
 
-fn initialize_core(app: &mut tauri::App) -> Result<jean_core::RuntimeContext, String> {
+fn initialize_core(app: &mut tauri::App) -> Result<velix_core::RuntimeContext, String> {
     let app_data_dir = app
         .path()
         .app_data_dir()
@@ -167,7 +167,7 @@ fn initialize_core(app: &mut tauri::App) -> Result<jean_core::RuntimeContext, St
         .path()
         .resource_dir()
         .map_err(|error| error.to_string())?;
-    let core = jean_core::RuntimeContext::new(app_data_dir, resource_dir)?;
+    let core = velix_core::RuntimeContext::new(app_data_dir, resource_dir)?;
     let event_app = app.handle().clone();
     core.set_event_sink(move |event, payload| {
         let payload: Value = serde_json::from_str(payload)
@@ -177,15 +177,15 @@ fn initialize_core(app: &mut tauri::App) -> Result<jean_core::RuntimeContext, St
             .map_err(|error| error.to_string())
     });
     tauri::async_runtime::block_on(async {
-        jean_core::async_runtime::set(tokio::runtime::Handle::current());
+        velix_core::async_runtime::set(tokio::runtime::Handle::current());
     });
-    jean_core::initialize_runtime(&core)?;
+    velix_core::initialize_runtime(&core)?;
     Ok(core)
 }
 
-fn allow_project_assets(app: &AppHandle, core: &jean_core::RuntimeContext) {
+fn allow_project_assets(app: &AppHandle, core: &velix_core::RuntimeContext) {
     let projects =
-        tauri::async_runtime::block_on(jean_core::http_server::dispatch::dispatch_command(
+        tauri::async_runtime::block_on(velix_core::http_server::dispatch::dispatch_command(
             core,
             "list_projects",
             Value::Object(Default::default()),
@@ -278,7 +278,7 @@ fn setup_runtime(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
 
     let services = core.clone();
     tauri::async_runtime::spawn(async move {
-        if let Err(error) = jean_core::start_runtime_services(services).await {
+        if let Err(error) = velix_core::start_runtime_services(services).await {
             log::warn!("Failed to start shared runtime services: {error}");
         }
     });
@@ -289,7 +289,7 @@ fn setup_runtime(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
     let http = core.clone();
     let desktop_app = app.handle().clone();
     tauri::async_runtime::spawn(async move {
-        let preferences = jean_core::http_server::dispatch::dispatch_command(
+        let preferences = velix_core::http_server::dispatch::dispatch_command(
             &http,
             "load_preferences",
             Value::Object(Default::default()),
@@ -308,7 +308,7 @@ fn setup_runtime(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
             .and_then(|value| value.get("http_server_auto_start").and_then(Value::as_bool))
             .unwrap_or(false);
         if should_start {
-            if let Err(error) = jean_core::start_http_server(http, None).await {
+            if let Err(error) = velix_core::start_http_server(http, None).await {
                 log::warn!("Failed to auto-start HTTP server: {error}");
             }
         }
@@ -338,14 +338,14 @@ fn setup_runtime(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Product version must be the desktop package, not jean-core's library version.
-    jean_core::set_app_version(env!("CARGO_PKG_VERSION"));
+    velix_core::set_app_version(env!("CARGO_PKG_VERSION"));
 
     if should_run_server() {
         let runtime = tokio::runtime::Builder::new_multi_thread()
             .enable_all()
             .build()
             .expect("failed to create Jean server runtime");
-        if let Err(error) = runtime.block_on(jean_core::run_server()) {
+        if let Err(error) = runtime.block_on(velix_core::run_server()) {
             eprintln!("Jean server failed: {error}");
             std::process::exit(1);
         }
@@ -429,15 +429,15 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error building Tauri application")
         .run(|app, event| match event {
-            tauri::RunEvent::Exit => jean_core::shutdown_runtime(),
+            tauri::RunEvent::Exit => velix_core::shutdown_runtime(),
             tauri::RunEvent::ExitRequested { api, .. } => {
-                if jean_core::has_nonsurvivable_running_sessions() {
+                if velix_core::has_nonsurvivable_running_sessions() {
                     api.prevent_exit();
                     if let Some(window) = app.get_webview_window("main") {
                         let _ = window.hide();
                     }
                 } else {
-                    jean_core::shutdown_runtime();
+                    velix_core::shutdown_runtime();
                 }
             }
             #[cfg(target_os = "macos")]

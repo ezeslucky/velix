@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 describe('WindowResizeHandles Tauri capability', () => {
   it('allows the main window to start native resize dragging', () => {
     const capability = JSON.parse(
-      readFileSync('src-tauri/capabilities/default.json', 'utf8')
+      readFileSync('backend/capabilities/default.json', 'utf8')
     ) as { permissions: string[] }
 
     expect(capability.permissions).toContain(

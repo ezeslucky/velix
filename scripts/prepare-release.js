@@ -73,7 +73,7 @@ async function prepareRelease() {
 
     // Update Cargo.toml
     console.log('📝 Updating Cargo.toml...')
-    const cargoPath = 'src-tauri/Cargo.toml'
+    const cargoPath = 'backend/Cargo.toml'
     const cargoToml = fs.readFileSync(cargoPath, 'utf8')
     const oldCargoVersion = cargoToml.match(/version = "([^"]*)"/)
     const updatedCargo = cargoToml.replace(
@@ -87,7 +87,7 @@ async function prepareRelease() {
 
     // Update tauri.conf.json
     console.log('📝 Updating tauri.conf.json...')
-    const tauriConfigPath = 'src-tauri/tauri.conf.json'
+    const tauriConfigPath = 'backend/tauri.conf.json'
     const tauriConfig = JSON.parse(fs.readFileSync(tauriConfigPath, 'utf8'))
     const oldTauriVersion = tauriConfig.version
     tauriConfig.version = cleanVersion
@@ -121,7 +121,7 @@ async function prepareRelease() {
 
     // Final check that Rust code compiles
     console.log('\n🔍 Running final compilation check...')
-    exec('source ~/.cargo/env && cd src-tauri && cargo check')
+    exec('source ~/.cargo/env && cd backend && cargo check')
     console.log('✅ Rust compilation check passed')
 
     console.log(`\n🎉 Successfully prepared release ${tagVersion}!`)

@@ -24,7 +24,7 @@ describe('EditedFilesDisplay', () => {
         name: 'FileChange',
         input: [
           {
-            path: 'src-tauri/src/chat/codex.rs',
+            path: 'backend/src/chat/codex.rs',
             kind: { type: 'update' },
             diff: '@@ -1,2 +1,3 @@\n-old line\n+new line\n+another line\n context\n',
           },
@@ -53,7 +53,7 @@ describe('EditedFilesDisplay', () => {
         name: 'FileChange',
         input: [
           {
-            path: 'src-tauri/src/chat/codex.rs',
+            path: 'backend/src/chat/codex.rs',
             diff: '@@ -1,2 +1,3 @@\n-old line\n+new line\n+another line\n context\n',
           },
         ],
@@ -69,10 +69,10 @@ describe('EditedFilesDisplay', () => {
     expect(screen.getByTestId('message-diff-modal')).toBeVisible()
     expect(diffModalMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        filePath: 'src-tauri/src/chat/codex.rs',
+        filePath: 'backend/src/chat/codex.rs',
         edits: [],
         patch: expect.stringContaining(
-          '--- src-tauri/src/chat/codex.rs\n+++ src-tauri/src/chat/codex.rs'
+          '--- backend/src/chat/codex.rs\n+++ backend/src/chat/codex.rs'
         ),
       })
     )

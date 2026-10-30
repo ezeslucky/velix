@@ -4,5 +4,5 @@ version = "0.1.73"
 edition = "2021"
 
 [dependencies]
-jean-core = { path = "../jean-core" }
+velix-core = { path = "../core" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

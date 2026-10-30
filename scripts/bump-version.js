@@ -32,16 +32,16 @@ pkg.version = newVersion
 writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 
 // Update tauri.conf.json
-const tauriConfPath = resolve(root, 'src-tauri/tauri.conf.json')
+const tauriConfPath = resolve(root, 'backend/tauri.conf.json')
 const tauriConf = JSON.parse(readFileSync(tauriConfPath, 'utf-8'))
 tauriConf.version = newVersion
 writeFileSync(tauriConfPath, JSON.stringify(tauriConf, null, 2) + '\n')
 
-// Update Cargo.toml files (including jean-core so library fallbacks stay aligned)
+// Update Cargo.toml files (including core so library fallbacks stay aligned)
 for (const cargoPath of [
-  resolve(root, 'src-tauri/Cargo.toml'),
-  resolve(root, 'src-server/Cargo.toml'),
-  resolve(root, 'jean-core/Cargo.toml'),
+  resolve(root, 'backend/Cargo.toml'),
+  resolve(root, 'server/Cargo.toml'),
+  resolve(root, 'core/Cargo.toml'),
 ]) {
   let cargo = readFileSync(cargoPath, 'utf-8')
   cargo = cargo.replace(/^version = ".*"/m, `version = "${newVersion}"`)
@@ -51,14 +51,14 @@ for (const cargoPath of [
 // Keep Cargo.lock package versions in sync so `cargo build --locked` works in CI.
 // Path packages store their own version in the lockfile; bumping only Cargo.toml
 // leaves the lock stale (Server Release failed on this for v0.1.68).
-// jean-core must stay in lockstep too — server self-update used to read
-// jean-core's CARGO_PKG_VERSION and offered updates forever after a release.
+// velix-core must stay in lockstep too — server self-update used to read
+// velix-core's CARGO_PKG_VERSION and offered updates forever after a release.
 for (const [lockPath, packageName] of [
-  [resolve(root, 'src-tauri/Cargo.lock'), 'jean'],
-  [resolve(root, 'src-tauri/Cargo.lock'), 'jean-core'],
-  [resolve(root, 'src-server/Cargo.lock'), 'jean-server'],
-  [resolve(root, 'src-server/Cargo.lock'), 'jean-core'],
-  [resolve(root, 'jean-core/Cargo.lock'), 'jean-core'],
+  [resolve(root, 'backend/Cargo.lock'), 'jean'],
+  [resolve(root, 'backend/Cargo.lock'), 'velix-core'],
+  [resolve(root, 'server/Cargo.lock'), 'jean-server'],
+  [resolve(root, 'server/Cargo.lock'), 'velix-core'],
+  [resolve(root, 'core/Cargo.lock'), 'velix-core'],
 ]) {
   let lock
   try {
